@@ -16,11 +16,11 @@ import java.time.ZoneOffset;
 public class TokenService {
     @Value("${security.jwt.token.secret}")
     private String secretKey;
-    private final Algorithm algorithm = Algorithm.HMAC256(secretKey);
 
 
     public String generateJWT(User user){
         try {
+            Algorithm algorithm = Algorithm.HMAC256(secretKey);
             return JWT.create()
                     .withIssuer("psicomanager-auth-login")
                     .withSubject(user.getUsername())
@@ -32,6 +32,7 @@ public class TokenService {
     }
 
     public String validateJWT(String token){
+        Algorithm algorithm = Algorithm.HMAC256(secretKey);
         try {
             return JWT.require(algorithm)
                     .withIssuer("psicomanager-auth-login")
