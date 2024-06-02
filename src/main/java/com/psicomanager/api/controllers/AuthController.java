@@ -36,7 +36,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<BaseResponse> signUp(@RequestBody UserRegisterDTO body){
+    public ResponseEntity<BaseResponse> signUp(@RequestBody @Valid UserRegisterDTO body){
         if(authService.save(body)) return ResponseEntity.ok(new BaseResponse(true, "Cadastro realizado com sucesso!"));
         return ResponseEntity.ok(new BaseResponse(false, "Não foi possível salvar o registro"));
     }
