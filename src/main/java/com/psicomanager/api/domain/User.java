@@ -1,5 +1,6 @@
 package com.psicomanager.api.domain;
 
+import com.psicomanager.api.dtos.UserRegisterDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,6 +27,13 @@ public class User implements UserDetails {
     private String email;
     private String password;
     private String phone;
+
+    public User(UserRegisterDTO dto, String encryptedPassword) {
+        this.username = dto.username();
+        this.password = encryptedPassword;
+        this.phone = dto.phone();
+        this.email = dto.email();
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
