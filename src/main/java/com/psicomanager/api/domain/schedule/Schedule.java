@@ -24,4 +24,13 @@ public class Schedule {
     @Enumerated(EnumType.STRING)
     private StageEnum stage = StageEnum.OPENED;
 
+    public Schedule(ScheduleRegisterDTO dto, Patient patient){
+        if(patient.getId() != null){
+            this.patient = patient;
+        }
+        dateStart = dto.dateStart();
+        this.dateEnd = dto.dateEnd() == null ? null : dto.dateEnd();
+        this.stage = dto.stage() == null ? StageEnum.OPENED : dto.stage();
+    }
+
 }
