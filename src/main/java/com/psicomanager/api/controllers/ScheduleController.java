@@ -16,7 +16,7 @@ public class ScheduleController {
     @Autowired
     private ScheduleService service;
     @PostMapping("/register")
-    public ResponseEntity<String> regiter(@RequestBody ScheduleRegisterDTO data){
+    public ResponseEntity<String> register(@RequestBody ScheduleRegisterDTO data){
         try {
             if(service.save(data)) return ResponseEntity.ok("Agendamento realizado com sucesso!");
             return ResponseEntity.badRequest().body("Não foi possível realizar o agendamento");
