@@ -1,6 +1,6 @@
 package com.psicomanager.api.repositories;
 
-import com.psicomanager.api.domain.User;
+import com.psicomanager.api.domain.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 

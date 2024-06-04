@@ -1,6 +1,7 @@
 package com.psicomanager.api.infra.security;
 
 import com.psicomanager.api.repositories.UserRepository;
+import com.psicomanager.api.services.MyUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

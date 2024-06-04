@@ -1,4 +1,4 @@
-package com.psicomanager.api.dtos;
+package com.psicomanager.api.domain.user;
 
 import jakarta.validation.constraints.NotBlank;
 

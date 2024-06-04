@@ -1,6 +1,5 @@
-package com.psicomanager.api.domain;
+package com.psicomanager.api.domain.user;
 
-import com.psicomanager.api.dtos.UserRegisterDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
