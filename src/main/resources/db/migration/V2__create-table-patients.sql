@@ -1,0 +1,13 @@
+CREATE TABLE `patients` (
+  `ID` varchar(255) NOT NULL,
+  `NAME` varchar(255) NOT NULL,
+  `MAIL` varchar(100) DEFAULT NULL,
+  `PHONE` varchar(100) NOT NULL,
+  `CPF` varchar(11) DEFAULT NULL,
+  `ISACTIVE` bit(1) NOT NULL DEFAULT b'1',
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `NAME` (`NAME`),
+  UNIQUE KEY `PHONE` (`PHONE`),
+  UNIQUE KEY `MAIL` (`MAIL`),
+  UNIQUE KEY `CPF` (`CPF`)
+);

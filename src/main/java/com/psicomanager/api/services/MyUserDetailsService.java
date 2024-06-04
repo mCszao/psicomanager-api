@@ -23,8 +23,7 @@ public class MyUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String input) throws UsernameNotFoundException {
         var userHasEmail = userRepo.findByEmail(input) != null;
         if(userHasEmail){
-            var user = userRepo.findByEmail(input);
-            return user;
+            return userRepo.findByEmail(input);
         };
         return userRepo.findByUsername(input).orElseThrow(() -> new RuntimeException("Username not found"));
     }
