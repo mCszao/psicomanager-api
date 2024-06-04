@@ -2,7 +2,7 @@ CREATE TABLE `sessions_schedule` (
   `ID` varchar(255) NOT NULL,
   `PATIENT` varchar(255) NOT NULL,
   `DATE_START` datetime NOT NULL,
-  `DATE_END` datetime NOT NULL,
+  `DATE_END` datetime NULL,
   `ANNOTATIONS` text DEFAULT NULL,
   `STAGE` enum('CONCLUDED','OPENED','CANCELLED','RESCHEDULED') DEFAULT 'OPENED',
   PRIMARY KEY (`ID`),

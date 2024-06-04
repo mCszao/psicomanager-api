@@ -50,8 +50,8 @@ public class Patient {
     private String cpf;
 
     private Boolean isActive = Boolean.TRUE;
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
 
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Address> addresses = new ArrayList<>();
     private LocalDate birthdayDate;
 
