@@ -18,7 +18,11 @@ public class PatientController {
 
     @PostMapping("/register")
     public ResponseEntity<BaseResponse> register(@RequestBody @Valid PatientRegisterDTO data){
-        patientRepo.save(new Patient(data));
-        return ResponseEntity.ok(new BaseResponse(true, "Paciente salvo com sucesso!"));
+        try {
+            patientRepo.save(new Patient(data));
+            return ResponseEntity.ok(new BaseResponse(true, "Paciente salvo com sucesso!"));
+        }catch (Exception ex) {
+            return ResponseEntity.internalServerError().body(new BaseResponse(false, ex.getMessage()));
+        }
     }
 }
