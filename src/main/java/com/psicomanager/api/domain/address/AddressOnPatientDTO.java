@@ -11,13 +11,12 @@ public record AddressOnPatientDTO (
         @NotBlank
         @Pattern(regexp = "\\d{6,8}")
         String zipcode,
-        @NotBlank
+
         String complement,
         @NotBlank
         String number,
-        @NotBlank
+
         String state,
         String abbreviation,
-        @NotBlank
         String city
 ){}

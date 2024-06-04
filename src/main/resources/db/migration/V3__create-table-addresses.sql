@@ -9,7 +9,6 @@ CREATE TABLE `addresses` (
   `ABBREVIATION` varchar(5) DEFAULT 'MT',
   `CITY` varchar(100) NOT NULL DEFAULT 'CUIABÁ',
   `PATIENT` varchar(255) NOT NULL,
-  `BIRTHDAY_DATE` datetime DEFAULT NULL,
   PRIMARY KEY (`ID`),
   KEY `fk_address_id_patient` (`PATIENT`),
   CONSTRAINT `fk_address_id_patient` FOREIGN KEY (`PATIENT`) REFERENCES `patients` (`ID`)

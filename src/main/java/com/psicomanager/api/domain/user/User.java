@@ -1,6 +1,9 @@
 package com.psicomanager.api.domain.user;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +16,10 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity(name = "users")
-@Table(name = "users")
+@Table(name = "users", uniqueConstraints = {
+        @UniqueConstraint(columnNames = "USERNAME"),
+        @UniqueConstraint(columnNames = "PHONE")
+})
 @Getter
 @Setter
 @AllArgsConstructor
@@ -22,9 +28,24 @@ public class User implements UserDetails {
     @Id()
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
+
+    @NotNull
+    @Size(max = 255)
+    @Column(name = "USERNAME", nullable = false, unique = true, length = 255)
     private String username;
+
+    @Size(max = 255)
+    @Email
+    @Column(name = "EMAIL", length = 255)
     private String email;
+
+    @NotNull
+    @Size(max = 255)
+    @Column(name = "PASSWORD", nullable = false, length = 255)
     private String password;
+
+    @Size(max = 255)
+    @Column(name = "PHONE", unique = true, length = 255)
     private String phone;
 
     public User(UserRegisterDTO dto, String encryptedPassword) {
