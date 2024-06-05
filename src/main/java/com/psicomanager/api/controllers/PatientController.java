@@ -22,4 +22,10 @@ public class PatientController {
             patientService.register(data);
             return ResponseEntity.ok(new BaseResponse(true, "Paciente salvo com sucesso!"));
     }
+
+    @GetMapping
+    public ResponseEntity<BaseResponse> index(){
+        var list = patientService.getAllPatients();
+        return ResponseEntity.ok(new BaseResponse<>(true, list));
+    }
 }

@@ -7,6 +7,8 @@ import com.psicomanager.api.repositories.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class PatientService {
     @Autowired
@@ -17,5 +19,9 @@ public class PatientService {
         if(patientRepo.findByPhone(dto.phone()) != null) throw new DuplicatePatientEntryException("Telefone do paciente");
         if(patientRepo.findByCpf(dto.cpf()) != null) throw new DuplicatePatientEntryException("Cpf do paciente");
         patientRepo.save(new Patient(dto));
+    }
+
+    public List<Patient> getAllPatients(){
+        return patientRepo.findAll();
     }
 }
