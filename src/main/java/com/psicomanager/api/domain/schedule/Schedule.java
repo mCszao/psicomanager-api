@@ -3,11 +3,18 @@ package com.psicomanager.api.domain.schedule;
 import com.psicomanager.api.domain.patient.Patient;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
+import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity(name = "sessions_schedule")
 @Table(name = "sessions_schedule")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = "id")
 public class Schedule {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -29,7 +36,7 @@ public class Schedule {
             this.patient = patient;
         }
         dateStart = dto.dateStart();
-        this.dateEnd = dto.dateEnd() == null ? null : dto.dateEnd();
+        this.dateEnd = dto.dateEnd() == null ? dto.dateStart().plusHours(BigDecimal.ONE.toBigInteger().longValue()) : dto.dateEnd();
         this.stage = dto.stage() == null ? StageEnum.OPENED : dto.stage();
     }
 

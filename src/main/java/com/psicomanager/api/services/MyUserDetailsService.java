@@ -34,7 +34,7 @@ public class MyUserDetailsService implements UserDetailsService {
         if(userHasEmail){
             return userRepo.findByEmail(input);
         };
-        return userRepo.findByUsername(input).orElseThrow(() -> new UserNotFoundException("Username or password doesnt match"));
+        return userRepo.findByUsername(input).orElseThrow(() -> new UserNotFoundException("Usuário ou senha incorretos"));
     }
 
     public UserLoginDTO login(UserLoginDTO dto, User authUser){
@@ -44,9 +44,9 @@ public class MyUserDetailsService implements UserDetailsService {
 
 
     public void register(UserRegisterDTO dto){
-        if(!(userRepo.findByUsername(dto.username()).isEmpty())) throw new DuplicateUserEntryException("This username is");
-        if(userRepo.findByEmail(dto.email() == null ? "Não cadastrado" : dto.email()) != null) throw new DuplicateUserEntryException("This email");
-        if(userRepo.findByPhone(dto.phone() == null ? "Não cadastrado" : dto.phone()) != null) throw new DuplicateUserEntryException("This phone");
+        if(!(userRepo.findByUsername(dto.username()).isEmpty())) throw new DuplicateUserEntryException("Esse usuário");
+        if(userRepo.findByEmail(dto.email() == null ? "Não cadastrado" : dto.email()) != null) throw new DuplicateUserEntryException("Esse email");
+        if(userRepo.findByPhone(dto.phone() == null ? "Não cadastrado" : dto.phone()) != null) throw new DuplicateUserEntryException("Esse telefone");
         String encryptedPass = new BCryptPasswordEncoder().encode(dto.password());
         userRepo.save(new User(dto, encryptedPass));
 

@@ -13,9 +13,9 @@ public class PatientService {
     private PatientRepository patientRepo;
 
     public void register(PatientRegisterDTO dto){
-        if(patientRepo.findByEmail(dto.email() == null ? "Não cadastrado" : dto.email()) != null) throw new DuplicatePatientEntryException("Patient email");
-        if(patientRepo.findByPhone(dto.phone()) != null) throw new DuplicatePatientEntryException("Patient phone");
-        if(patientRepo.findByCpf(dto.cpf()) != null) throw new DuplicatePatientEntryException("Patient cpf");
+        if(patientRepo.findByEmail(dto.email() == null ? "Não cadastrado" : dto.email()) != null) throw new DuplicatePatientEntryException("Email do paciente");
+        if(patientRepo.findByPhone(dto.phone()) != null) throw new DuplicatePatientEntryException("Telefone do paciente");
+        if(patientRepo.findByCpf(dto.cpf()) != null) throw new DuplicatePatientEntryException("Cpf do paciente");
         patientRepo.save(new Patient(dto));
     }
 }
