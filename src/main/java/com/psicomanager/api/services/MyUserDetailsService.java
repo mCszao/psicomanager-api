@@ -1,11 +1,15 @@
 package com.psicomanager.api.services;
 
 import com.psicomanager.api.domain.user.User;
+import com.psicomanager.api.domain.user.UserLoginDTO;
 import com.psicomanager.api.domain.user.UserRegisterDTO;
 import com.psicomanager.api.exceptions.user.DuplicateUserEntryException;
 import com.psicomanager.api.exceptions.user.UserNotFoundException;
+import com.psicomanager.api.infra.security.TokenService;
 import com.psicomanager.api.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,25 +22,33 @@ import java.util.Collections;
 public class MyUserDetailsService implements UserDetailsService {
 
     @Autowired
+    private TokenService tokenService;
+
+    @Autowired
     private UserRepository userRepo;
 
 
     @Override
-    public UserDetails loadUserByUsername(String input) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String input) {
         var userHasEmail = userRepo.findByEmail(input) != null;
         if(userHasEmail){
             return userRepo.findByEmail(input);
         };
-        return userRepo.findByUsername(input).orElseThrow(() -> new UserNotFoundException("Username not found"));
+        return userRepo.findByUsername(input).orElseThrow(() -> new UserNotFoundException("Username or password doesnt match"));
+    }
+
+    public UserLoginDTO login(UserLoginDTO dto, User authUser){
+        var token = tokenService.generateJWT(authUser);
+        return new UserLoginDTO(dto.username(),token);
     }
 
 
     public void register(UserRegisterDTO dto){
-        var differentUsername = userRepo.findByUsername(dto.username()).isEmpty();
-        if(differentUsername){
-            String encryptedPass = new BCryptPasswordEncoder().encode(dto.password());
-            userRepo.save(new User(dto, encryptedPass));
-        }
-        throw new DuplicateUserEntryException("This username is already registered");
+        if(!(userRepo.findByUsername(dto.username()).isEmpty())) throw new DuplicateUserEntryException("This username is already registered");
+        if(userRepo.findByEmail(dto.email() == null ? "Não cadastrado" : dto.email()) != null) throw new DuplicateUserEntryException("This email is already registered");
+        if(userRepo.findByPhone(dto.phone() == null ? "Não cadastrado" : dto.phone()) != null) throw new DuplicateUserEntryException("This phone is already registered");
+        String encryptedPass = new BCryptPasswordEncoder().encode(dto.password());
+        userRepo.save(new User(dto, encryptedPass));
+
     }
 }

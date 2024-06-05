@@ -21,16 +21,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     @Autowired
-    private TokenService tokenService;
+    private MyUserDetailsService authService;
+
     @Autowired
     private AuthenticationManager authManager;
-    @Autowired
-    private MyUserDetailsService authService;
+
+
     @PostMapping("/login")
-    public ResponseEntity<Object> signIn(@RequestBody @Valid UserLoginDTO body){
+    public ResponseEntity<BaseResponse> signIn(@RequestBody @Valid UserLoginDTO body){
         var authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(body.username(), body.password()));
-        var token = tokenService.generateJWT((User) authentication.getPrincipal());
-        return ResponseEntity.ok(new UserLoginDTO(body.username(),token));
+        var userLogin = authService.login(body, (User) authentication.getPrincipal());
+        return ResponseEntity.ok(new BaseResponse(true, userLogin));
     }
 
     @PostMapping("/register")
