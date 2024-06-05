@@ -44,9 +44,9 @@ public class MyUserDetailsService implements UserDetailsService {
 
 
     public void register(UserRegisterDTO dto){
-        if(!(userRepo.findByUsername(dto.username()).isEmpty())) throw new DuplicateUserEntryException("This username is already registered");
-        if(userRepo.findByEmail(dto.email() == null ? "Não cadastrado" : dto.email()) != null) throw new DuplicateUserEntryException("This email is already registered");
-        if(userRepo.findByPhone(dto.phone() == null ? "Não cadastrado" : dto.phone()) != null) throw new DuplicateUserEntryException("This phone is already registered");
+        if(!(userRepo.findByUsername(dto.username()).isEmpty())) throw new DuplicateUserEntryException("This username is");
+        if(userRepo.findByEmail(dto.email() == null ? "Não cadastrado" : dto.email()) != null) throw new DuplicateUserEntryException("This email");
+        if(userRepo.findByPhone(dto.phone() == null ? "Não cadastrado" : dto.phone()) != null) throw new DuplicateUserEntryException("This phone");
         String encryptedPass = new BCryptPasswordEncoder().encode(dto.password());
         userRepo.save(new User(dto, encryptedPass));
 
