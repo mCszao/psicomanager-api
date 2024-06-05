@@ -2,6 +2,8 @@ package com.psicomanager.api.services;
 
 import com.psicomanager.api.domain.user.User;
 import com.psicomanager.api.domain.user.UserRegisterDTO;
+import com.psicomanager.api.exceptions.user.DuplicateUserEntryException;
+import com.psicomanager.api.exceptions.user.UserNotFoundException;
 import com.psicomanager.api.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,17 +27,16 @@ public class MyUserDetailsService implements UserDetailsService {
         if(userHasEmail){
             return userRepo.findByEmail(input);
         };
-        return userRepo.findByUsername(input).orElseThrow(() -> new RuntimeException("Username not found"));
+        return userRepo.findByUsername(input).orElseThrow(() -> new UserNotFoundException("Username not found"));
     }
 
 
-    public boolean save(UserRegisterDTO dto){
+    public void register(UserRegisterDTO dto){
         var differentUsername = userRepo.findByUsername(dto.username()).isEmpty();
         if(differentUsername){
             String encryptedPass = new BCryptPasswordEncoder().encode(dto.password());
             userRepo.save(new User(dto, encryptedPass));
-            return true;
         }
-        return false;
+        throw new DuplicateUserEntryException("This username is already registered");
     }
 }
