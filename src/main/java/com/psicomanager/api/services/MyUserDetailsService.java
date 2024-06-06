@@ -7,6 +7,7 @@ import com.psicomanager.api.exceptions.user.DuplicateUserEntryException;
 import com.psicomanager.api.exceptions.user.UserNotFoundException;
 import com.psicomanager.api.infra.security.TokenService;
 import com.psicomanager.api.repositories.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -42,7 +43,7 @@ public class MyUserDetailsService implements UserDetailsService {
         return new UserLoginDTO(dto.username(),token);
     }
 
-
+    @Transactional
     public void register(UserRegisterDTO dto){
         if(!(userRepo.findByUsername(dto.username()).isEmpty())) throw new DuplicateUserEntryException("Esse usuário");
         if(userRepo.findByEmail(dto.email() == null ? "Não cadastrado" : dto.email()) != null) throw new DuplicateUserEntryException("Esse email");

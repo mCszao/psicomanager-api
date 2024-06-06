@@ -10,6 +10,7 @@ import com.psicomanager.api.exceptions.patient.DuplicatePatientEntryException;
 import com.psicomanager.api.exceptions.patient.PatientNotFoundException;
 import com.psicomanager.api.repositories.AddressRepository;
 import com.psicomanager.api.repositories.PatientRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,7 @@ public class PatientService {
     @Autowired
     private AddressRepository addressRepo;
 
+    @Transactional
     public void register(PatientRegisterDTO dto){
         if(patientRepo.findByEmail(dto.email() == null ? "Não cadastrado" : dto.email()) != null) throw new DuplicatePatientEntryException("Email do paciente");
         if(patientRepo.findByPhone(dto.phone()) != null) throw new DuplicatePatientEntryException("Telefone do paciente");
@@ -46,6 +48,7 @@ public class PatientService {
         return patientRepo.findById(id).orElseThrow(() -> new PatientNotFoundException("Id do paciente informado não possui registro"));
     }
 
+    @Transactional
     public void saveAddressPatient(AddressOnPatientDTO dto, String patientId){
         Patient patient = getDetailsById(patientId);
         var address = new Address(dto, patient);

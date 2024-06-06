@@ -8,6 +8,7 @@ import com.psicomanager.api.exceptions.patient.PatientNotFoundException;
 import com.psicomanager.api.exceptions.schedule.ScheduleConflictTimeException;
 import com.psicomanager.api.repositories.PatientRepository;
 import com.psicomanager.api.repositories.ScheduleRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ public class ScheduleService {
     @Autowired
     private PatientRepository patientRepo;
 
+    @Transactional
     public void createSchedule(ScheduleRegisterDTO dto) {
         var schedules = scheduleRepo.getScheduleBetweenStartEnd(dto.dateStart(), dto.dateStart().plusHours(1));
         if (schedules.isEmpty()) {
