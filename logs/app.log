@@ -1,0 +1,276 @@
+2024-06-06 02:09:42 - c.p.a.PsicomanagerApiApplication >>>  Starting PsicomanagerApiApplication using Java 21.0.2 with PID 4748 (C:\Projetos\Projeto PsicoManager\psicomanager-api\target\classes started by Suporte Totem in C:\Projetos\Projeto PsicoManager\psicomanager-api)
+2024-06-06 02:09:42 - c.p.a.PsicomanagerApiApplication >>>  No active profile set, falling back to 1 default profile: "default"
+2024-06-06 02:09:42 - o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor >>>  Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2024-06-06 02:09:42 - o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor >>>  For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2024-06-06 02:09:45 - o.s.d.r.c.RepositoryConfigurationDelegate >>>  Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-06-06 02:09:45 - o.s.d.r.c.RepositoryConfigurationDelegate >>>  Finished Spring Data repository scanning in 166 ms. Found 4 JPA repository interfaces.
+2024-06-06 02:09:46 - o.s.b.w.e.t.TomcatWebServer >>>  Tomcat initialized with port 8080 (http)
+2024-06-06 02:09:46 - o.a.c.core.StandardService >>>  Starting service [Tomcat]
+2024-06-06 02:09:46 - o.a.c.core.StandardEngine >>>  Starting Servlet engine: [Apache Tomcat/10.1.24]
+2024-06-06 02:09:47 - o.a.c.c.C.[.[localhost].[/] >>>  Initializing Spring embedded WebApplicationContext
+2024-06-06 02:09:47 - o.s.b.w.s.c.ServletWebServerApplicationContext >>>  Root WebApplicationContext: initialization completed in 4432 ms
+2024-06-06 02:09:47 - c.z.hikari.HikariDataSource >>>  HikariPool-1 - Starting...
+2024-06-06 02:09:48 - c.z.hikari.pool.HikariPool >>>  HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@6d89bb08
+2024-06-06 02:09:48 - c.z.hikari.HikariDataSource >>>  HikariPool-1 - Start completed.
+2024-06-06 02:09:48 - o.flywaydb.core.FlywayExecutor >>>  Database: jdbc:mysql://localhost:3310/psicomanager (MySQL 5.5)
+2024-06-06 02:09:48 - o.f.c.i.command.DbValidate >>>  Successfully validated 5 migrations (execution time 00:00.153s)
+2024-06-06 02:09:48 - o.f.c.i.command.DbMigrate >>>  Current version of schema `psicomanager`: 5
+2024-06-06 02:09:48 - o.f.c.i.command.DbMigrate >>>  Schema `psicomanager` is up to date. No migration necessary.
+2024-06-06 02:09:48 - o.h.j.internal.util.LogHelper >>>  HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-06-06 02:09:49 - org.hibernate.Version >>>  HHH000412: Hibernate ORM core version 6.5.2.Final
+2024-06-06 02:09:49 - o.h.c.i.RegionFactoryInitiator >>>  HHH000026: Second-level cache disabled
+2024-06-06 02:09:49 - o.s.o.j.p.SpringPersistenceUnitInfo >>>  No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-06-06 02:09:49 - org.hibernate.dialect.Dialect >>>  HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2024-06-06 02:09:51 - o.h.e.t.j.p.i.JtaPlatformInitiator >>>  HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-06-06 02:09:51 - o.s.o.j.LocalContainerEntityManagerFactoryBean >>>  Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-06-06 02:09:52 - o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer >>>  Global AuthenticationManager configured with UserDetailsService bean with name myUserDetailsService
+2024-06-06 02:09:53 - o.s.d.j.r.q.QueryEnhancerFactory >>>  Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-06-06 02:09:54 - o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration >>>  spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-06-06 02:09:54 - o.s.s.w.DefaultSecurityFilterChain >>>  Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@30014c49, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@1e6f83fb, org.springframework.security.web.context.SecurityContextHolderFilter@19f9b470, org.springframework.security.web.header.HeaderWriterFilter@6ea8ed54, org.springframework.web.filter.CorsFilter@2b5f71e6, org.springframework.security.web.authentication.logout.LogoutFilter@5ee236aa, com.psicomanager.api.infra.security.FilterSecurity@ae47787, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@7b01e799, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@399af2a0, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@69abd6d7, org.springframework.security.web.session.SessionManagementFilter@16991a22, org.springframework.security.web.access.ExceptionTranslationFilter@663fff34, org.springframework.security.web.access.intercept.AuthorizationFilter@404dd1bb]
+2024-06-06 02:09:54 - o.s.b.a.t.ThymeleafAutoConfiguration$DefaultTemplateResolverConfiguration >>>  Cannot find template location: classpath:/templates/ (please add some templates, check your Thymeleaf configuration, or set spring.thymeleaf.check-template-location=false)
+2024-06-06 02:09:55 - o.s.b.d.a.OptionalLiveReloadServer >>>  LiveReload server is running on port 35729
+2024-06-06 02:09:55 - o.s.b.w.e.t.TomcatWebServer >>>  Tomcat started on port 8080 (http) with context path '/'
+2024-06-06 02:09:55 - c.p.a.PsicomanagerApiApplication >>>  Started PsicomanagerApiApplication in 13.899 seconds (process running for 15.236)
+2024-06-06 02:10:03 - o.a.c.c.C.[.[localhost].[/] >>>  Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-06-06 02:10:03 - o.s.w.s.DispatcherServlet >>>  Initializing Servlet 'dispatcherServlet'
+2024-06-06 02:10:03 - o.s.w.s.DispatcherServlet >>>  Completed initialization in 3 ms
+2024-06-06 02:14:09 - o.s.o.j.LocalContainerEntityManagerFactoryBean >>>  Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-06-06 02:14:09 - c.z.hikari.HikariDataSource >>>  HikariPool-1 - Shutdown initiated...
+2024-06-06 02:14:09 - c.z.hikari.HikariDataSource >>>  HikariPool-1 - Shutdown completed.
+2024-06-06 02:15:22 - c.p.a.PsicomanagerApiApplication >>>  Starting PsicomanagerApiApplication using Java 21.0.2 with PID 15444 (C:\Projetos\Projeto PsicoManager\psicomanager-api\target\classes started by Suporte Totem in C:\Projetos\Projeto PsicoManager\psicomanager-api)
+2024-06-06 02:15:22 - c.p.a.PsicomanagerApiApplication >>>  No active profile set, falling back to 1 default profile: "default"
+2024-06-06 02:15:23 - o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor >>>  Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2024-06-06 02:15:23 - o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor >>>  For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2024-06-06 02:15:25 - o.s.d.r.c.RepositoryConfigurationDelegate >>>  Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-06-06 02:15:25 - o.s.d.r.c.RepositoryConfigurationDelegate >>>  Finished Spring Data repository scanning in 159 ms. Found 4 JPA repository interfaces.
+2024-06-06 02:15:27 - o.s.b.w.e.t.TomcatWebServer >>>  Tomcat initialized with port 8080 (http)
+2024-06-06 02:15:27 - o.a.c.core.StandardService >>>  Starting service [Tomcat]
+2024-06-06 02:15:27 - o.a.c.core.StandardEngine >>>  Starting Servlet engine: [Apache Tomcat/10.1.24]
+2024-06-06 02:15:27 - o.a.c.c.C.[.[localhost].[/] >>>  Initializing Spring embedded WebApplicationContext
+2024-06-06 02:15:27 - o.s.b.w.s.c.ServletWebServerApplicationContext >>>  Root WebApplicationContext: initialization completed in 4288 ms
+2024-06-06 02:15:27 - c.z.hikari.HikariDataSource >>>  HikariPool-1 - Starting...
+2024-06-06 02:15:28 - c.z.hikari.pool.HikariPool >>>  HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@3d40bfe0
+2024-06-06 02:15:28 - c.z.hikari.HikariDataSource >>>  HikariPool-1 - Start completed.
+2024-06-06 02:15:28 - o.flywaydb.core.FlywayExecutor >>>  Database: jdbc:mysql://localhost:3310/psicomanager (MySQL 5.5)
+2024-06-06 02:15:28 - o.f.c.i.command.DbValidate >>>  Successfully validated 5 migrations (execution time 00:00.068s)
+2024-06-06 02:15:28 - o.f.c.i.command.DbMigrate >>>  Current version of schema `psicomanager`: 5
+2024-06-06 02:15:28 - o.f.c.i.command.DbMigrate >>>  Schema `psicomanager` is up to date. No migration necessary.
+2024-06-06 02:15:28 - o.h.j.internal.util.LogHelper >>>  HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-06-06 02:15:29 - org.hibernate.Version >>>  HHH000412: Hibernate ORM core version 6.5.2.Final
+2024-06-06 02:15:29 - o.h.c.i.RegionFactoryInitiator >>>  HHH000026: Second-level cache disabled
+2024-06-06 02:15:29 - o.s.o.j.p.SpringPersistenceUnitInfo >>>  No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-06-06 02:15:29 - org.hibernate.dialect.Dialect >>>  HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2024-06-06 02:15:31 - o.h.e.t.j.p.i.JtaPlatformInitiator >>>  HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-06-06 02:15:32 - o.s.o.j.LocalContainerEntityManagerFactoryBean >>>  Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-06-06 02:15:32 - o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer >>>  Global AuthenticationManager configured with UserDetailsService bean with name myUserDetailsService
+2024-06-06 02:15:33 - o.s.d.j.r.q.QueryEnhancerFactory >>>  Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-06-06 02:15:34 - o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration >>>  spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-06-06 02:15:34 - o.s.s.w.DefaultSecurityFilterChain >>>  Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@67875a0f, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@4271167e, org.springframework.security.web.context.SecurityContextHolderFilter@1fda945f, org.springframework.security.web.header.HeaderWriterFilter@45e1165f, org.springframework.web.filter.CorsFilter@3334ac79, org.springframework.security.web.authentication.logout.LogoutFilter@199218a4, com.psicomanager.api.infra.security.FilterSecurity@14ee625f, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@175c81cf, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@3cee6b61, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@74ae2d6d, org.springframework.security.web.session.SessionManagementFilter@111acfab, org.springframework.security.web.access.ExceptionTranslationFilter@58ae87e, org.springframework.security.web.access.intercept.AuthorizationFilter@794b9302]
+2024-06-06 02:15:34 - o.s.b.a.t.ThymeleafAutoConfiguration$DefaultTemplateResolverConfiguration >>>  Cannot find template location: classpath:/templates/ (please add some templates, check your Thymeleaf configuration, or set spring.thymeleaf.check-template-location=false)
+2024-06-06 02:15:35 - o.s.b.d.a.OptionalLiveReloadServer >>>  LiveReload server is running on port 35729
+2024-06-06 02:15:35 - o.s.b.w.e.t.TomcatWebServer >>>  Tomcat started on port 8080 (http) with context path '/'
+2024-06-06 02:15:35 - c.p.a.PsicomanagerApiApplication >>>  Started PsicomanagerApiApplication in 13.413 seconds (process running for 14.625)
+2024-06-06 02:19:20 - o.a.c.c.C.[.[localhost].[/] >>>  Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-06-06 02:19:20 - o.s.w.s.DispatcherServlet >>>  Initializing Servlet 'dispatcherServlet'
+2024-06-06 02:19:20 - o.s.w.s.DispatcherServlet >>>  Completed initialization in 4 ms
+2024-06-06 02:20:56 - o.s.o.j.LocalContainerEntityManagerFactoryBean >>>  Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-06-06 02:20:56 - c.z.hikari.HikariDataSource >>>  HikariPool-1 - Shutdown initiated...
+2024-06-06 02:20:56 - c.z.hikari.HikariDataSource >>>  HikariPool-1 - Shutdown completed.
+2024-06-06 02:21:07 - c.p.a.PsicomanagerApiApplication >>>  Starting PsicomanagerApiApplication using Java 21.0.2 with PID 10956 (C:\Projetos\Projeto PsicoManager\psicomanager-api\target\classes started by Suporte Totem in C:\Projetos\Projeto PsicoManager\psicomanager-api)
+2024-06-06 02:21:07 - c.p.a.PsicomanagerApiApplication >>>  No active profile set, falling back to 1 default profile: "default"
+2024-06-06 02:21:07 - o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor >>>  Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2024-06-06 02:21:07 - o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor >>>  For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2024-06-06 02:21:09 - o.s.d.r.c.RepositoryConfigurationDelegate >>>  Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-06-06 02:21:09 - o.s.d.r.c.RepositoryConfigurationDelegate >>>  Finished Spring Data repository scanning in 183 ms. Found 4 JPA repository interfaces.
+2024-06-06 02:21:11 - o.s.b.w.e.t.TomcatWebServer >>>  Tomcat initialized with port 8080 (http)
+2024-06-06 02:21:11 - o.a.c.core.StandardService >>>  Starting service [Tomcat]
+2024-06-06 02:21:11 - o.a.c.core.StandardEngine >>>  Starting Servlet engine: [Apache Tomcat/10.1.24]
+2024-06-06 02:21:11 - o.a.c.c.C.[.[localhost].[/] >>>  Initializing Spring embedded WebApplicationContext
+2024-06-06 02:21:11 - o.s.b.w.s.c.ServletWebServerApplicationContext >>>  Root WebApplicationContext: initialization completed in 4764 ms
+2024-06-06 02:21:12 - c.z.hikari.HikariDataSource >>>  HikariPool-1 - Starting...
+2024-06-06 02:21:13 - c.z.hikari.pool.HikariPool >>>  HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@2815b891
+2024-06-06 02:21:13 - c.z.hikari.HikariDataSource >>>  HikariPool-1 - Start completed.
+2024-06-06 02:21:13 - o.flywaydb.core.FlywayExecutor >>>  Database: jdbc:mysql://localhost:3310/psicomanager (MySQL 5.5)
+2024-06-06 02:21:13 - o.f.c.i.command.DbValidate >>>  Successfully validated 5 migrations (execution time 00:00.089s)
+2024-06-06 02:21:13 - o.f.c.i.command.DbMigrate >>>  Current version of schema `psicomanager`: 5
+2024-06-06 02:21:13 - o.f.c.i.command.DbMigrate >>>  Schema `psicomanager` is up to date. No migration necessary.
+2024-06-06 02:21:13 - o.h.j.internal.util.LogHelper >>>  HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-06-06 02:21:14 - org.hibernate.Version >>>  HHH000412: Hibernate ORM core version 6.5.2.Final
+2024-06-06 02:21:14 - o.h.c.i.RegionFactoryInitiator >>>  HHH000026: Second-level cache disabled
+2024-06-06 02:21:14 - o.s.o.j.p.SpringPersistenceUnitInfo >>>  No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-06-06 02:21:15 - org.hibernate.dialect.Dialect >>>  HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2024-06-06 02:21:17 - o.h.e.t.j.p.i.JtaPlatformInitiator >>>  HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-06-06 02:21:18 - o.s.o.j.LocalContainerEntityManagerFactoryBean >>>  Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-06-06 02:21:19 - o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer >>>  Global AuthenticationManager configured with UserDetailsService bean with name myUserDetailsService
+2024-06-06 02:21:19 - o.s.d.j.r.q.QueryEnhancerFactory >>>  Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-06-06 02:21:20 - o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration >>>  spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-06-06 02:21:21 - o.s.s.w.DefaultSecurityFilterChain >>>  Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@2525a0ba, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@44f3d93e, org.springframework.security.web.context.SecurityContextHolderFilter@721d18fa, org.springframework.security.web.header.HeaderWriterFilter@431efc8b, org.springframework.web.filter.CorsFilter@4197ad52, org.springframework.security.web.authentication.logout.LogoutFilter@72d9d0df, com.psicomanager.api.infra.security.FilterSecurity@2ed8f762, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@60af4f80, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@25bab2c4, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@8231ce9, org.springframework.security.web.session.SessionManagementFilter@224d3021, org.springframework.security.web.access.ExceptionTranslationFilter@19fa3e81, org.springframework.security.web.access.intercept.AuthorizationFilter@61e00afa]
+2024-06-06 02:21:21 - o.s.b.a.t.ThymeleafAutoConfiguration$DefaultTemplateResolverConfiguration >>>  Cannot find template location: classpath:/templates/ (please add some templates, check your Thymeleaf configuration, or set spring.thymeleaf.check-template-location=false)
+2024-06-06 02:21:21 - o.s.b.d.a.OptionalLiveReloadServer >>>  LiveReload server is running on port 35729
+2024-06-06 02:21:21 - o.s.b.w.e.t.TomcatWebServer >>>  Tomcat started on port 8080 (http) with context path '/'
+2024-06-06 02:21:21 - c.p.a.PsicomanagerApiApplication >>>  Started PsicomanagerApiApplication in 16.361 seconds (process running for 17.768)
+2024-06-06 02:22:36 - o.a.c.c.C.[.[localhost].[/] >>>  Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-06-06 02:22:36 - o.s.w.s.DispatcherServlet >>>  Initializing Servlet 'dispatcherServlet'
+2024-06-06 02:22:36 - o.s.w.s.DispatcherServlet >>>  Completed initialization in 3 ms
+2024-06-06 02:22:37 - o.a.c.c.C.[.[.[.[dispatcherServlet] >>>  Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: jakarta.validation.UnexpectedTypeException: HV000030: No validator could be found for constraint 'jakarta.validation.constraints.NotBlank' validating type 'java.time.LocalDateTime'. Check configuration for 'dateStart'] with root cause
+jakarta.validation.UnexpectedTypeException: HV000030: No validator could be found for constraint 'jakarta.validation.constraints.NotBlank' validating type 'java.time.LocalDateTime'. Check configuration for 'dateStart'
+	at org.hibernate.validator.internal.engine.constraintvalidation.ConstraintTree.getExceptionForNullValidator(ConstraintTree.java:116)
+	at org.hibernate.validator.internal.engine.constraintvalidation.ConstraintTree.getInitializedConstraintValidator(ConstraintTree.java:162)
+	at org.hibernate.validator.internal.engine.constraintvalidation.SimpleConstraintTree.validateConstraints(SimpleConstraintTree.java:58)
+	at org.hibernate.validator.internal.engine.constraintvalidation.ConstraintTree.validateConstraints(ConstraintTree.java:75)
+	at org.hibernate.validator.internal.metadata.core.MetaConstraint.doValidateConstraint(MetaConstraint.java:130)
+	at org.hibernate.validator.internal.metadata.core.MetaConstraint.validateConstraint(MetaConstraint.java:123)
+	at org.hibernate.validator.internal.engine.ValidatorImpl.validateMetaConstraint(ValidatorImpl.java:555)
+	at org.hibernate.validator.internal.engine.ValidatorImpl.validateConstraintsForSingleDefaultGroupElement(ValidatorImpl.java:518)
+	at org.hibernate.validator.internal.engine.ValidatorImpl.validateConstraintsForDefaultGroup(ValidatorImpl.java:488)
+	at org.hibernate.validator.internal.engine.ValidatorImpl.validateConstraintsForCurrentGroup(ValidatorImpl.java:450)
+	at org.hibernate.validator.internal.engine.ValidatorImpl.validateInContext(ValidatorImpl.java:400)
+	at org.hibernate.validator.internal.engine.ValidatorImpl.validate(ValidatorImpl.java:172)
+	at org.springframework.validation.beanvalidation.SpringValidatorAdapter.validate(SpringValidatorAdapter.java:106)
+	at org.springframework.boot.autoconfigure.validation.ValidatorAdapter.validate(ValidatorAdapter.java:67)
+	at org.springframework.validation.DataBinder.validate(DataBinder.java:1264)
+	at org.springframework.web.servlet.mvc.method.annotation.AbstractMessageConverterMethodArgumentResolver.validateIfApplicable(AbstractMessageConverterMethodArgumentResolver.java:252)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor.resolveArgument(RequestResponseBodyMethodProcessor.java:142)
+	at org.springframework.web.method.support.HandlerMethodArgumentResolverComposite.resolveArgument(HandlerMethodArgumentResolverComposite.java:122)
+	at org.springframework.web.method.support.InvocableHandlerMethod.getMethodArgumentValues(InvocableHandlerMethod.java:224)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:178)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:926)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:831)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:110)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108)
+	at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$3(FilterChainProxy.java:231)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:365)
+	at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:100)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:126)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:120)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:131)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:85)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:179)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at com.psicomanager.api.infra.security.FilterSecurity.doFilterInternal(FilterSecurity.java:42)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:107)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:93)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90)
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:233)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:191)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.servlet.handler.HandlerMappingIntrospector.lambda$createCacheFilter$3(HandlerMappingIntrospector.java:195)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74)
+	at org.springframework.security.config.annotation.web.configuration.WebMvcSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebMvcSecurityConfiguration.java:230)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:352)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:268)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:389)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:896)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1190)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+2024-06-06 02:23:37 - o.s.o.j.LocalContainerEntityManagerFactoryBean >>>  Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-06-06 02:23:37 - c.z.hikari.HikariDataSource >>>  HikariPool-1 - Shutdown initiated...
+2024-06-06 02:23:37 - c.z.hikari.HikariDataSource >>>  HikariPool-1 - Shutdown completed.
+2024-06-06 02:23:45 - c.p.a.PsicomanagerApiApplication >>>  Starting PsicomanagerApiApplication using Java 21.0.2 with PID 11048 (C:\Projetos\Projeto PsicoManager\psicomanager-api\target\classes started by Suporte Totem in C:\Projetos\Projeto PsicoManager\psicomanager-api)
+2024-06-06 02:23:45 - c.p.a.PsicomanagerApiApplication >>>  No active profile set, falling back to 1 default profile: "default"
+2024-06-06 02:23:45 - o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor >>>  Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2024-06-06 02:23:45 - o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor >>>  For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2024-06-06 02:23:47 - o.s.d.r.c.RepositoryConfigurationDelegate >>>  Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-06-06 02:23:48 - o.s.d.r.c.RepositoryConfigurationDelegate >>>  Finished Spring Data repository scanning in 160 ms. Found 4 JPA repository interfaces.
+2024-06-06 02:23:49 - o.s.b.w.e.t.TomcatWebServer >>>  Tomcat initialized with port 8080 (http)
+2024-06-06 02:23:49 - o.a.c.core.StandardService >>>  Starting service [Tomcat]
+2024-06-06 02:23:49 - o.a.c.core.StandardEngine >>>  Starting Servlet engine: [Apache Tomcat/10.1.24]
+2024-06-06 02:23:49 - o.a.c.c.C.[.[localhost].[/] >>>  Initializing Spring embedded WebApplicationContext
+2024-06-06 02:23:49 - o.s.b.w.s.c.ServletWebServerApplicationContext >>>  Root WebApplicationContext: initialization completed in 4259 ms
+2024-06-06 02:23:50 - c.z.hikari.HikariDataSource >>>  HikariPool-1 - Starting...
+2024-06-06 02:23:50 - c.z.hikari.pool.HikariPool >>>  HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@69219705
+2024-06-06 02:23:50 - c.z.hikari.HikariDataSource >>>  HikariPool-1 - Start completed.
+2024-06-06 02:23:51 - o.flywaydb.core.FlywayExecutor >>>  Database: jdbc:mysql://localhost:3310/psicomanager (MySQL 5.5)
+2024-06-06 02:23:51 - o.f.c.i.command.DbValidate >>>  Successfully validated 5 migrations (execution time 00:00.072s)
+2024-06-06 02:23:51 - o.f.c.i.command.DbMigrate >>>  Current version of schema `psicomanager`: 5
+2024-06-06 02:23:51 - o.f.c.i.command.DbMigrate >>>  Schema `psicomanager` is up to date. No migration necessary.
+2024-06-06 02:23:51 - o.h.j.internal.util.LogHelper >>>  HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-06-06 02:23:51 - org.hibernate.Version >>>  HHH000412: Hibernate ORM core version 6.5.2.Final
+2024-06-06 02:23:51 - o.h.c.i.RegionFactoryInitiator >>>  HHH000026: Second-level cache disabled
+2024-06-06 02:23:52 - o.s.o.j.p.SpringPersistenceUnitInfo >>>  No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-06-06 02:23:52 - org.hibernate.dialect.Dialect >>>  HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2024-06-06 02:23:54 - o.h.e.t.j.p.i.JtaPlatformInitiator >>>  HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-06-06 02:23:54 - o.s.o.j.LocalContainerEntityManagerFactoryBean >>>  Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-06-06 02:23:55 - o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer >>>  Global AuthenticationManager configured with UserDetailsService bean with name myUserDetailsService
+2024-06-06 02:23:55 - o.s.d.j.r.q.QueryEnhancerFactory >>>  Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-06-06 02:23:56 - o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration >>>  spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-06-06 02:23:57 - o.s.s.w.DefaultSecurityFilterChain >>>  Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@3c7b8450, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@7bbaf5d7, org.springframework.security.web.context.SecurityContextHolderFilter@2de0d2ad, org.springframework.security.web.header.HeaderWriterFilter@4b7477f0, org.springframework.web.filter.CorsFilter@51ea49eb, org.springframework.security.web.authentication.logout.LogoutFilter@3c02543c, com.psicomanager.api.infra.security.FilterSecurity@16427bdb, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@7e5510f4, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@30112a4e, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@4ae719a6, org.springframework.security.web.session.SessionManagementFilter@79f3e6f2, org.springframework.security.web.access.ExceptionTranslationFilter@6d2f5e58, org.springframework.security.web.access.intercept.AuthorizationFilter@4e0130f8]
+2024-06-06 02:23:57 - o.s.b.a.t.ThymeleafAutoConfiguration$DefaultTemplateResolverConfiguration >>>  Cannot find template location: classpath:/templates/ (please add some templates, check your Thymeleaf configuration, or set spring.thymeleaf.check-template-location=false)
+2024-06-06 02:23:57 - o.s.b.d.a.OptionalLiveReloadServer >>>  LiveReload server is running on port 35729
+2024-06-06 02:23:58 - o.s.b.w.e.t.TomcatWebServer >>>  Tomcat started on port 8080 (http) with context path '/'
+2024-06-06 02:23:58 - c.p.a.PsicomanagerApiApplication >>>  Started PsicomanagerApiApplication in 13.645 seconds (process running for 14.882)
+2024-06-06 02:24:08 - o.a.c.c.C.[.[localhost].[/] >>>  Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-06-06 02:24:08 - o.s.w.s.DispatcherServlet >>>  Initializing Servlet 'dispatcherServlet'
+2024-06-06 02:24:08 - o.s.w.s.DispatcherServlet >>>  Completed initialization in 4 ms
+2024-06-06 02:24:09 - o.s.w.s.m.s.DefaultHandlerExceptionResolver >>>  Resolved [org.springframework.web.bind.MethodArgumentNotValidException: Validation failed for argument [0] in public org.springframework.http.ResponseEntity<com.psicomanager.api.dtos.BaseResponse> com.psicomanager.api.controllers.ScheduleController.register(com.psicomanager.api.domain.schedule.ScheduleRegisterDTO): [Field error in object 'scheduleRegisterDTO' on field 'dateStart': rejected value [2024-06-03T09:00]; codes [Future.scheduleRegisterDTO.dateStart,Future.dateStart,Future.java.time.LocalDateTime,Future]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [scheduleRegisterDTO.dateStart,dateStart]; arguments []; default message [dateStart]]; default message [must be a future date]] ]
+2024-06-06 02:29:02 - o.s.o.j.LocalContainerEntityManagerFactoryBean >>>  Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-06-06 02:29:02 - c.z.hikari.HikariDataSource >>>  HikariPool-1 - Shutdown initiated...
+2024-06-06 02:29:02 - c.z.hikari.HikariDataSource >>>  HikariPool-1 - Shutdown completed.
