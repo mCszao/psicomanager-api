@@ -2,6 +2,7 @@ package com.psicomanager.api.controllers;
 
 import com.psicomanager.api.domain.patient.Patient;
 import com.psicomanager.api.domain.patient.PatientRegisterDTO;
+import com.psicomanager.api.domain.patient.PatientResumeResponseDTO;
 import com.psicomanager.api.dtos.BaseResponse;
 import com.psicomanager.api.repositories.PatientRepository;
 import com.psicomanager.api.services.PatientService;
@@ -23,9 +24,21 @@ public class PatientController {
             return ResponseEntity.ok(new BaseResponse(true, "Paciente salvo com sucesso!"));
     }
 
-    @GetMapping
+    @GetMapping()
     public ResponseEntity<BaseResponse> index(){
-        var list = patientService.getAllPatients();
+        var list = patientService.getAllPatientsComplete();
         return ResponseEntity.ok(new BaseResponse<>(true, list));
+    }
+
+    @GetMapping("/resume")
+    public ResponseEntity<BaseResponse> indexResume(){
+        var list = patientService.getAllPatientsResume();
+        return ResponseEntity.ok(new BaseResponse<>(true, list));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<BaseResponse> resume(@PathVariable String id){
+        var patient = patientService.getDetailsById(id);
+        return ResponseEntity.ok(new BaseResponse<>(true, new PatientResumeResponseDTO(patient.getId(), patient.getName(), patient.getPhone())));
     }
 }

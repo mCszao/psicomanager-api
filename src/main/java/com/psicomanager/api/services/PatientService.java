@@ -2,12 +2,16 @@ package com.psicomanager.api.services;
 
 import com.psicomanager.api.domain.patient.Patient;
 import com.psicomanager.api.domain.patient.PatientRegisterDTO;
+import com.psicomanager.api.domain.patient.PatientResponseDTO;
+import com.psicomanager.api.domain.patient.PatientResumeResponseDTO;
 import com.psicomanager.api.exceptions.patient.DuplicatePatientEntryException;
+import com.psicomanager.api.exceptions.patient.PatientNotFoundException;
 import com.psicomanager.api.repositories.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 
 @Service
 public class PatientService {
@@ -21,7 +25,18 @@ public class PatientService {
         patientRepo.save(new Patient(dto));
     }
 
-    public List<Patient> getAllPatients(){
-        return patientRepo.findAll();
+    public List<PatientResponseDTO> getAllPatientsComplete(){
+        return patientRepo.findAll().stream().map(patient ->{
+            return new PatientResponseDTO(patient.getId(),patient.getName(), patient.getEmail(), patient.getPhone(), patient.getCpf(), patient.getBirthdayDate(), patient.getAddresses());
+        }).toList();
+    }
+    public List<PatientResumeResponseDTO> getAllPatientsResume(){
+        return patientRepo.findAll().stream().map(patient ->{
+            return new PatientResumeResponseDTO(patient.getId(),patient.getName(), patient.getPhone());
+        }).toList();
+    }
+
+    public Patient getDetailsById(String id){
+        return patientRepo.findById(id).orElseThrow(() -> new PatientNotFoundException("Id do paciente informado não possui registro"));
     }
 }
