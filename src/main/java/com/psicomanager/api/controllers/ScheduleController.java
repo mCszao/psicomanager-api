@@ -27,7 +27,13 @@ public class ScheduleController {
 
     @GetMapping("/patient")
     public ResponseEntity<BaseResponse> detailsByPatient(@RequestParam(required = true) String id){
-            var schedules = service.getAllByPatientId(id);
-            return ResponseEntity.ok(new BaseResponse(true, schedules));
+        var schedules = service.getAllByPatientId(id);
+        return ResponseEntity.ok(new BaseResponse(true, schedules));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<BaseResponse> details(@PathVariable String id){
+        var schedule = service.getScheduleById(id);
+        return ResponseEntity.ok(new BaseResponse(true, schedule));
     }
 }

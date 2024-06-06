@@ -6,6 +6,7 @@ import com.psicomanager.api.domain.schedule.ScheduleRegisterDTO;
 import com.psicomanager.api.domain.schedule.ScheduleResponseDTO;
 import com.psicomanager.api.exceptions.patient.PatientNotFoundException;
 import com.psicomanager.api.exceptions.schedule.ScheduleConflictTimeException;
+import com.psicomanager.api.exceptions.schedule.ScheduleNotFoundException;
 import com.psicomanager.api.repositories.PatientRepository;
 import com.psicomanager.api.repositories.ScheduleRepository;
 import jakarta.transaction.Transactional;
@@ -49,6 +50,7 @@ public class ScheduleService {
     }
 
     public List<ScheduleResponseDTO> getAllByPatientId(String patientId){
+        patientRepo.findById(patientId).orElseThrow(() -> new PatientNotFoundException("Paciente informado não possuí registro"));
         return scheduleRepo.findByPatientId(patientId).stream().map((schedule) -> {
             var patient = schedule.getPatient();
             return new ScheduleResponseDTO(
@@ -60,5 +62,10 @@ public class ScheduleService {
                     new PatientResumeResponseDTO(patient.getId(), patient.getName(), patient.getPhone())
             );
         }).toList();
+    }
+
+    public ScheduleResponseDTO getScheduleById(String id){
+        var schedule = scheduleRepo.findById(id).orElseThrow(() -> new ScheduleNotFoundException("Agendamento com id enviado não possuí registro"));
+        return ScheduleResponseDTO.of(schedule);
     }
 }
