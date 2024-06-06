@@ -1,5 +1,6 @@
 package com.psicomanager.api.controllers;
 
+import com.psicomanager.api.domain.address.AddressOnPatientDTO;
 import com.psicomanager.api.domain.patient.Patient;
 import com.psicomanager.api.domain.patient.PatientRegisterDTO;
 import com.psicomanager.api.domain.patient.PatientResumeResponseDTO;
@@ -37,8 +38,14 @@ public class PatientController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BaseResponse> resume(@PathVariable String id){
+    public ResponseEntity<BaseResponse> detail(@PathVariable String id){
         var patient = patientService.getDetailsById(id);
         return ResponseEntity.ok(new BaseResponse<>(true, new PatientResumeResponseDTO(patient.getId(), patient.getName(), patient.getPhone())));
+    }
+
+    @PostMapping("/register/address/{id}")
+    public ResponseEntity<BaseResponse> addAddress(@PathVariable String id, @RequestBody @Valid AddressOnPatientDTO data){
+        patientService.saveAddressPatient(data, id);
+        return ResponseEntity.ok(new BaseResponse<>(true, "Endereço adicionado com sucesso"));
     }
 }

@@ -1,11 +1,14 @@
 package com.psicomanager.api.services;
 
+import com.psicomanager.api.domain.address.Address;
+import com.psicomanager.api.domain.address.AddressOnPatientDTO;
 import com.psicomanager.api.domain.patient.Patient;
 import com.psicomanager.api.domain.patient.PatientRegisterDTO;
 import com.psicomanager.api.domain.patient.PatientResponseDTO;
 import com.psicomanager.api.domain.patient.PatientResumeResponseDTO;
 import com.psicomanager.api.exceptions.patient.DuplicatePatientEntryException;
 import com.psicomanager.api.exceptions.patient.PatientNotFoundException;
+import com.psicomanager.api.repositories.AddressRepository;
 import com.psicomanager.api.repositories.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +20,9 @@ import java.util.List;
 public class PatientService {
     @Autowired
     private PatientRepository patientRepo;
+
+    @Autowired
+    private AddressRepository addressRepo;
 
     public void register(PatientRegisterDTO dto){
         if(patientRepo.findByEmail(dto.email() == null ? "Não cadastrado" : dto.email()) != null) throw new DuplicatePatientEntryException("Email do paciente");
@@ -38,5 +44,11 @@ public class PatientService {
 
     public Patient getDetailsById(String id){
         return patientRepo.findById(id).orElseThrow(() -> new PatientNotFoundException("Id do paciente informado não possui registro"));
+    }
+
+    public void saveAddressPatient(AddressOnPatientDTO dto, String patientId){
+        Patient patient = getDetailsById(patientId);
+        var address = new Address(dto, patient);
+        addressRepo.save(address);
     }
 }
