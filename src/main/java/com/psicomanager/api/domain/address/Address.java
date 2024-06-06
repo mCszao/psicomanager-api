@@ -1,5 +1,6 @@
 package com.psicomanager.api.domain.address;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.psicomanager.api.domain.patient.Patient;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -60,6 +61,7 @@ public class Address {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "patient" , nullable = false)
+    @JsonBackReference
     private Patient patient;
 
 

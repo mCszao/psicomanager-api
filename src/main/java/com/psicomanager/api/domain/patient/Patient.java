@@ -1,5 +1,7 @@
 package com.psicomanager.api.domain.patient;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.psicomanager.api.domain.address.Address;
 import com.psicomanager.api.domain.address.AddressOnPatientDTO;
 import jakarta.persistence.*;
@@ -11,6 +13,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -52,6 +55,7 @@ public class Patient {
     private Boolean isActive = Boolean.TRUE;
 
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Address> addresses = new ArrayList<>();
     private LocalDate birthdayDate;
 
