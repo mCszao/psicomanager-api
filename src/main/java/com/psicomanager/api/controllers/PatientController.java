@@ -43,9 +43,9 @@ public class PatientController {
         return ResponseEntity.ok(new BaseResponse<>(true, new PatientResumeResponseDTO(patient.getId(), patient.getName(), patient.getPhone())));
     }
 
-    @PostMapping("/register/address/{id}")
-    public ResponseEntity<BaseResponse> addAddress(@PathVariable String id, @RequestBody @Valid AddressOnPatientDTO data){
-        patientService.saveAddressPatient(data, id);
+    @PostMapping("/register/address")
+    public ResponseEntity<BaseResponse> addAddress(@RequestParam(required = true) String patientId, @RequestBody @Valid AddressOnPatientDTO data){
+        patientService.saveAddressPatient(data, patientId);
         return ResponseEntity.ok(new BaseResponse<>(true, "Endereço adicionado com sucesso"));
     }
 }
