@@ -47,4 +47,18 @@ public class ScheduleService {
             );
         }).toList();
     }
+
+    public List<ScheduleResponseDTO> getAllByPatientId(String patientId){
+        return scheduleRepo.findByPatientId(patientId).stream().map((schedule) -> {
+            var patient = schedule.getPatient();
+            return new ScheduleResponseDTO(
+                    schedule.getId(),
+                    schedule.getDateStart(),
+                    schedule.getDateEnd(),
+                    schedule.getAnnotations(),
+                    schedule.getStage(),
+                    new PatientResumeResponseDTO(patient.getId(), patient.getName(), patient.getPhone())
+            );
+        }).toList();
+    }
 }

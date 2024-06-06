@@ -11,6 +11,8 @@ import java.util.List;
 
 public interface ScheduleRepository extends JpaRepository<Schedule, String> {
     Schedule findByDateStart(LocalDateTime dateStart);
+
+    List<Schedule> findByPatientId(String patientId);
     @Query("SELECT s FROM sessions_schedule s WHERE s.dateEnd BETWEEN :dateStart AND :dateEnd")
     List<Schedule> getScheduleBetweenStartEnd(@Param("dateStart") LocalDateTime dateStart, @Param("dateEnd") LocalDateTime dateEnd);
 }
