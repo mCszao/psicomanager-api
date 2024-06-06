@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Contrato de Atendimento Psicológico</title>
+    <style>
+<!--        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap');-->
+       body {
+           font-family: "Montserrat", sans-serif;
+           font-optical-sizing: auto;
+           font-style: normal;
+           color: #4f5a96;
+           text-align: center;
+       }
+       .contract-section {
+           text-align: justify;
+       }
+       .signature, .date {
+           display: flex;
+           flex-direction: column;
+           align-items: center;
+           margin: 0 auto;
+           font-size: 1.2rem;
+       }
+
+       .date {
+           margin-top: 5rem;
+       }
+       .sign {
+           border-bottom: 2px solid #0066cc;
+           width: 20vw;
+           font-family: "Dancing Script", cursive;
+           font-size: 2rem;
+       }
+
+       .signatures {
+           margin-top: 5rem;
+       }
+
+       h1 {
+           font-weight: 500;
+       }
+
+       p {
+           color: #636faf
+       }
+
+    </style>
+</head>
+<body>
+<svg width="100%" height="100%" id="svg" viewBox="0 0 1440 390" xmlns="http://www.w3.org/2000/svg" class="transition duration-300 ease-in-out delay-150"><path d="M 0,400 L 0,150 C 42.45315625652414,121.27811829793694 84.90631251304828,92.5562365958739 129,91 C 173.09368748695172,89.4437634041261 218.82790620433104,115.05317191444132 256,167 C 293.17209379566896,218.94682808555868 321.78206266962746,297.2310757463608 357,342 C 392.21793733037254,386.7689242536392 434.0438431171591,398.02252510011573 474,391 C 513.9561568828409,383.97747489988427 552.042564861736,358.6788238531762 598,388 C 643.957435138264,417.3211761468238 697.7858974358975,501.2621794871794 736,538 C 774.2141025641025,574.7378205128206 796.8138453946746,564.2724581981059 827,582 C 857.1861546053254,599.7275418018941 894.958720985405,645.6479877203969 943,696 C 991.041279014595,746.3520122796031 1049.351270663706,801.135590920306 1090,805 C 1130.648729336294,808.864409079694 1153.6361963597715,761.8096485983791 1185,778 C 1216.3638036402285,794.1903514016209 1256.1039438972082,873.6258146861774 1300,917 C 1343.8960561027918,960.3741853138226 1391.9480280513958,967.6870926569113 1440,975 L 1440,400 L 0,400 Z" stroke="none" stroke-width="0" fill="#4f5a96" fill-opacity="1" class="transition-all duration-300 ease-in-out delay-150 path-0" transform="rotate(-180 720 200)"></path></svg>
+<header>
+    <h1>CONTRATO DE ATENDIMENTO PSICOLÓGICO EM MEIO VIRTUAL</h1>
+</header>
+<div class="container">
+    <section class="contract-section">
+        <h2>CONTRATANTE:</h2>
+        <p>Eu, <span th:text="${patient.name}">Nome do paciente</span>, sob CPF <span th:text="${patient.cpf}">CPF do paciente</span>, residente e domiciliado na cidade de <span th:text="${patient.addresses.get(0).city}">Cidade do paciente</span>, estado <span th:text="${patient.addresses.get(0).state}">Estado do paciente</span>, país Brasil, situado no endereço CEP: <span th:text="${patient.addresses.get(0).zipcode}">Cep do paciente</span>, telefone: <span th:text="${patient.phone}">Telefone do paciente</span>, na qualidade de contratante, tendo decidido pelo atendimento psicológico online, declaro que me encontro suficientemente esclarecido(a) sobre os procedimentos técnicos e éticos de acompanhamento do caso, consentindo sua realização e me comprometendo com os termos deste contrato.</p>
+    </section>
+    <section class="contract-section">
+        <h2>CONTRATADA:</h2>
+        <p>Kelourine Kévia Ramos de Queiroz, solteira, psicóloga, registro profissional CRP-18/8617, residente em Cuiabá MT, com o CEP 78055534.</p>
+    </section>
+    <section class="contract-section">
+        <h2>OBJETO:</h2>
+        <p>Prestação de atendimento psicológico, mediado por tecnologias da informação e comunicação ao contratante.</p>
+    </section>
+    <section class="contract-section">
+        <h2>CONDIÇÕES</h2>
+        <p><strong>Cláusula 1ª:</strong> Serão prestados atendimentos psicológicos mediado por tecnologias da informação e comunicação obedientes ao disposto na legislação específica do Conselho Federal de Psicologia (CFP) e na Resolução CFP 011/2018</p>
+        <p><strong>Cláusula 2ª:</strong> Os serviços prestados iniciarão em 24/05/2024 com sessões de 50 minutos. Parágrafo único: O PACIENTE compromete-se a participar de forma regular e pontual às sessões.</p>
+        <p><strong>Cláusula 3ª:</strong> O valor dos honorários é estipulado em R$ 150 mensal, as sessões podem ser canceladas com a comunicação realizada com 24h (vinte e quatro horas) de antecedência.</p>
+        <ul>
+            <li><strong>Parágrafo primeiro:</strong> Caso o cliente não compareça a consulta no horário agendado, o valor pago não será devolvido. Caso o Psicólogo não compareça a consulta no horário agendado, o valor pago será devolvido.</li>
+            <li><strong>Parágrafo segundo:</strong> O pagamento dos serviços é realizado antecipadamente.</li>
+            <li><strong>Parágrafo terceiro:</strong> O valor dos honorários pode ser revisto a qualquer momento desde que qualquer mudança seja comunicada com 30 dias de antecedência.</li>
+        </ul>
+        <p><strong>Cláusula 4ª:</strong> O acesso à Internet é de responsabilidade exclusiva do usuário. Porém, caso o atendimento seja interrompido devido a falha na conexão da internet, ele é agendado novamente, sem ônus para o usuário.</p>
+        <p><strong>Cláusula 5ª:</strong> O atendimento é realizado por meio de chamada de vídeo.</p>
+        <ul>
+            <li><strong>Parágrafo quarto:</strong> O atendimento deve ser realizado em local privado, sendo inadequado utilizar locais como lan-house, trabalho, infocentros ou outros locais públicos e na presença de outras pessoas. Os dispositivos como celular, ipad ou computador utilizados no atendimento devem ser pessoais e sempre protegidos por antivírus, senha forte e firewall de confiança. Não será permitido o acesso a outros sites durante o atendimento.</li>
+            <li><strong>Parágrafo quinto:</strong> O psicólogo e cliente não podem divulgar a terceiros, informações de consulta, sem consentimento por escrito de ambas as partes. De igual modo, de acordo com o código de ética, art. 9º, gravação de consulta deve ser adotada apenas em casos necessários, pois a regra é resguardar a intimidade das pessoas. Para a gravação de consultas, o (a) psicólogo (a) deve considerar a orientação de seus autores e abordagens psicológicos de referência para definir se há necessidade de gravação das sessões. No caso de necessidade de gravação das sessões, o (a) psicólogo (a) responsável deve se certificar que o (a) cliente / paciente tem ciência da gravação, se concorda com ela e com o objetivo da gravação, para uso do(a) psicólogo(a).</li>
+        </ul>
+        <p><strong>Cláusula 6ª:</strong> Será realizado um registro documental/prontuário, com as devidas fundamentações nos termos das Resoluções CFP 01/2009 e CFP 05/2010 ou legislação vigente, sendo mantidos por 5 anos, e destruídos após este período conforme a Resolução CFP Nº 005/2010 e Resolução do CFP n° 007/2003. O prontuário e os registros documentais serão armazenados no computador sendo protegido por meios de senhas e firewall.</p>
+        <p><strong>Cláusula 7ª:</strong> As sessões terão por base a abordagem histórico-cultural com base em evidências científicas.</p>
+        <ul>
+            <li><strong>Parágrafo único:</strong> Após a terceira falta seguida, o contrato está automaticamente rescindido e as faltas serão cobradas.</li>
+            <li><strong>Parágrafo sexto:</strong> Após quatro desmarques consecutivos o psicólogo pode efetuar o desligamento do usuário.</li>
+        </ul>
+        <p><strong>Cláusula 8ª:</strong> O contrato pode ser revisto e alterado a qualquer momento desde que as mudanças efetuadas sejam avisadas com 30 dias de antecedência.</p>
+        <p><strong>Cláusula 9ª:</strong> Por estarem assim justos e contratados, firmam o presente instrumento.</p>
+    </section>
+    <div class="signatures">
+        <div class="signature">
+            <p class="sign"></p>
+            <p>Contratante - Paciente</p>
+        </div>
+        <div class="signature">
+            <p class="sign">Kelourine Kévia Ramos de Queiroz</p>
+            <p >Contratada - Profissional</p>
+        </div>
+        <div class="date">21 DE MAIO DE 2024.</div>
+    </div>
+</div>
+</body>
+</html>
