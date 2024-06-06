@@ -11,12 +11,13 @@ import com.psicomanager.api.exceptions.patient.PatientNotFoundException;
 import com.psicomanager.api.repositories.AddressRepository;
 import com.psicomanager.api.repositories.PatientRepository;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-
+@Slf4j
 @Service
 public class PatientService {
     @Autowired
@@ -34,6 +35,7 @@ public class PatientService {
     }
 
     public List<PatientResponseDTO> getAllPatientsComplete(){
+        log.info("Pesquisando por todos os usuários");
         return patientRepo.findAll().stream().map(patient ->{
             return new PatientResponseDTO(patient.getId(),patient.getName(), patient.getEmail(), patient.getPhone(), patient.getCpf(), patient.getBirthdayDate(), patient.getAddresses());
         }).toList();
