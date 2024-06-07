@@ -24,13 +24,14 @@ public class Document {
     @Column(name = "NAME", nullable = false, unique = true, length = 255)
     private String name;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "patient" , nullable = false)
     private Patient patient ;
 
     @NotNull
-    @Size(max = 10)
-    @Column(name = "TYPE", nullable = true, unique = false, length = 10)
+    @Size(max = 100)
+    @Column(name = "TYPE", nullable = true, unique = false, length = 100)
     private String type;
 
     @NotNull

@@ -32,7 +32,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/generate-contract").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/documents/generate-contract").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/documents/download/*").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(filterSecurity, UsernamePasswordAuthenticationFilter.class)
                 .build();
