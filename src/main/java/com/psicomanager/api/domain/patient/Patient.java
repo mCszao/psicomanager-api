@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.psicomanager.api.domain.address.Address;
 import com.psicomanager.api.domain.address.AddressOnPatientDTO;
+import com.psicomanager.api.domain.document.Document;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -32,7 +33,7 @@ import java.util.List;
 public class Patient {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String Id;
+    private String id;
     @NotNull
     @Size(max = 255)
     @Column(name = "NAME", nullable = false, unique = true, length = 255)
@@ -57,6 +58,9 @@ public class Patient {
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Address> addresses = new ArrayList<>();
+
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Document> documents = new ArrayList<>();
     private LocalDate birthdayDate;
 
     public Patient(PatientRegisterDTO dto){
