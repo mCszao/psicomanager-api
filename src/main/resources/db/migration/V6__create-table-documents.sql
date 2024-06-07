@@ -1,0 +1,12 @@
+CREATE TABLE documents (
+	ID VARCHAR(255) NOT NULL PRIMARY KEY,
+    PATIENT VARCHAR(255) NULL,
+    NAME VARCHAR(255) NOT NULL,
+    TYPE CHAR(30) NOT NULL,
+    CONTENT LONGBLOB,
+
+    UNIQUE KEY `NAME` (`NAME`),
+	KEY `fk_doc_patients_id_patient` (`PATIENT`),
+    CONSTRAINT `fk_doc_patients_id_patient` FOREIGN KEY (`PATIENT`) REFERENCES `patients` (`ID`)
+
+);

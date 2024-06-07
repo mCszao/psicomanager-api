@@ -19,7 +19,7 @@ public class Schedule {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-    @OneToOne()
+    @ManyToOne()
     @JoinColumn(name = "patient", nullable = false, referencedColumnName = "id")
     private Patient patient;
     @Column(name = "DATE_START", nullable = false)
