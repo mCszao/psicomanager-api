@@ -6,10 +6,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -35,5 +32,13 @@ public class DocumentController {
     public ResponseEntity<BaseResponse> upload(@RequestParam MultipartFile file ,@RequestParam(required = false) String patientId) throws IOException {
         service.saveDoc(file, patientId);
         return ResponseEntity.ok(new BaseResponse<>(true, file.getOriginalFilename() + " salvo com sucesso"));
+    }
+
+    @GetMapping("/download/{id}")
+    private ResponseEntity<byte[]> download(@PathVariable String id){
+        var doc = service.getDocumentById(id);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+doc.getName());
+        return ResponseEntity.ok().headers(headers).body(doc.getContent());
     }
 }

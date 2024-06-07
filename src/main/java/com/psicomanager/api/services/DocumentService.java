@@ -2,6 +2,7 @@ package com.psicomanager.api.services;
 
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import com.psicomanager.api.domain.document.Document;
+import com.psicomanager.api.exceptions.document.DocumentNotFoundException;
 import com.psicomanager.api.exceptions.patient.PatientNotFoundException;
 import com.psicomanager.api.repositories.DocumentRepository;
 import com.psicomanager.api.repositories.PatientRepository;
@@ -42,7 +43,6 @@ public class DocumentService {
 
     public void saveDoc(MultipartFile file, String patientId) throws IOException {
         var doc = new Document();
-        String[] nameType = file.getOriginalFilename().split(".");
         doc.setName(file.getOriginalFilename());
         doc.setType(file.getContentType());
         doc.setContent(file.getBytes());
@@ -51,5 +51,9 @@ public class DocumentService {
             doc.setPatient(patient);
         }
         docRepo.save(doc);
+    }
+
+    public Document getDocumentById(String id){
+        return docRepo.findById(id).orElseThrow(() -> new DocumentNotFoundException("Documento solicitado não existe"));
     }
 }
