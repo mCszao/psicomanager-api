@@ -40,7 +40,7 @@ public class PatientController {
     @GetMapping("/{id}")
     public ResponseEntity<BaseResponse> detail(@PathVariable String id){
         var patient = patientService.getDetailsById(id);
-        return ResponseEntity.ok(new BaseResponse<>(true, new PatientResumeResponseDTO(patient.getId(), patient.getName(), patient.getPhone())));
+        return ResponseEntity.ok(new BaseResponse<>(true, patient));
     }
 
     @PostMapping("/register/address")

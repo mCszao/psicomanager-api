@@ -46,13 +46,14 @@ public class PatientService {
         }).toList();
     }
 
-    public Patient getDetailsById(String id){
-        return patientRepo.findById(id).orElseThrow(() -> new PatientNotFoundException("Id do paciente informado não possui registro"));
+    public PatientResponseDTO getDetailsById(String id){
+        var patient = patientRepo.findById(id).orElseThrow(() -> new PatientNotFoundException("Id do paciente informado não possui registro"));
+        return PatientResponseDTO.of(patient);
     }
 
     @Transactional
     public void saveAddressPatient(AddressOnPatientDTO dto, String patientId){
-        Patient patient = getDetailsById(patientId);
+        var patient = patientRepo.findById(patientId).orElseThrow(() -> new PatientNotFoundException("Id do paciente informado não possui registro"));
         var address = new Address(dto, patient);
         addressRepo.save(address);
     }
