@@ -21,16 +21,15 @@ public class Address {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @NotNull
     @Size(max = 100)
     @Column(name = "STREET", nullable = false, length = 100)
     private String street;
 
-    @NotNull
     @Size(max = 100)
     @Column(name = "DISTRICT", nullable = false, length = 100)
     private String district;
 
+    @NotNull
     @Size(max = 9)
     @Column(name = "ZIPCODE", length = 9)
     private String zipcode;
@@ -39,7 +38,6 @@ public class Address {
     @Column(name = "COMPLEMENT", length = 100)
     private String complement;
 
-    @NotNull
     @Size(max = 20)
     @Column(name = "NUMBER", nullable = false, length = 20)
     private String number;

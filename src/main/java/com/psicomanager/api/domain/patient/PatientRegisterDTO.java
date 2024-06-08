@@ -16,6 +16,7 @@ public record PatientRegisterDTO (
         @NotBlank
         @Email
         String email,
+        @NotBlank
         @Pattern(regexp = "\\d{11}")
         String cpf,
         @NotBlank
