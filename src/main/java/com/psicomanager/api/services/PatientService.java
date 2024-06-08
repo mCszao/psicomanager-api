@@ -28,33 +28,36 @@ public class PatientService {
 
     @Transactional
     public void register(PatientRegisterDTO dto){
+        log.info("Validando informações enviadas");
         if(patientRepo.findByEmail(dto.email() == null ? "Não cadastrado" : dto.email()) != null) throw new DuplicatePatientEntryException("Email do paciente");
         if(patientRepo.findByPhone(dto.phone()) != null) throw new DuplicatePatientEntryException("Telefone do paciente");
         if(patientRepo.findByCpf(dto.cpf()) != null) throw new DuplicatePatientEntryException("Cpf do paciente");
+        log.info("Salvando novo paciente");
         patientRepo.save(new Patient(dto));
     }
 
     public List<PatientResponseDTO> getAllPatientsComplete(){
-        log.info("Pesquisando por todos os usuários");
-        return patientRepo.findAll().stream().map(patient ->{
-            return new PatientResponseDTO(patient.getId(),patient.getName(), patient.getEmail(), patient.getPhone(), patient.getCpf(), patient.getBirthdayDate(), patient.getAddresses());
-        }).toList();
+        log.info("Buscando pacientes");
+        return patientRepo.findAll().stream().map(PatientResponseDTO::of).toList();
     }
     public List<PatientResumeResponseDTO> getAllPatientsResume(){
-        return patientRepo.findAll().stream().map(patient ->{
-            return new PatientResumeResponseDTO(patient.getId(),patient.getName(), patient.getPhone());
-        }).toList();
+        log.info("Buscando pacientes resumidos");
+        return patientRepo.findAll().stream().map(patient -> new PatientResumeResponseDTO(patient.getId(),patient.getName(), patient.getPhone())).toList();
     }
 
     public PatientResponseDTO getDetailsById(String id){
+        log.info("Buscando informações do paciente de id"+ id);
         var patient = patientRepo.findById(id).orElseThrow(() -> new PatientNotFoundException("Id do paciente informado não possui registro"));
+        log.info("Retornando paciente");
         return PatientResponseDTO.of(patient);
     }
 
     @Transactional
     public void saveAddressPatient(AddressOnPatientDTO dto, String patientId){
+        log.info("Buscando informações do paciente de id "+ patientId);
         var patient = patientRepo.findById(patientId).orElseThrow(() -> new PatientNotFoundException("Id do paciente informado não possui registro"));
         var address = new Address(dto, patient);
+        log.info("Salvando endereço no paciente de id "+ patientId);
         addressRepo.save(address);
     }
 }

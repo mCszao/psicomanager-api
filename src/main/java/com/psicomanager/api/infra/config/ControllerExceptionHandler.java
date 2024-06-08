@@ -1,6 +1,7 @@
 package com.psicomanager.api.infra.config;
 
 import com.psicomanager.api.dtos.BaseResponse;
+import com.psicomanager.api.exceptions.ContractWithoutArgsException;
 import com.psicomanager.api.exceptions.DuplicateEntryException;
 import com.psicomanager.api.exceptions.patient.PatientNotFoundException;
 import com.psicomanager.api.exceptions.schedule.ScheduleConflictTimeException;
@@ -46,5 +47,10 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(ScheduleNotFoundException.class)
     private ResponseEntity<BaseResponse> patientNotFoundHandler(ScheduleNotFoundException ex){
         return ResponseEntity.badRequest().body(new BaseResponse<>(false, ex.getMessage()));
+    }
+
+    @ExceptionHandler(ContractWithoutArgsException.class)
+    private ResponseEntity<BaseResponse> contractWithoutArgsHandler(ContractWithoutArgsException ex){
+        return ResponseEntity.badRequest().body(new BaseResponse(false, ex.getMessage()));
     }
 }
