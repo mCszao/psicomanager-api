@@ -7,6 +7,7 @@ import com.psicomanager.api.exceptions.patient.PatientNotFoundException;
 import com.psicomanager.api.exceptions.schedule.ScheduleConflictTimeException;
 import com.psicomanager.api.exceptions.schedule.ScheduleNotFoundException;
 import com.psicomanager.api.exceptions.user.UserNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -16,41 +17,49 @@ import java.util.HashMap;
 import java.util.Map;
 
 @ControllerAdvice
+@Slf4j
 public class ControllerExceptionHandler {
     @ExceptionHandler(UserNotFoundException.class)
-    private ResponseEntity<BaseResponse> userNotFoundHandler(UserNotFoundException ex){
+    private ResponseEntity<BaseResponse<String>> userNotFoundHandler(UserNotFoundException ex){
+        log.error("Usuário informado não foi encontrado");
         return ResponseEntity.badRequest().body(new BaseResponse<>(false, ex.getMessage()));
     }
 
     @ExceptionHandler(DuplicateEntryException.class)
-    private ResponseEntity<BaseResponse> duplicateUserEntryHandler(DuplicateEntryException ex){
+    private ResponseEntity<BaseResponse<String>> duplicateUserEntryHandler(DuplicateEntryException ex){
+        log.error("Informações do usuário enviado já possuem registro no banco de dados");
         return ResponseEntity.badRequest().body(new BaseResponse<>(false, ex.getMessage()));
     }
 
     @ExceptionHandler(PatientNotFoundException.class)
-    private ResponseEntity<BaseResponse> patientNotFoundHandler(PatientNotFoundException ex){
+    private ResponseEntity<BaseResponse<String>> patientNotFoundHandler(PatientNotFoundException ex){
+        log.error("Paciente informado não foi encontrado");
         return ResponseEntity.badRequest().body(new BaseResponse<>(false, ex.getMessage()));
     }
 
     @ExceptionHandler(ScheduleConflictTimeException.class)
-    private ResponseEntity<BaseResponse> scheduleConflictHandler(ScheduleConflictTimeException ex){
+    private ResponseEntity<BaseResponse<String>> scheduleConflictHandler(ScheduleConflictTimeException ex){
+        log.error("Conflito entre a data da nova consulta e das consultas já agendadas");
         return ResponseEntity.badRequest().body(new BaseResponse<>(false, ex.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    private ResponseEntity<BaseResponse> methodNotValidHandler(MethodArgumentNotValidException ex){
+    private ResponseEntity<BaseResponse<Map<String, String>>> methodNotValidHandler(MethodArgumentNotValidException ex){
+        log.error("Valores enviados não são valídos para realizar o registro");
         Map<String, String> errors = new HashMap<>();
         ex.getFieldErrors().forEach((error) -> errors.put(error.getField(), error.getDefaultMessage()));
-        return ResponseEntity.badRequest().body(new BaseResponse(false, errors));
+        return ResponseEntity.badRequest().body(new BaseResponse<>(false, errors));
     }
 
     @ExceptionHandler(ScheduleNotFoundException.class)
-    private ResponseEntity<BaseResponse> patientNotFoundHandler(ScheduleNotFoundException ex){
+    private ResponseEntity<BaseResponse<String>> patientNotFoundHandler(ScheduleNotFoundException ex){
+        log.error("Consulta informada não foi encontrada");
         return ResponseEntity.badRequest().body(new BaseResponse<>(false, ex.getMessage()));
     }
 
     @ExceptionHandler(ContractWithoutArgsException.class)
-    private ResponseEntity<BaseResponse> contractWithoutArgsHandler(ContractWithoutArgsException ex){
-        return ResponseEntity.badRequest().body(new BaseResponse(false, ex.getMessage()));
+    private ResponseEntity<BaseResponse<String>> contractWithoutArgsHandler(ContractWithoutArgsException ex){
+        log.error("Não foi possível gerar o contrato, informações necessárias estão faltando");
+        return ResponseEntity.badRequest().body(new BaseResponse<>(false, ex.getMessage()));
     }
 }
