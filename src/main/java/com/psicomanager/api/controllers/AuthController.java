@@ -7,6 +7,7 @@ import com.psicomanager.api.domain.user.UserRegisterDTO;
 import com.psicomanager.api.infra.security.TokenService;
 import com.psicomanager.api.services.MyUserDetailsService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/auth")
+@Slf4j
 public class AuthController {
 
     @Autowired
@@ -27,16 +29,19 @@ public class AuthController {
     private AuthenticationManager authManager;
 
 
-    @PostMapping("/login")
-    public ResponseEntity<BaseResponse> signIn(@RequestBody @Valid UserLoginDTO body){
+    @PostMapping("/signIp")
+    public ResponseEntity<BaseResponse<UserLoginDTO>> signIn(@RequestBody @Valid UserLoginDTO body){
+        log.info("POST: /auth/signIp");
+        log.info("Tentativa de login do usuário: "+body.username());
         var authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(body.username(), body.password()));
         var userLogin = authService.login(body, (User) authentication.getPrincipal());
-        return ResponseEntity.ok(new BaseResponse(true, userLogin));
+        return ResponseEntity.ok(new BaseResponse<>(true, userLogin));
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<BaseResponse> signUp(@RequestBody @Valid UserRegisterDTO body){
+    @PostMapping("/signUp")
+    public ResponseEntity<BaseResponse<String>> signUp(@RequestBody @Valid UserRegisterDTO body){
+        log.info("POST: /auth/signUp");
         authService.register(body);
-        return ResponseEntity.ok(new BaseResponse(true, "Cadastro realizado com sucesso!"));
+        return ResponseEntity.ok(new BaseResponse<>(true, "Cadastro realizado com sucesso!"));
     }
 }
