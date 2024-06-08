@@ -29,9 +29,9 @@ public class AuthController {
     private AuthenticationManager authManager;
 
 
-    @PostMapping("/signIp")
+    @PostMapping("/signIn")
     public ResponseEntity<BaseResponse<UserLoginDTO>> signIn(@RequestBody @Valid UserLoginDTO body){
-        log.info("POST: /auth/signIp");
+        log.info("POST: /auth/signIn");
         log.info("Tentativa de login do usuário: "+body.username());
         var authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(body.username(), body.password()));
         var userLogin = authService.login(body, (User) authentication.getPrincipal());

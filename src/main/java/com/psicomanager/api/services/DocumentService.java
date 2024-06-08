@@ -7,6 +7,7 @@ import com.psicomanager.api.exceptions.document.DocumentNotFoundException;
 import com.psicomanager.api.exceptions.patient.PatientNotFoundException;
 import com.psicomanager.api.repositories.DocumentRepository;
 import com.psicomanager.api.repositories.PatientRepository;
+import com.psicomanager.api.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,7 @@ public class DocumentService {
         if(patient.getAddresses().isEmpty()) throw new ContractWithoutArgsException("Paciente não possuí endereço cadastrado.");
         Context context = new Context();
         context.setVariable("patient", patient);
+        context.setVariable("currentDate", DateUtils.getDateToContract());
         log.info("Adicionando paciente ao modelo de contrato.");
         String htmlContent = templateEngine.process("template", context);
         log.info("Obtendo bytes do arquivo gerado.");

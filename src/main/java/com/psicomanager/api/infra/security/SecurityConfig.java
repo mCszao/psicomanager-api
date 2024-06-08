@@ -30,8 +30,8 @@ public class SecurityConfig {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/signIn").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/signUp").permitAll()
                         .requestMatchers(HttpMethod.GET, "/documents/generate-contract").permitAll()
                         .requestMatchers(HttpMethod.GET, "/documents/download/*").permitAll()
                         .anyRequest().authenticated())
