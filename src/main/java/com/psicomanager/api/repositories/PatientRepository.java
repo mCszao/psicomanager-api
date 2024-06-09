@@ -1,6 +1,6 @@
 package com.psicomanager.api.repositories;
 
-import com.psicomanager.api.domain.patient.Patient;
+import com.psicomanager.api.domain.patient.model.Patient;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PatientRepository extends JpaRepository<Patient, String> {

@@ -1,8 +1,8 @@
 package com.psicomanager.api.controllers;
 
-import com.psicomanager.api.domain.schedule.ScheduleRegisterDTO;
-import com.psicomanager.api.domain.schedule.ScheduleResponseDTO;
-import com.psicomanager.api.dtos.BaseResponse;
+import com.psicomanager.api.domain.schedule.dto.ScheduleRegisterDTO;
+import com.psicomanager.api.domain.schedule.dto.ScheduleResponseDTO;
+import com.psicomanager.api.core.dto.BaseResponse;
 import com.psicomanager.api.services.ScheduleService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;

@@ -1,24 +1,19 @@
 package com.psicomanager.api.services;
 
-import com.psicomanager.api.domain.user.User;
-import com.psicomanager.api.domain.user.UserLoginDTO;
-import com.psicomanager.api.domain.user.UserRegisterDTO;
-import com.psicomanager.api.exceptions.user.DuplicateUserEntryException;
-import com.psicomanager.api.exceptions.user.UserNotFoundException;
+import com.psicomanager.api.domain.user.model.User;
+import com.psicomanager.api.domain.user.dto.UserLoginDTO;
+import com.psicomanager.api.domain.user.dto.UserRegisterDTO;
+import com.psicomanager.api.domain.user.exception.DuplicateUserEntryException;
+import com.psicomanager.api.domain.user.exception.UserNotFoundException;
 import com.psicomanager.api.infra.security.TokenService;
 import com.psicomanager.api.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Collections;
 
 @Service
 @Slf4j

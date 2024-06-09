@@ -1,12 +1,12 @@
 package com.psicomanager.api.services;
 
-import com.psicomanager.api.domain.patient.PatientResumeResponseDTO;
-import com.psicomanager.api.domain.schedule.Schedule;
-import com.psicomanager.api.domain.schedule.ScheduleRegisterDTO;
-import com.psicomanager.api.domain.schedule.ScheduleResponseDTO;
-import com.psicomanager.api.exceptions.patient.PatientNotFoundException;
-import com.psicomanager.api.exceptions.schedule.ScheduleConflictTimeException;
-import com.psicomanager.api.exceptions.schedule.ScheduleNotFoundException;
+import com.psicomanager.api.domain.patient.dto.PatientResumeResponseDTO;
+import com.psicomanager.api.domain.schedule.model.Schedule;
+import com.psicomanager.api.domain.schedule.dto.ScheduleRegisterDTO;
+import com.psicomanager.api.domain.schedule.dto.ScheduleResponseDTO;
+import com.psicomanager.api.domain.patient.exception.PatientNotFoundException;
+import com.psicomanager.api.domain.schedule.exception.ScheduleConflictTimeException;
+import com.psicomanager.api.domain.schedule.exception.ScheduleNotFoundException;
 import com.psicomanager.api.repositories.PatientRepository;
 import com.psicomanager.api.repositories.ScheduleRepository;
 import jakarta.transaction.Transactional;

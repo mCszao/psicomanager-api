@@ -1,12 +1,12 @@
 package com.psicomanager.api.infra.config;
 
-import com.psicomanager.api.dtos.BaseResponse;
-import com.psicomanager.api.exceptions.ContractWithoutArgsException;
-import com.psicomanager.api.exceptions.DuplicateEntryException;
-import com.psicomanager.api.exceptions.patient.PatientNotFoundException;
-import com.psicomanager.api.exceptions.schedule.ScheduleConflictTimeException;
-import com.psicomanager.api.exceptions.schedule.ScheduleNotFoundException;
-import com.psicomanager.api.exceptions.user.UserNotFoundException;
+import com.psicomanager.api.core.dto.BaseResponse;
+import com.psicomanager.api.domain.document.exception.ContractWithoutArgsException;
+import com.psicomanager.api.core.exception.DuplicateEntryException;
+import com.psicomanager.api.domain.patient.exception.PatientNotFoundException;
+import com.psicomanager.api.domain.schedule.exception.ScheduleConflictTimeException;
+import com.psicomanager.api.domain.schedule.exception.ScheduleNotFoundException;
+import com.psicomanager.api.domain.user.exception.UserNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

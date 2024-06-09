@@ -1,14 +1,11 @@
 package com.psicomanager.api.services;
 
-import com.psicomanager.api.domain.address.Address;
-import com.psicomanager.api.domain.address.AddressOnPatientDTO;
-import com.psicomanager.api.domain.patient.Patient;
-import com.psicomanager.api.domain.patient.PatientRegisterDTO;
-import com.psicomanager.api.domain.patient.PatientResponseDTO;
-import com.psicomanager.api.domain.patient.PatientResumeResponseDTO;
-import com.psicomanager.api.exceptions.patient.DuplicatePatientEntryException;
-import com.psicomanager.api.exceptions.patient.PatientNotFoundException;
-import com.psicomanager.api.repositories.AddressRepository;
+import com.psicomanager.api.domain.patient.model.Patient;
+import com.psicomanager.api.domain.patient.dto.PatientRegisterDTO;
+import com.psicomanager.api.domain.patient.dto.PatientResponseDTO;
+import com.psicomanager.api.domain.patient.dto.PatientResumeResponseDTO;
+import com.psicomanager.api.domain.patient.exception.DuplicatePatientEntryException;
+import com.psicomanager.api.domain.patient.exception.PatientNotFoundException;
 import com.psicomanager.api.repositories.PatientRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +19,6 @@ import java.util.List;
 public class PatientService {
     @Autowired
     private PatientRepository patientRepo;
-
-    @Autowired
-    private AddressRepository addressRepo;
 
     @Transactional
     public void register(PatientRegisterDTO dto){
@@ -50,14 +44,5 @@ public class PatientService {
         var patient = patientRepo.findById(id).orElseThrow(() -> new PatientNotFoundException("Id do paciente informado não possui registro"));
         log.info("Retornando paciente");
         return PatientResponseDTO.of(patient);
-    }
-
-    @Transactional
-    public void saveAddressPatient(AddressOnPatientDTO dto, String patientId){
-        log.info("Buscando informações do paciente de id "+ patientId);
-        var patient = patientRepo.findById(patientId).orElseThrow(() -> new PatientNotFoundException("Id do paciente informado não possui registro"));
-        var address = new Address(dto, patient);
-        log.info("Salvando endereço no paciente de id "+ patientId);
-        addressRepo.save(address);
     }
 }

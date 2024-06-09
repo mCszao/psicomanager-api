@@ -1,12 +1,11 @@
 package com.psicomanager.api.controllers;
 
-import com.psicomanager.api.domain.address.AddressOnPatientDTO;
-import com.psicomanager.api.domain.patient.Patient;
-import com.psicomanager.api.domain.patient.PatientRegisterDTO;
-import com.psicomanager.api.domain.patient.PatientResponseDTO;
-import com.psicomanager.api.domain.patient.PatientResumeResponseDTO;
-import com.psicomanager.api.dtos.BaseResponse;
-import com.psicomanager.api.repositories.PatientRepository;
+import com.psicomanager.api.domain.address.dto.AddressOnPatientDTO;
+import com.psicomanager.api.domain.patient.dto.PatientRegisterDTO;
+import com.psicomanager.api.domain.patient.dto.PatientResponseDTO;
+import com.psicomanager.api.domain.patient.dto.PatientResumeResponseDTO;
+import com.psicomanager.api.core.dto.BaseResponse;
+import com.psicomanager.api.services.AddressPatientService;
 import com.psicomanager.api.services.PatientService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +22,9 @@ public class PatientController {
 
     @Autowired
     private PatientService patientService;
+
+    @Autowired
+    private AddressPatientService addressPatientService;
 
     @PostMapping("/register")
     public ResponseEntity<BaseResponse<String>> register(@RequestBody @Valid PatientRegisterDTO data){
@@ -55,7 +57,7 @@ public class PatientController {
     @PostMapping("/register/address")
     public ResponseEntity<BaseResponse<String>> addAddress(@RequestParam(required = true) String patientId, @RequestBody @Valid AddressOnPatientDTO data){
         log.info("POST: /patients/register/address?patientId="+patientId);
-        patientService.saveAddressPatient(data, patientId);
+        addressPatientService.saveAddressPatient(data, patientId);
         return ResponseEntity.ok(new BaseResponse<>(true, "Endereço adicionado com sucesso"));
     }
 }

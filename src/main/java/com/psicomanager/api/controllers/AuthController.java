@@ -1,10 +1,9 @@
 package com.psicomanager.api.controllers;
 
-import com.psicomanager.api.domain.user.User;
-import com.psicomanager.api.dtos.BaseResponse;
-import com.psicomanager.api.domain.user.UserLoginDTO;
-import com.psicomanager.api.domain.user.UserRegisterDTO;
-import com.psicomanager.api.infra.security.TokenService;
+import com.psicomanager.api.domain.user.model.User;
+import com.psicomanager.api.core.dto.BaseResponse;
+import com.psicomanager.api.domain.user.dto.UserLoginDTO;
+import com.psicomanager.api.domain.user.dto.UserRegisterDTO;
 import com.psicomanager.api.services.MyUserDetailsService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
