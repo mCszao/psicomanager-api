@@ -1,5 +1,6 @@
 package com.psicomanager.api.services;
 
+import com.psicomanager.api.domain.user.mapper.UserMapper;
 import com.psicomanager.api.domain.user.model.User;
 import com.psicomanager.api.domain.user.dto.UserLoginDTO;
 import com.psicomanager.api.domain.user.dto.UserRegisterDTO;
@@ -25,6 +26,9 @@ public class MyUserDetailsService implements UserDetailsService {
     @Autowired
     private UserRepository userRepo;
 
+    @Autowired
+    private UserMapper mapper;
+
 
     @Override
     public UserDetails loadUserByUsername(String input) {
@@ -47,9 +51,9 @@ public class MyUserDetailsService implements UserDetailsService {
         if(!(userRepo.findByUsername(dto.username()).isEmpty())) throw new DuplicateUserEntryException("Esse usuário");
         if(userRepo.findByEmail(dto.email() == null ? "Não cadastrado" : dto.email()) != null) throw new DuplicateUserEntryException("Esse email");
         if(userRepo.findByPhone(dto.phone() == null ? "Não cadastrado" : dto.phone()) != null) throw new DuplicateUserEntryException("Esse telefone");
-        String encryptedPass = new BCryptPasswordEncoder().encode(dto.password());
         log.info("Salvando novo usuário");
-        userRepo.save(new User(dto, encryptedPass));
+        User user = mapper.dtoToEntity(dto);
+        userRepo.save(user);
 
     }
 }

@@ -49,13 +49,6 @@ public class User implements UserDetails {
     @Column(name = "PHONE", unique = true, length = 255)
     private String phone;
 
-    public User(UserRegisterDTO dto, String encryptedPassword) {
-        this.username = dto.username();
-        this.password = encryptedPassword;
-        this.phone = dto.phone();
-        this.email = dto.email();
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_USER"));

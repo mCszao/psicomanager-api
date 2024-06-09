@@ -1,6 +1,7 @@
 package com.psicomanager.api.services;
 
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
+import com.psicomanager.api.domain.document.DocumentMapper;
 import com.psicomanager.api.domain.document.exception.ContractWithoutArgsException;
 import com.psicomanager.api.domain.document.model.Document;
 import com.psicomanager.api.domain.patient.exception.PatientNotFoundException;
@@ -30,6 +31,9 @@ public class DocumentOfPatientService {
     @Autowired
     private DocumentRepository docRepo;
 
+    @Autowired
+    private DocumentMapper mapper;
+
     public byte[] generateContract(String patientId) throws IOException {
         log.info("Buscando informações paciente de id "+ patientId);
         var patient = patientRepo.findById(patientId).orElseThrow(()-> new ContractWithoutArgsException("Paciente informado não possuí registro"));
@@ -50,12 +54,16 @@ public class DocumentOfPatientService {
     }
 
     @Transactional
-    public void saveDoc(MultipartFile file, String patientId) throws IOException {
-        var doc = new Document();
+    public void saveDoc(MultipartFile file, String patientId) {
         log.info("Montando objeto com o arquivo recebido.");
-        doc.setName(file.getOriginalFilename());
-        doc.setType(file.getContentType());
-        doc.setContent(file.getBytes());
+        Document doc;
+        try {
+            doc = mapper.fileToDocument(file);
+        }catch (Exception exception){
+            String msg = "Não foi possível criar o arquivo";
+            log.error(msg);
+            throw new RuntimeException(msg);
+        }
         log.info("Buscando informações paciente de id "+ patientId);
         if(patientId != null && !(patientId.trim().equals(""))){
             var patient = patientRepo.findById(patientId).orElseThrow(() -> new PatientNotFoundException("Paciente informado não possuí registro"));
