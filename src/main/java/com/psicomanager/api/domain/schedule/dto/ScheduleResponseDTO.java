@@ -19,15 +19,4 @@ public record ScheduleResponseDTO(
         PatientResumeResponseDTO patient
 
 ) {
-
-        public static ScheduleResponseDTO of(Schedule schedule){
-                return new ScheduleResponseDTO(
-                        schedule.getId(),
-                        schedule.getDateStart(),
-                        schedule.getDateEnd(),
-                        schedule.getAnnotations(),
-                        schedule.getStage(),
-                        PatientMapper.toResumeDto(schedule.getPatient())
-                );
-        }
 }

@@ -1,6 +1,7 @@
 package com.psicomanager.api.services;
 
 import com.psicomanager.api.domain.patient.dto.PatientResumeResponseDTO;
+import com.psicomanager.api.domain.schedule.mapper.ScheduleMapper;
 import com.psicomanager.api.domain.schedule.model.Schedule;
 import com.psicomanager.api.domain.schedule.dto.ScheduleRegisterDTO;
 import com.psicomanager.api.domain.schedule.dto.ScheduleResponseDTO;
@@ -25,6 +26,9 @@ public class ScheduleService {
     @Autowired
     private PatientRepository patientRepo;
 
+    @Autowired
+    private ScheduleMapper mapper;
+
     @Transactional
     public void createSchedule(ScheduleRegisterDTO dto) {
         log.info("Verificando se nova consulta possúi conflito de horário com alguma existente");
@@ -32,7 +36,7 @@ public class ScheduleService {
         if (schedules.isEmpty()) {
             log.info("Buscando informações do paciente de id"+ dto.patientId());
             var patient = patientRepo.findById(dto.patientId()).orElseThrow(() -> new PatientNotFoundException("Paciente informado não encontrado"));
-            Schedule formedSchedule = new Schedule(dto, patient);
+            Schedule formedSchedule = mapper.dtoToEntity(dto, patient);
             log.info("Salvando nova consulta do paciente de id "+ dto.patientId());
             scheduleRepo.save(formedSchedule);
             return;
@@ -59,23 +63,13 @@ public class ScheduleService {
         log.info("Verificando informações do paciente de id "+ patientId);
         patientRepo.findById(patientId).orElseThrow(() -> new PatientNotFoundException("Paciente informado não possuí registro"));
         log.info("Retornando consultas do paciente de id "+ patientId);
-        return scheduleRepo.findByPatientId(patientId).stream().map((schedule) -> {
-            var patient = schedule.getPatient();
-            return new ScheduleResponseDTO(
-                    schedule.getId(),
-                    schedule.getDateStart(),
-                    schedule.getDateEnd(),
-                    schedule.getAnnotations(),
-                    schedule.getStage(),
-                    new PatientResumeResponseDTO(patient.getId(), patient.getName(), patient.getPhone())
-            );
-        }).toList();
+        return scheduleRepo.findByPatientId(patientId).stream().map(ScheduleMapper::toDto).toList();
     }
 
     public ScheduleResponseDTO getScheduleById(String id){
         log.info("Buscando informações da consulta de id"+ id);
         var schedule = scheduleRepo.findById(id).orElseThrow(() -> new ScheduleNotFoundException("Agendamento com id enviado não possuí registro"));
         log.info("Retornando consulta");
-        return ScheduleResponseDTO.of(schedule);
+        return ScheduleMapper.toDto(schedule);
     }
 }
