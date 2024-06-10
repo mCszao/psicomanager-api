@@ -8,6 +8,7 @@ import com.psicomanager.api.domain.patient.exception.PatientNotFoundException;
 import com.psicomanager.api.repositories.DocumentRepository;
 import com.psicomanager.api.repositories.PatientRepository;
 import com.psicomanager.api.utils.DateUtils;
+import com.psicomanager.api.utils.FileUtils;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,13 +45,9 @@ public class DocumentOfPatientService {
         log.info("Adicionando paciente ao modelo de contrato.");
         String htmlContent = templateEngine.process("template", context);
         log.info("Obtendo bytes do arquivo gerado.");
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        PdfRendererBuilder builder = new PdfRendererBuilder();
-        builder.withHtmlContent(htmlContent, null);
-        builder.toStream(outputStream);
-        builder.run();
+        byte[] bytes = FileUtils.generactByteByContractHtml(htmlContent);
         log.info("Retornando bytes");
-        return outputStream.toByteArray();
+        return bytes;
     }
 
     @Transactional

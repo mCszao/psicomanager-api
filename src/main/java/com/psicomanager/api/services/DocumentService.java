@@ -21,6 +21,7 @@ import java.io.IOException;
 @Service
 @Slf4j
 public class DocumentService {
+    @Autowired
     private DocumentRepository docRepo;
 
     public Document getDocumentById(String id){
