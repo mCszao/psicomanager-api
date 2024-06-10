@@ -46,17 +46,7 @@ public class ScheduleService {
 
     public List<ScheduleResponseDTO> getAllSchedules() {
         log.info("Buscando por todas as consultas");
-        return scheduleRepo.findAll().stream().map((schedule) -> {
-            var patient = schedule.getPatient();
-            return new ScheduleResponseDTO(
-                    schedule.getId(),
-                    schedule.getDateStart(),
-                    schedule.getDateEnd(),
-                    schedule.getAnnotations(),
-                    schedule.getStage(),
-                    new PatientResumeResponseDTO(patient.getId(), patient.getName(), patient.getPhone())
-            );
-        }).toList();
+        return scheduleRepo.findAll().stream().map(ScheduleMapper::toDto).toList();
     }
 
     public List<ScheduleResponseDTO> getAllByPatientId(String patientId){
