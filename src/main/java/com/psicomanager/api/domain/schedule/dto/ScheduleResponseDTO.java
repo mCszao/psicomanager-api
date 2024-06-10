@@ -2,6 +2,7 @@ package com.psicomanager.api.domain.schedule.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.psicomanager.api.domain.patient.dto.PatientResumeResponseDTO;
+import com.psicomanager.api.domain.patient.mapper.PatientMapper;
 import com.psicomanager.api.domain.schedule.enums.StageEnum;
 import com.psicomanager.api.domain.schedule.model.Schedule;
 
@@ -26,7 +27,7 @@ public record ScheduleResponseDTO(
                         schedule.getDateEnd(),
                         schedule.getAnnotations(),
                         schedule.getStage(),
-                        PatientResumeResponseDTO.of(schedule.getPatient())
+                        PatientMapper.toResumeDto(schedule.getPatient())
                 );
         }
 }

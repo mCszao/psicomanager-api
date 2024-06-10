@@ -16,8 +16,4 @@ public record PatientResponseDTO(
         birthdayDate,
         List<Address> address
 ) {
-
-    public static PatientResponseDTO of(Patient patient){
-        return new PatientResponseDTO(patient.getId(),patient.getName(), patient.getEmail(), patient.getPhone(), patient.getCpf(), patient.getBirthdayDate(), patient.getAddresses());
-    }
 }

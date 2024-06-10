@@ -59,15 +59,7 @@ public class Patient {
     private List<Document> documents = new ArrayList<>();
     private LocalDate birthdayDate;
 
-    public Patient(PatientRegisterDTO dto){
-        this.name = dto.name();
-        this.email = dto.email();
-        this.phone = dto.phone();
-        this.cpf = dto.cpf();
-        this.birthdayDate = dto.birthdayDate();
-        if(dto.address() != null){
-            Address transactAddress = new Address(dto.address(), this);
-            this.addresses.add(transactAddress);
-        }
+    public void addAddress(Address address){
+        this.addresses.add(address);
     }
 }
