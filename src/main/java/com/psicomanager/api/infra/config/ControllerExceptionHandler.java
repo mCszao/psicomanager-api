@@ -3,6 +3,7 @@ package com.psicomanager.api.infra.config;
 import com.psicomanager.api.core.dto.BaseResponse;
 import com.psicomanager.api.domain.document.exception.ContractWithoutArgsException;
 import com.psicomanager.api.core.exception.DuplicateEntryException;
+import com.psicomanager.api.domain.document.exception.DocumentNotFoundException;
 import com.psicomanager.api.domain.patient.exception.PatientNotFoundException;
 import com.psicomanager.api.domain.schedule.exception.ScheduleConflictTimeException;
 import com.psicomanager.api.domain.schedule.exception.ScheduleNotFoundException;
@@ -22,7 +23,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(UserNotFoundException.class)
     private ResponseEntity<BaseResponse<String>> userNotFoundHandler(UserNotFoundException ex){
         log.error("Usuário informado não foi encontrado");
-        return ResponseEntity.badRequest().body(new BaseResponse<>(false, ex.getMessage()));
+        return ResponseEntity.internalServerError().body(new BaseResponse<>(false, ex.getMessage()));
     }
 
     @ExceptionHandler(DuplicateEntryException.class)
@@ -34,7 +35,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(PatientNotFoundException.class)
     private ResponseEntity<BaseResponse<String>> patientNotFoundHandler(PatientNotFoundException ex){
         log.error("Paciente informado não foi encontrado");
-        return ResponseEntity.badRequest().body(new BaseResponse<>(false, ex.getMessage()));
+        return ResponseEntity.internalServerError().body(new BaseResponse<>(false, ex.getMessage()));
     }
 
     @ExceptionHandler(ScheduleConflictTimeException.class)
@@ -54,12 +55,18 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(ScheduleNotFoundException.class)
     private ResponseEntity<BaseResponse<String>> patientNotFoundHandler(ScheduleNotFoundException ex){
         log.error("Consulta informada não foi encontrada");
-        return ResponseEntity.badRequest().body(new BaseResponse<>(false, ex.getMessage()));
+        return ResponseEntity.notFound().build();
     }
 
     @ExceptionHandler(ContractWithoutArgsException.class)
     private ResponseEntity<BaseResponse<String>> contractWithoutArgsHandler(ContractWithoutArgsException ex){
         log.error("Não foi possível gerar o contrato, informações necessárias estão faltando");
         return ResponseEntity.badRequest().body(new BaseResponse<>(false, ex.getMessage()));
+    }
+
+    @ExceptionHandler(DocumentNotFoundException.class)
+    private ResponseEntity<String> documentNotFoundHandler(DocumentNotFoundException ex){
+        log.error("Documento informado não foi encontrado");
+        return ResponseEntity.notFound().build();
     }
 }
