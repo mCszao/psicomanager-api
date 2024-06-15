@@ -28,6 +28,6 @@ public class PatientMapper {
     }
 
     public static PatientResumeResponseDTO toResumeDto(Patient patient){
-        return new PatientResumeResponseDTO(patient.getId(), patient.getName(), patient.getPhone());
+        return new PatientResumeResponseDTO(patient.getId(), patient.getName(), patient.getBirthdayDate());
     }
 }

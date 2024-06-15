@@ -1,11 +1,11 @@
 package com.psicomanager.api.domain.patient.dto;
 
-import com.psicomanager.api.domain.patient.model.Patient;
+import java.time.LocalDate;
 
 public record PatientResumeResponseDTO(
         String id,
         String name,
-        String phone
+        LocalDate birthdayDate
 ) {
 
 }
