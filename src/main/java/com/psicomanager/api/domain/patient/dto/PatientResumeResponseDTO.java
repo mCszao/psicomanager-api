@@ -5,7 +5,8 @@ import java.time.LocalDate;
 public record PatientResumeResponseDTO(
         String id,
         String name,
-        LocalDate birthdayDate
+        LocalDate birthdayDate,
+        String email
 ) {
 
 }
