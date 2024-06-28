@@ -29,6 +29,7 @@ public class PatientService {
         if(patientRepo.findByEmail(dto.email() == null ? "Não cadastrado" : dto.email()) != null) throw new DuplicatePatientEntryException("Email do paciente");
         if(patientRepo.findByPhone(dto.phone()) != null) throw new DuplicatePatientEntryException("Telefone do paciente");
         if(patientRepo.findByCpf(dto.cpf()) != null) throw new DuplicatePatientEntryException("Cpf do paciente");
+        if(patientRepo.findByName(dto.name()) != null) throw new DuplicatePatientEntryException("Nome do paciente");
         log.info("Salvando novo paciente");
         var patient = mapper.dtoToEntity(dto);
         patientRepo.save(patient);

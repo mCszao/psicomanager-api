@@ -9,6 +9,7 @@ import com.psicomanager.api.domain.schedule.exception.ScheduleConflictTimeExcept
 import com.psicomanager.api.domain.schedule.exception.ScheduleNotFoundException;
 import com.psicomanager.api.domain.user.exception.UserNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -68,5 +69,11 @@ public class ControllerExceptionHandler {
     private ResponseEntity<String> documentNotFoundHandler(DocumentNotFoundException ex){
         log.error("Documento informado não foi encontrado");
         return ResponseEntity.notFound().build();
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    private ResponseEntity<BaseResponse<String>> dataIntegrityViolationHandler(DataIntegrityViolationException ex){
+        log.error("Dados duplicados foram enviados");
+        return ResponseEntity.badRequest().body(new BaseResponse<>(false, "Dados duplicados"));
     }
 }
