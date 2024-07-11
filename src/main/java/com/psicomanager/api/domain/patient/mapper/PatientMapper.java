@@ -1,6 +1,7 @@
 package com.psicomanager.api.domain.patient.mapper;
 
 import com.psicomanager.api.domain.address.model.Address;
+import com.psicomanager.api.domain.document.DocumentMapper;
 import com.psicomanager.api.domain.patient.dto.PatientRegisterDTO;
 import com.psicomanager.api.domain.patient.dto.PatientResponseDTO;
 import com.psicomanager.api.domain.patient.dto.PatientResumeResponseDTO;
@@ -24,7 +25,8 @@ public class PatientMapper {
     }
 
     public static PatientResponseDTO toDto(Patient patient){
-        return new PatientResponseDTO(patient.getId(),patient.getName(), patient.getEmail(), patient.getPhone(), patient.getCpf(), patient.getBirthdayDate(), patient.getAddresses());
+        var documents = patient.getDocuments().stream().map(DocumentMapper::documentToDto).toList();
+        return new PatientResponseDTO(patient.getId(),patient.getName(), patient.getEmail(), patient.getPhone(), patient.getCpf(), patient.getBirthdayDate(), patient.getAddresses(), documents);
     }
 
     public static PatientResumeResponseDTO toResumeDto(Patient patient){

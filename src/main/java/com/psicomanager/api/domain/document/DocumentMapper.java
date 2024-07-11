@@ -1,5 +1,6 @@
 package com.psicomanager.api.domain.document;
 
+import com.psicomanager.api.domain.document.dto.DocumentResponseDTO;
 import com.psicomanager.api.domain.document.model.Document;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,5 +15,9 @@ public class DocumentMapper {
         doc.setType(file.getContentType());
         doc.setContent(file.getBytes());
         return doc;
+    }
+
+    public static DocumentResponseDTO documentToDto(Document doc) {
+        return new DocumentResponseDTO(doc.getId(), doc.getName(), doc.getType());
     }
 }
