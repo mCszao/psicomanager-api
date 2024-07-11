@@ -6,6 +6,7 @@ import com.psicomanager.api.domain.patient.dto.PatientRegisterDTO;
 import com.psicomanager.api.domain.patient.dto.PatientResponseDTO;
 import com.psicomanager.api.domain.patient.dto.PatientResumeResponseDTO;
 import com.psicomanager.api.domain.patient.model.Patient;
+import com.psicomanager.api.domain.schedule.mapper.ScheduleMapper;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -26,7 +27,8 @@ public class PatientMapper {
 
     public static PatientResponseDTO toDto(Patient patient){
         var documents = patient.getDocuments().stream().map(DocumentMapper::documentToDto).toList();
-        return new PatientResponseDTO(patient.getId(),patient.getName(), patient.getEmail(), patient.getPhone(), patient.getCpf(), patient.getBirthdayDate(), patient.getAddresses(), documents);
+        var schedules = patient.getSchedules().stream().map(ScheduleMapper::toDto).toList();
+        return new PatientResponseDTO(patient.getId(),patient.getName(), patient.getEmail(), patient.getPhone(), patient.getCpf(), patient.getBirthdayDate(), patient.getAddresses(), documents, schedules);
     }
 
     public static PatientResumeResponseDTO toResumeDto(Patient patient){

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.psicomanager.api.domain.address.model.Address;
 import com.psicomanager.api.domain.document.model.Document;
 import com.psicomanager.api.domain.patient.dto.PatientRegisterDTO;
+import com.psicomanager.api.domain.schedule.model.Schedule;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -57,6 +58,10 @@ public class Patient {
 
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Document> documents = new ArrayList<>();
+
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Schedule> schedules = new ArrayList<>();
+
     private LocalDate birthdayDate;
 
     public void addAddress(Address address){
