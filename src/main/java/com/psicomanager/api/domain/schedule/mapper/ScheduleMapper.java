@@ -1,11 +1,11 @@
 package com.psicomanager.api.domain.schedule.mapper;
 
 import com.psicomanager.api.domain.patient.mapper.PatientMapper;
-import com.psicomanager.api.domain.patient.model.Patient;
+import com.psicomanager.api.repositories.patient.model.Patient;
 import com.psicomanager.api.domain.schedule.dto.ScheduleRegisterDTO;
 import com.psicomanager.api.domain.schedule.dto.ScheduleResponseDTO;
 import com.psicomanager.api.domain.schedule.enums.StageEnum;
-import com.psicomanager.api.domain.schedule.model.Schedule;
+import com.psicomanager.api.repositories.schedule.model.Schedule;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;

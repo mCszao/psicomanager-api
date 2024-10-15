@@ -1,12 +1,10 @@
-package com.psicomanager.api.domain.schedule.model;
+package com.psicomanager.api.repositories.schedule.model;
 
-import com.psicomanager.api.domain.patient.model.Patient;
-import com.psicomanager.api.domain.schedule.dto.ScheduleRegisterDTO;
+import com.psicomanager.api.repositories.patient.model.Patient;
 import com.psicomanager.api.domain.schedule.enums.StageEnum;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity(name = "sessions_schedule")

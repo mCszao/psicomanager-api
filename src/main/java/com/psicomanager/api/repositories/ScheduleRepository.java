@@ -1,6 +1,6 @@
 package com.psicomanager.api.repositories;
 
-import com.psicomanager.api.domain.schedule.model.Schedule;
+import com.psicomanager.api.repositories.schedule.model.Schedule;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

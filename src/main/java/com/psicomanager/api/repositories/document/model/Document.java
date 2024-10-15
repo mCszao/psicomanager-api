@@ -1,6 +1,6 @@
-package com.psicomanager.api.domain.document.model;
+package com.psicomanager.api.repositories.document.model;
 
-import com.psicomanager.api.domain.patient.model.Patient;
+import com.psicomanager.api.repositories.patient.model.Patient;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

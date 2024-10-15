@@ -1,7 +1,6 @@
 package com.psicomanager.api.services;
 
 import com.psicomanager.api.domain.patient.mapper.PatientMapper;
-import com.psicomanager.api.domain.patient.model.Patient;
 import com.psicomanager.api.domain.patient.dto.PatientRegisterDTO;
 import com.psicomanager.api.domain.patient.dto.PatientResponseDTO;
 import com.psicomanager.api.domain.patient.dto.PatientResumeResponseDTO;

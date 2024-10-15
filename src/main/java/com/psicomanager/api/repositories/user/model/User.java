@@ -1,4 +1,4 @@
-package com.psicomanager.api.domain.user.model;
+package com.psicomanager.api.repositories.user.model;
 
 import com.psicomanager.api.domain.user.dto.UserRegisterDTO;
 import jakarta.persistence.*;

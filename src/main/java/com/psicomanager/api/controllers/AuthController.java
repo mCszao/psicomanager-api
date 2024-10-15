@@ -1,7 +1,7 @@
 package com.psicomanager.api.controllers;
 
 import com.psicomanager.api.domain.user.dto.ResponseLoginDTO;
-import com.psicomanager.api.domain.user.model.User;
+import com.psicomanager.api.repositories.user.model.User;
 import com.psicomanager.api.core.dto.BaseResponse;
 import com.psicomanager.api.domain.user.dto.UserLoginDTO;
 import com.psicomanager.api.domain.user.dto.UserRegisterDTO;

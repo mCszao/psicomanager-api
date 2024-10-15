@@ -1,8 +1,7 @@
 package com.psicomanager.api.services;
 
-import com.psicomanager.api.domain.patient.dto.PatientResumeResponseDTO;
 import com.psicomanager.api.domain.schedule.mapper.ScheduleMapper;
-import com.psicomanager.api.domain.schedule.model.Schedule;
+import com.psicomanager.api.repositories.schedule.model.Schedule;
 import com.psicomanager.api.domain.schedule.dto.ScheduleRegisterDTO;
 import com.psicomanager.api.domain.schedule.dto.ScheduleResponseDTO;
 import com.psicomanager.api.domain.patient.exception.PatientNotFoundException;

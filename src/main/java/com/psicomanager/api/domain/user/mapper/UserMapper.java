@@ -1,7 +1,7 @@
 package com.psicomanager.api.domain.user.mapper;
 
 import com.psicomanager.api.domain.user.dto.UserRegisterDTO;
-import com.psicomanager.api.domain.user.model.User;
+import com.psicomanager.api.repositories.user.model.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 

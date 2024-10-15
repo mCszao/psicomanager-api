@@ -1,7 +1,7 @@
 package com.psicomanager.api.services;
 
 import com.psicomanager.api.domain.address.dto.AddressOnPatientDTO;
-import com.psicomanager.api.domain.address.model.Address;
+import com.psicomanager.api.repositories.address.model.Address;
 import com.psicomanager.api.domain.patient.exception.DuplicatePatientEntryException;
 import com.psicomanager.api.domain.patient.exception.PatientNotFoundException;
 import com.psicomanager.api.repositories.AddressRepository;

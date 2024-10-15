@@ -1,8 +1,8 @@
-package com.psicomanager.api.domain.address.model;
+package com.psicomanager.api.repositories.address.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.psicomanager.api.domain.address.dto.AddressOnPatientDTO;
-import com.psicomanager.api.domain.patient.model.Patient;
+import com.psicomanager.api.repositories.patient.model.Patient;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

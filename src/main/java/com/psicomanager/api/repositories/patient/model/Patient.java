@@ -1,10 +1,9 @@
-package com.psicomanager.api.domain.patient.model;
+package com.psicomanager.api.repositories.patient.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.psicomanager.api.domain.address.model.Address;
-import com.psicomanager.api.domain.document.model.Document;
-import com.psicomanager.api.domain.patient.dto.PatientRegisterDTO;
-import com.psicomanager.api.domain.schedule.model.Schedule;
+import com.psicomanager.api.repositories.address.model.Address;
+import com.psicomanager.api.repositories.document.model.Document;
+import com.psicomanager.api.repositories.schedule.model.Schedule;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;

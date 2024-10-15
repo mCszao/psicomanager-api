@@ -1,9 +1,7 @@
 package com.psicomanager.api.domain.patient.dto;
 
-import com.psicomanager.api.domain.address.model.Address;
+import com.psicomanager.api.repositories.address.model.Address;
 import com.psicomanager.api.domain.document.dto.DocumentResponseDTO;
-import com.psicomanager.api.domain.document.model.Document;
-import com.psicomanager.api.domain.patient.model.Patient;
 import com.psicomanager.api.domain.schedule.dto.ScheduleResponseDTO;
 
 import java.time.LocalDate;

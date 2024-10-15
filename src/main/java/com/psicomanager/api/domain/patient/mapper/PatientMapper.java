@@ -1,11 +1,11 @@
 package com.psicomanager.api.domain.patient.mapper;
 
-import com.psicomanager.api.domain.address.model.Address;
+import com.psicomanager.api.repositories.address.model.Address;
 import com.psicomanager.api.domain.document.DocumentMapper;
 import com.psicomanager.api.domain.patient.dto.PatientRegisterDTO;
 import com.psicomanager.api.domain.patient.dto.PatientResponseDTO;
 import com.psicomanager.api.domain.patient.dto.PatientResumeResponseDTO;
-import com.psicomanager.api.domain.patient.model.Patient;
+import com.psicomanager.api.repositories.patient.model.Patient;
 import com.psicomanager.api.domain.schedule.mapper.ScheduleMapper;
 import org.springframework.stereotype.Component;
 
