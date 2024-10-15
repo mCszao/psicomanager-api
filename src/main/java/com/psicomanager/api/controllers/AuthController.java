@@ -1,5 +1,6 @@
 package com.psicomanager.api.controllers;
 
+import com.psicomanager.api.domain.user.dto.ResponseLoginDTO;
 import com.psicomanager.api.domain.user.model.User;
 import com.psicomanager.api.core.dto.BaseResponse;
 import com.psicomanager.api.domain.user.dto.UserLoginDTO;
@@ -29,7 +30,7 @@ public class AuthController {
 
 
     @PostMapping("/signIn")
-    public ResponseEntity<BaseResponse<UserLoginDTO>> signIn(@RequestBody @Valid UserLoginDTO body){
+    public ResponseEntity<BaseResponse<ResponseLoginDTO>> signIn(@RequestBody @Valid UserLoginDTO body){
         log.info("POST: /auth/signIn");
         log.info("Tentativa de login do usuário: "+body.username());
         var authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(body.username(), body.password()));

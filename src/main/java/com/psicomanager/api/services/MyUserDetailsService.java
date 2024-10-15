@@ -1,5 +1,6 @@
 package com.psicomanager.api.services;
 
+import com.psicomanager.api.domain.user.dto.ResponseLoginDTO;
 import com.psicomanager.api.domain.user.mapper.UserMapper;
 import com.psicomanager.api.domain.user.model.User;
 import com.psicomanager.api.domain.user.dto.UserLoginDTO;
@@ -39,10 +40,10 @@ public class MyUserDetailsService implements UserDetailsService {
         return userRepo.findByUsername(input).orElseThrow(() -> new UserNotFoundException("Usuário ou senha incorretos"));
     }
 
-    public UserLoginDTO login(UserLoginDTO dto, User authUser){
+    public ResponseLoginDTO login(UserLoginDTO dto, User authUser){
         var token = tokenService.generateJWT(authUser);
         log.info("Retornando usuário para login");
-        return new UserLoginDTO(dto.username(),token);
+        return new ResponseLoginDTO(dto.username(),token);
     }
 
     @Transactional
