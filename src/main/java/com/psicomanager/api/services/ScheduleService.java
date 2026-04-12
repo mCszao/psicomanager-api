@@ -78,4 +78,6 @@ public class ScheduleService {
         scheduleRepo.save(schedule);
         log.info("Sessão de id " + id + " concluída com sucesso");
     }
+
+
 }

@@ -58,4 +58,5 @@ public class ScheduleController {
         scheduleService.concludeSession(id);
         return ResponseEntity.ok(new BaseResponse<>(true, "Sessão concluída com sucesso!"));
     }
+
 }
