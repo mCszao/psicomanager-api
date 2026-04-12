@@ -15,6 +15,6 @@ public class DocumentService {
 
     public Document getDocumentById(String id){
         log.info("Buscando informações do documento de id "+id);
-        return docRepo.findById(id).orElseThrow(() -> new DocumentNotFoundException("Documento solicitado não existe"));
+        return docRepo.findById(id).orElseThrow(DocumentNotFoundException::new);
     }
 }

@@ -36,13 +36,13 @@ public class ScheduleService {
         var schedules = scheduleRepo.getScheduleBetweenStartEnd(dto.dateStart(), dto.dateStart().plusHours(1));
         if (schedules.isEmpty()) {
             log.info("Buscando informações do paciente de id"+ dto.patientId());
-            var patient = patientRepo.findById(dto.patientId()).orElseThrow(() -> new PatientNotFoundException("Paciente informado não encontrado"));
+            var patient = patientRepo.findById(dto.patientId()).orElseThrow(PatientNotFoundException::new);
             Schedule formedSchedule = mapper.dtoToEntity(dto, patient);
             log.info("Salvando nova consulta do paciente de id "+ dto.patientId());
             scheduleRepo.save(formedSchedule);
             return;
         }
-        throw new ScheduleConflictTimeException("Já existe uma sessão no período informado");
+        throw new ScheduleConflictTimeException();
     }
 
     public List<ScheduleResponseDTO> getAllSchedules() {
@@ -52,14 +52,14 @@ public class ScheduleService {
 
     public List<ScheduleResponseDTO> getAllByPatientId(String patientId){
         log.info("Verificando informações do paciente de id "+ patientId);
-        patientRepo.findById(patientId).orElseThrow(() -> new PatientNotFoundException("Paciente informado não possuí registro"));
+        patientRepo.findById(patientId).orElseThrow(PatientNotFoundException::new);
         log.info("Retornando consultas do paciente de id "+ patientId);
         return scheduleRepo.findByPatientId(patientId).stream().map(ScheduleMapper::toDto).toList();
     }
 
     public ScheduleResponseDTO getScheduleById(String id){
         log.info("Buscando informações da consulta de id"+ id);
-        var schedule = scheduleRepo.findById(id).orElseThrow(() -> new ScheduleNotFoundException("Agendamento com id enviado não possuí registro"));
+        var schedule = scheduleRepo.findById(id).orElseThrow(ScheduleNotFoundException::new);
         log.info("Retornando consulta");
         return ScheduleMapper.toDto(schedule);
     }
@@ -67,10 +67,10 @@ public class ScheduleService {
     @Transactional
     public void concludeSession(String id) {
         log.info("Buscando sessão de id " + id + " para conclusão");
-        var schedule = scheduleRepo.findById(id).orElseThrow(() -> new ScheduleNotFoundException("Agendamento com id enviado não possuí registro"));
+        var schedule = scheduleRepo.findById(id).orElseThrow(ScheduleNotFoundException::new);
 
         if (schedule.getStage() != StageEnum.OPENED) {
-            throw new ScheduleAlreadyConcludedException("Apenas sessões abertas podem ser concluídas");
+            throw new ScheduleAlreadyConcludedException();
         }
 
         schedule.setStage(StageEnum.CONCLUDED);

@@ -45,7 +45,7 @@ public class PatientService {
 
     public PatientResponseDTO getDetailsById(String id){
         log.info("Buscando informações do paciente de id"+ id);
-        var patient = patientRepo.findById(id).orElseThrow(() -> new PatientNotFoundException("Id do paciente informado não possui registro"));
+        var patient = patientRepo.findById(id).orElseThrow(PatientNotFoundException::new);
         log.info("Retornando paciente");
         return PatientMapper.toDto(patient);
     }
