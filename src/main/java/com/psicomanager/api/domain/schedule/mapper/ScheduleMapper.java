@@ -4,6 +4,7 @@ import com.psicomanager.api.domain.patient.mapper.PatientMapper;
 import com.psicomanager.api.repositories.patient.model.Patient;
 import com.psicomanager.api.domain.schedule.dto.ScheduleRegisterDTO;
 import com.psicomanager.api.domain.schedule.dto.ScheduleResponseDTO;
+import com.psicomanager.api.domain.schedule.enums.AttendanceTypeEnum;
 import com.psicomanager.api.domain.schedule.enums.StageEnum;
 import com.psicomanager.api.repositories.schedule.model.Schedule;
 import org.springframework.stereotype.Component;
@@ -23,6 +24,8 @@ public class ScheduleMapper {
         schedule.setDateEnd(end);
         StageEnum stage = dto.stage() == null ? StageEnum.OPENED : dto.stage();
         schedule.setStage(stage);
+        AttendanceTypeEnum type = dto.type() == null ? AttendanceTypeEnum.PRESENTIAL : dto.type();
+        schedule.setType(type);
         return schedule;
     }
 
@@ -33,6 +36,7 @@ public class ScheduleMapper {
                 schedule.getDateEnd(),
                 schedule.getAnnotations(),
                 schedule.getStage(),
+                schedule.getType(),
                 PatientMapper.toResumeDto(schedule.getPatient())
         );
     }

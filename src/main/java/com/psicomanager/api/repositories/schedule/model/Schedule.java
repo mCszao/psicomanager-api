@@ -1,6 +1,7 @@
 package com.psicomanager.api.repositories.schedule.model;
 
 import com.psicomanager.api.repositories.patient.model.Patient;
+import com.psicomanager.api.domain.schedule.enums.AttendanceTypeEnum;
 import com.psicomanager.api.domain.schedule.enums.StageEnum;
 import jakarta.persistence.*;
 import lombok.*;
@@ -28,7 +29,9 @@ public class Schedule {
     @Column(name = "ANNOTATIONS", nullable = true)
     private String annotations;
     @Enumerated(EnumType.STRING)
+    @Column(name = "STAGE")
     private StageEnum stage = StageEnum.OPENED;
-
-
+    @Enumerated(EnumType.STRING)
+    @Column(name = "TYPE", nullable = false)
+    private AttendanceTypeEnum type = AttendanceTypeEnum.PRESENTIAL;
 }

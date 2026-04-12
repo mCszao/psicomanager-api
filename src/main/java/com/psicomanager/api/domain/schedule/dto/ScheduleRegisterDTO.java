@@ -1,6 +1,7 @@
 package com.psicomanager.api.domain.schedule.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.psicomanager.api.domain.schedule.enums.AttendanceTypeEnum;
 import com.psicomanager.api.domain.schedule.enums.StageEnum;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
@@ -18,5 +19,7 @@ public record ScheduleRegisterDTO(
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
         LocalDateTime dateEnd,
 
-        StageEnum stage
+        StageEnum stage,
+
+        AttendanceTypeEnum type
 ) {}

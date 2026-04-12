@@ -4,5 +4,6 @@ public enum StageEnum {
     CONCLUDED,
     OPENED,
     CANCELLED,
-    RESCHEDULED
+    RESCHEDULED,
+    ABSENT
 }

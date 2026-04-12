@@ -23,6 +23,7 @@ public class ScheduleController {
 
     @Autowired
     private SortService sortService;
+
     @PostMapping("/register")
     public ResponseEntity<BaseResponse<String>> register(@RequestBody @Valid ScheduleRegisterDTO data){
         log.info("POST: /schedules/register");

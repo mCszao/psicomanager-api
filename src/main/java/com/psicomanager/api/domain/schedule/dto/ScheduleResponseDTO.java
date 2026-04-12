@@ -2,6 +2,7 @@ package com.psicomanager.api.domain.schedule.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.psicomanager.api.domain.patient.dto.PatientResumeResponseDTO;
+import com.psicomanager.api.domain.schedule.enums.AttendanceTypeEnum;
 import com.psicomanager.api.domain.schedule.enums.StageEnum;
 
 import java.time.LocalDateTime;
@@ -14,7 +15,7 @@ public record ScheduleResponseDTO(
         LocalDateTime dateEnd,
         String annotations,
         StageEnum stage,
+        AttendanceTypeEnum type,
         PatientResumeResponseDTO patient
-
 ) {
 }
