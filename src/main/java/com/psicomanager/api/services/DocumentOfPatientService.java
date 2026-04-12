@@ -61,7 +61,7 @@ public class DocumentOfPatientService {
         }
         log.info("Buscando informações paciente de id "+ patientId);
         if(patientId != null && !(patientId.trim().equals(""))){
-            var patient = patientRepo.findById(patientId).orElseThrow(() -> new PatientNotFoundException("Paciente informado não possuí registro"));
+            var patient = patientRepo.findById(patientId).orElseThrow(PatientNotFoundException::new);
             doc.setPatient(patient);
         }
         log.info("Salvando novo documento");

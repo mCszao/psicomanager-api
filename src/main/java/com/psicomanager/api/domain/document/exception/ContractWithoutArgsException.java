@@ -6,4 +6,8 @@ public class ContractWithoutArgsException extends CustomException {
     public ContractWithoutArgsException() {
         super("Contrato não pode ser gerado sem os argumentos necessários");
     }
+
+    public ContractWithoutArgsException(String message) {
+        super(message);
+    }
 }
