@@ -66,4 +66,11 @@ public class ScheduleController {
         return ResponseEntity.ok(new BaseResponse<>(true, "Sessão cancelada com sucesso!"));
     }
 
+    @PatchMapping("/{id}/absent")
+    public ResponseEntity<BaseResponse<String>> absent(@PathVariable String id){
+        log.info("PATCH: /schedules/"+id+"/absent");
+        scheduleService.markAsAbsent(id);
+        return ResponseEntity.ok(new BaseResponse<>(true, "Falta registrada com sucesso!"));
+    }
+
 }
