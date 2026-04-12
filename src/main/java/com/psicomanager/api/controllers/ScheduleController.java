@@ -1,6 +1,7 @@
 package com.psicomanager.api.controllers;
 
 import com.psicomanager.api.domain.schedule.dto.ScheduleRegisterDTO;
+import com.psicomanager.api.domain.schedule.dto.ScheduleRescheduleDTO;
 import com.psicomanager.api.domain.schedule.dto.ScheduleResponseDTO;
 import com.psicomanager.api.core.dto.BaseResponse;
 import com.psicomanager.api.services.ScheduleService;
@@ -71,6 +72,13 @@ public class ScheduleController {
         log.info("PATCH: /schedules/"+id+"/absent");
         scheduleService.markAsAbsent(id);
         return ResponseEntity.ok(new BaseResponse<>(true, "Falta registrada com sucesso!"));
+    }
+
+    @PatchMapping("/{id}/reschedule")
+    public ResponseEntity<BaseResponse<String>> reschedule(@PathVariable String id, @RequestBody @Valid ScheduleRescheduleDTO data){
+        log.info("PATCH: /schedules/"+id+"/reschedule");
+        scheduleService.rescheduleSession(id, data);
+        return ResponseEntity.ok(new BaseResponse<>(true, "Sessão reagendada com sucesso!"));
     }
 
 }

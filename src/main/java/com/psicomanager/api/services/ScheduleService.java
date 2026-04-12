@@ -8,6 +8,8 @@ import com.psicomanager.api.domain.patient.exception.PatientNotFoundException;
 import com.psicomanager.api.domain.schedule.exception.ScheduleAlreadyConcludedException;
 import com.psicomanager.api.domain.schedule.exception.ScheduleAlreadyCancelledException;
 import com.psicomanager.api.domain.schedule.exception.ScheduleAlreadyAbsentException;
+import com.psicomanager.api.domain.schedule.exception.ScheduleAlreadyRescheduledException;
+import com.psicomanager.api.domain.schedule.dto.ScheduleRescheduleDTO;
 import com.psicomanager.api.domain.schedule.exception.ScheduleConflictTimeException;
 import com.psicomanager.api.domain.schedule.exception.ScheduleNotFoundException;
 import com.psicomanager.api.domain.schedule.enums.StageEnum;
@@ -107,6 +109,36 @@ public class ScheduleService {
         schedule.setStage(StageEnum.ABSENT);
         scheduleRepo.save(schedule);
         log.info("Sessão de id " + id + " marcada como falta com sucesso");
+    }
+
+    @Transactional
+    public void rescheduleSession(String id, ScheduleRescheduleDTO dto) {
+        log.info("Buscando sessão de id " + id + " para reagendamento");
+        var schedule = scheduleRepo.findById(id).orElseThrow(ScheduleNotFoundException::new);
+
+        if (schedule.getStage() != StageEnum.OPENED) {
+            throw new ScheduleAlreadyRescheduledException();
+        }
+
+        log.info("Verificando conflito de horário para reagendamento");
+        var conflicts = scheduleRepo.getScheduleBetweenStartEnd(dto.dateStart(), dto.dateStart().plusHours(1));
+        if (!conflicts.isEmpty()) {
+            throw new ScheduleConflictTimeException();
+        }
+
+        Schedule newSchedule = new Schedule();
+        newSchedule.setPatient(schedule.getPatient());
+        newSchedule.setDateStart(dto.dateStart());
+        newSchedule.setDateEnd(dto.dateStart().plusHours(1));
+        newSchedule.setStage(StageEnum.OPENED);
+        newSchedule.setType(schedule.getType());
+        log.info("Salvando nova sessão reagendada para o paciente de id " + schedule.getPatient().getId());
+        scheduleRepo.save(newSchedule);
+
+        schedule.setStage(StageEnum.RESCHEDULED);
+        schedule.setRescheduledTo(newSchedule);
+        scheduleRepo.save(schedule);
+        log.info("Sessão de id " + id + " marcada como reagendada com sucesso");
     }
 
 

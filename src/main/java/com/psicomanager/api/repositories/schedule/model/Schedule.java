@@ -34,4 +34,7 @@ public class Schedule {
     @Enumerated(EnumType.STRING)
     @Column(name = "TYPE", nullable = false)
     private AttendanceTypeEnum type = AttendanceTypeEnum.PRESENTIAL;
+    @OneToOne
+    @JoinColumn(name = "RESCHEDULED_TO", nullable = true, referencedColumnName = "id")
+    private Schedule rescheduledTo;
 }
