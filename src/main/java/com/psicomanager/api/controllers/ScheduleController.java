@@ -51,4 +51,11 @@ public class ScheduleController {
         var schedule = scheduleService.getScheduleById(id);
         return ResponseEntity.ok(new BaseResponse<>(true, schedule));
     }
+
+    @PatchMapping("/{id}/conclude")
+    public ResponseEntity<BaseResponse<String>> conclude(@PathVariable String id){
+        log.info("PATCH: /schedules/"+id+"/conclude");
+        scheduleService.concludeSession(id);
+        return ResponseEntity.ok(new BaseResponse<>(true, "Sessão concluída com sucesso!"));
+    }
 }

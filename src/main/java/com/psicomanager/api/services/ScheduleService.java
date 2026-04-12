@@ -5,8 +5,10 @@ import com.psicomanager.api.repositories.schedule.model.Schedule;
 import com.psicomanager.api.domain.schedule.dto.ScheduleRegisterDTO;
 import com.psicomanager.api.domain.schedule.dto.ScheduleResponseDTO;
 import com.psicomanager.api.domain.patient.exception.PatientNotFoundException;
+import com.psicomanager.api.domain.schedule.exception.ScheduleAlreadyConcludedException;
 import com.psicomanager.api.domain.schedule.exception.ScheduleConflictTimeException;
 import com.psicomanager.api.domain.schedule.exception.ScheduleNotFoundException;
+import com.psicomanager.api.domain.schedule.enums.StageEnum;
 import com.psicomanager.api.repositories.PatientRepository;
 import com.psicomanager.api.repositories.ScheduleRepository;
 import jakarta.transaction.Transactional;
@@ -60,5 +62,20 @@ public class ScheduleService {
         var schedule = scheduleRepo.findById(id).orElseThrow(() -> new ScheduleNotFoundException("Agendamento com id enviado não possuí registro"));
         log.info("Retornando consulta");
         return ScheduleMapper.toDto(schedule);
+    }
+
+    @Transactional
+    public void concludeSession(String id) {
+        log.info("Buscando sessão de id " + id + " para conclusão");
+        var schedule = scheduleRepo.findById(id).orElseThrow(() -> new ScheduleNotFoundException("Agendamento com id enviado não possuí registro"));
+
+        if (schedule.getStage() != StageEnum.OPENED) {
+            throw new ScheduleAlreadyConcludedException("Apenas sessões abertas podem ser concluídas");
+        }
+
+        schedule.setStage(StageEnum.CONCLUDED);
+        schedule.setDateEnd(java.time.LocalDateTime.now());
+        scheduleRepo.save(schedule);
+        log.info("Sessão de id " + id + " concluída com sucesso");
     }
 }
