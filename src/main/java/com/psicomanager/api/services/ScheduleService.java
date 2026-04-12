@@ -6,6 +6,7 @@ import com.psicomanager.api.domain.schedule.dto.ScheduleRegisterDTO;
 import com.psicomanager.api.domain.schedule.dto.ScheduleResponseDTO;
 import com.psicomanager.api.domain.patient.exception.PatientNotFoundException;
 import com.psicomanager.api.domain.schedule.exception.ScheduleAlreadyConcludedException;
+import com.psicomanager.api.domain.schedule.exception.ScheduleAlreadyCancelledException;
 import com.psicomanager.api.domain.schedule.exception.ScheduleConflictTimeException;
 import com.psicomanager.api.domain.schedule.exception.ScheduleNotFoundException;
 import com.psicomanager.api.domain.schedule.enums.StageEnum;
@@ -77,6 +78,20 @@ public class ScheduleService {
         schedule.setDateEnd(java.time.LocalDateTime.now());
         scheduleRepo.save(schedule);
         log.info("Sessão de id " + id + " concluída com sucesso");
+    }
+
+    @Transactional
+    public void cancelSession(String id) {
+        log.info("Buscando sessão de id " + id + " para cancelamento");
+        var schedule = scheduleRepo.findById(id).orElseThrow(ScheduleNotFoundException::new);
+
+        if (schedule.getStage() != StageEnum.OPENED) {
+            throw new ScheduleAlreadyCancelledException();
+        }
+
+        schedule.setStage(StageEnum.CANCELLED);
+        scheduleRepo.save(schedule);
+        log.info("Sessão de id " + id + " cancelada com sucesso");
     }
 
 

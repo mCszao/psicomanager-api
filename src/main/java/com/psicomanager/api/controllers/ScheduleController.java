@@ -59,4 +59,11 @@ public class ScheduleController {
         return ResponseEntity.ok(new BaseResponse<>(true, "Sessão concluída com sucesso!"));
     }
 
+    @PatchMapping("/{id}/cancel")
+    public ResponseEntity<BaseResponse<String>> cancel(@PathVariable String id){
+        log.info("PATCH: /schedules/"+id+"/cancel");
+        scheduleService.cancelSession(id);
+        return ResponseEntity.ok(new BaseResponse<>(true, "Sessão cancelada com sucesso!"));
+    }
+
 }
