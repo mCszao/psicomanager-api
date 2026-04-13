@@ -129,7 +129,7 @@ public class ScheduleService {
         Schedule newSchedule = new Schedule();
         newSchedule.setPatient(schedule.getPatient());
         newSchedule.setDateStart(dto.dateStart());
-        newSchedule.setDateEnd(dto.dateStart().plusHours(1));
+        newSchedule.setDateEnd(dto.dateEnd() != null ? dto.dateEnd() : dto.dateStart().plusHours(1));
         newSchedule.setStage(StageEnum.OPENED);
         newSchedule.setType(schedule.getType());
         log.info("Salvando nova sessão reagendada para o paciente de id " + schedule.getPatient().getId());
