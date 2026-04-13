@@ -16,6 +16,7 @@ public record ScheduleResponseDTO(
         String annotations,
         StageEnum stage,
         AttendanceTypeEnum type,
-        PatientResumeResponseDTO patient
+        PatientResumeResponseDTO patient,
+        ScheduleRescheduledToDTO rescheduledTo
 ) {
 }
