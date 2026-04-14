@@ -2,6 +2,7 @@ package com.psicomanager.api.services;
 
 import com.psicomanager.api.domain.schedule.mapper.ScheduleMapper;
 import com.psicomanager.api.repositories.schedule.model.Schedule;
+import com.psicomanager.api.domain.schedule.dto.ScheduleAnnotationsDTO;
 import com.psicomanager.api.domain.schedule.dto.ScheduleRegisterDTO;
 import com.psicomanager.api.domain.schedule.dto.ScheduleResponseDTO;
 import com.psicomanager.api.domain.patient.exception.PatientNotFoundException;
@@ -121,6 +122,22 @@ public class ScheduleService {
         schedule.setStage(StageEnum.ABSENT);
         scheduleRepo.save(schedule);
         log.info("Sessão de id " + id + " marcada como falta com sucesso");
+    }
+
+    /**
+     * Salva ou atualiza as anotações de uma sessão.
+     * Não há restrição de stage — anotações podem ser editadas em qualquer estado.
+     *
+     * @param id  Identificador da sessão
+     * @param dto Payload com o texto das anotações
+     */
+    @Transactional
+    public void saveAnnotations(String id, ScheduleAnnotationsDTO dto) {
+        log.info("Buscando sessão de id " + id + " para salvar anotações");
+        var schedule = scheduleRepo.findById(id).orElseThrow(ScheduleNotFoundException::new);
+        schedule.setAnnotations(dto.annotations());
+        scheduleRepo.save(schedule);
+        log.info("Anotações da sessão de id " + id + " salvas com sucesso");
     }
 
     @Transactional
