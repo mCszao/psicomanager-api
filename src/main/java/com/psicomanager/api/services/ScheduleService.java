@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -34,19 +35,30 @@ public class ScheduleService {
     @Autowired
     private ScheduleMapper mapper;
 
+
+    private LocalDateTime resolveEnd(LocalDateTime start, LocalDateTime end) {
+        return end != null ? end : start.plusHours(1);
+    }
+
+    private void assertNoConflict(LocalDateTime start, LocalDateTime effectiveEnd, String excludeId) {
+        var conflicts = scheduleRepo.findConflictingSchedules(start, effectiveEnd, excludeId);
+        if (!conflicts.isEmpty()) {
+            throw new ScheduleConflictTimeException();
+        }
+    }
+
+
     @Transactional
     public void createSchedule(ScheduleRegisterDTO dto) {
-        log.info("Verificando se nova consulta possúi conflito de horário com alguma existente");
-        var schedules = scheduleRepo.getScheduleBetweenStartEnd(dto.dateStart(), dto.dateStart().plusHours(1));
-        if (schedules.isEmpty()) {
-            log.info("Buscando informações do paciente de id"+ dto.patientId());
-            var patient = patientRepo.findById(dto.patientId()).orElseThrow(PatientNotFoundException::new);
-            Schedule formedSchedule = mapper.dtoToEntity(dto, patient);
-            log.info("Salvando nova consulta do paciente de id "+ dto.patientId());
-            scheduleRepo.save(formedSchedule);
-            return;
-        }
-        throw new ScheduleConflictTimeException();
+        log.info("Verificando conflito de horário para nova consulta");
+        assertNoConflict(dto.dateStart(), resolveEnd(dto.dateStart(), dto.dateEnd()), null);
+
+        log.info("Buscando informações do paciente de id " + dto.patientId());
+        var patient = patientRepo.findById(dto.patientId()).orElseThrow(PatientNotFoundException::new);
+
+        Schedule formedSchedule = mapper.dtoToEntity(dto, patient);
+        log.info("Salvando nova consulta do paciente de id " + dto.patientId());
+        scheduleRepo.save(formedSchedule);
     }
 
     public List<ScheduleResponseDTO> getAllSchedules() {
@@ -54,15 +66,15 @@ public class ScheduleService {
         return scheduleRepo.findAll().stream().map(ScheduleMapper::toDto).toList();
     }
 
-    public List<ScheduleResponseDTO> getAllByPatientId(String patientId){
-        log.info("Verificando informações do paciente de id "+ patientId);
+    public List<ScheduleResponseDTO> getAllByPatientId(String patientId) {
+        log.info("Verificando informações do paciente de id " + patientId);
         patientRepo.findById(patientId).orElseThrow(PatientNotFoundException::new);
-        log.info("Retornando consultas do paciente de id "+ patientId);
+        log.info("Retornando consultas do paciente de id " + patientId);
         return scheduleRepo.findByPatientId(patientId).stream().map(ScheduleMapper::toDto).toList();
     }
 
-    public ScheduleResponseDTO getScheduleById(String id){
-        log.info("Buscando informações da consulta de id"+ id);
+    public ScheduleResponseDTO getScheduleById(String id) {
+        log.info("Buscando informações da consulta de id " + id);
         var schedule = scheduleRepo.findById(id).orElseThrow(ScheduleNotFoundException::new);
         log.info("Retornando consulta");
         return ScheduleMapper.toDto(schedule);
@@ -78,7 +90,7 @@ public class ScheduleService {
         }
 
         schedule.setStage(StageEnum.CONCLUDED);
-        schedule.setDateEnd(java.time.LocalDateTime.now());
+        schedule.setDateEnd(LocalDateTime.now());
         scheduleRepo.save(schedule);
         log.info("Sessão de id " + id + " concluída com sucesso");
     }
@@ -120,11 +132,9 @@ public class ScheduleService {
             throw new ScheduleAlreadyRescheduledException();
         }
 
+        LocalDateTime newEnd = resolveEnd(dto.dateStart(), dto.dateEnd());
         log.info("Verificando conflito de horário para reagendamento");
-        var conflicts = scheduleRepo.getScheduleBetweenStartEnd(dto.dateStart(), dto.dateStart().plusHours(1));
-        if (!conflicts.isEmpty()) {
-            throw new ScheduleConflictTimeException();
-        }
+        assertNoConflict(dto.dateStart(), newEnd, id);
 
         Schedule newSchedule = new Schedule();
         newSchedule.setPatient(schedule.getPatient());
@@ -140,6 +150,4 @@ public class ScheduleService {
         scheduleRepo.save(schedule);
         log.info("Sessão de id " + id + " marcada como reagendada com sucesso");
     }
-
-
 }
