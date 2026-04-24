@@ -1,14 +1,14 @@
 package com.psicomanager.api.infra.config;
 
+import com.psicomanager.api.auth.exception.InvalidRefreshTokenException;
 import com.psicomanager.api.core.dto.BaseResponse;
-import com.psicomanager.api.domain.auth.exception.InvalidRefreshTokenException;
-import com.psicomanager.api.domain.document.exception.ContractWithoutArgsException;
 import com.psicomanager.api.core.exception.DuplicateEntryException;
-import com.psicomanager.api.domain.document.exception.DocumentNotFoundException;
-import com.psicomanager.api.domain.patient.exception.PatientNotFoundException;
-import com.psicomanager.api.domain.schedule.exception.ScheduleConflictTimeException;
-import com.psicomanager.api.domain.schedule.exception.ScheduleNotFoundException;
-import com.psicomanager.api.domain.user.exception.UserNotFoundException;
+import com.psicomanager.api.document.exception.ContractWithoutArgsException;
+import com.psicomanager.api.document.exception.DocumentNotFoundException;
+import com.psicomanager.api.patient.exception.PatientNotFoundException;
+import com.psicomanager.api.schedule.exception.ScheduleConflictTimeException;
+import com.psicomanager.api.schedule.exception.ScheduleNotFoundException;
+import com.psicomanager.api.user.exception.UserNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;

@@ -1,6 +1,6 @@
 package com.psicomanager.api.infra.security;
 
-import com.psicomanager.api.services.MyUserDetailsService;
+import com.psicomanager.api.user.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
