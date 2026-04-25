@@ -89,6 +89,19 @@ public class ControllerExceptionHandler {
         return ResponseEntity.badRequest().body(new BaseResponse<>(false, "Dados duplicados"));
     }
 
+    @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
+    private ResponseEntity<BaseResponse<String>> httpMessageNotReadableHandler(
+            org.springframework.http.converter.HttpMessageNotReadableException ex) {
+        log.error("Erro ao desserializar o corpo da requisição: " + ex.getMessage());
+        String message = "Formato de dado inválido. Verifique os campos enviados.";
+        Throwable cause = ex.getCause();
+        if (cause instanceof com.fasterxml.jackson.databind.exc.InvalidFormatException ife) {
+            String fieldName = ife.getPath().isEmpty() ? "campo" : ife.getPath().get(0).getFieldName();
+            message = "Valor inválido para o campo '" + fieldName + "'. Verifique o formato enviado.";
+        }
+        return ResponseEntity.badRequest().body(new BaseResponse<>(false, message));
+    }
+
     @ExceptionHandler(PlanNotFoundException.class)
     private ResponseEntity<BaseResponse<String>> planNotFoundHandler(PlanNotFoundException ex) {
         log.error("Plano informado não foi encontrado");

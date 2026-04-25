@@ -13,10 +13,15 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Expõe os endpoints de gerenciamento de templates e planos de atendimento.
+ */
 @RestController
 @RequestMapping("/plans")
 @Slf4j
 public class PlanController {
+
+    // region Dependências
 
     @Autowired
     private PlanService planService;
@@ -24,11 +29,12 @@ public class PlanController {
     @Autowired
     private PlanTemplateService planTemplateService;
 
-    // ── Templates ────────────────────────────────────────────────
+    // endregion
+
+    // region Templates
 
     @PostMapping("/templates")
-    public ResponseEntity<BaseResponse<String>> createTemplate(
-            @RequestBody @Valid PlanTemplateRegisterDTO body) {
+    public ResponseEntity<BaseResponse<String>> createTemplate(@RequestBody @Valid PlanTemplateRegisterDTO body) {
         log.info("POST: /plans/templates");
         planTemplateService.create(body);
         return ResponseEntity.ok(new BaseResponse<>(true, "Template criado com sucesso!"));
@@ -53,19 +59,19 @@ public class PlanController {
         return ResponseEntity.ok(new BaseResponse<>(true, "Template removido com sucesso!"));
     }
 
-    // ── Plans ─────────────────────────────────────────────────────
+    // endregion
+
+    // region Planos
 
     @PostMapping
-    public ResponseEntity<BaseResponse<String>> createPlan(
-            @RequestBody @Valid PlanRegisterDTO body) {
+    public ResponseEntity<BaseResponse<String>> createPlan(@RequestBody @Valid PlanRegisterDTO body) {
         log.info("POST: /plans");
         planService.createPlan(body);
         return ResponseEntity.ok(new BaseResponse<>(true, "Plano criado com sucesso!"));
     }
 
     @GetMapping("/patient/{patientId}")
-    public ResponseEntity<BaseResponse<List<PlanResponseDTO>>> listByPatient(
-            @PathVariable String patientId) {
+    public ResponseEntity<BaseResponse<List<PlanResponseDTO>>> listByPatient(@PathVariable String patientId) {
         log.info("GET: /plans/patient/" + patientId);
         return ResponseEntity.ok(new BaseResponse<>(true, planService.getAllByPatient(patientId)));
     }
@@ -82,4 +88,6 @@ public class PlanController {
         planService.deactivatePlan(id);
         return ResponseEntity.ok(new BaseResponse<>(true, "Plano desativado com sucesso!"));
     }
+
+    // endregion
 }

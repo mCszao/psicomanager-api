@@ -9,6 +9,15 @@ import lombok.*;
 
 import java.math.BigDecimal;
 
+/**
+ * Template reutilizável de plano de atendimento.
+ * <p>
+ * Define um modelo de plano com frequência, preço e quantidade de sessões
+ * que pode ser aplicado a múltiplos pacientes. Ao aplicar um template,
+ * todos os valores são copiados para o {@link com.psicomanager.api.plan.model.Plan}
+ * e podem ser ajustados individualmente.
+ * </p>
+ */
 @Entity(name = "plan_templates")
 @Table(name = "plan_templates")
 @Getter
@@ -18,9 +27,15 @@ import java.math.BigDecimal;
 @EqualsAndHashCode(of = "id")
 public class PlanTemplate {
 
+    // region Identidade
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
+
+    // endregion
+
+    // region Dados do template
 
     @NotBlank
     @Column(name = "TITLE", nullable = false, length = 255)
@@ -40,9 +55,20 @@ public class PlanTemplate {
     @Column(name = "FREQUENCY", nullable = false)
     private FrequencyEnum frequency;
 
+    /**
+     * Calculado automaticamente via {@link #calculateTotalValue()} antes de
+     * qualquer persistência ou atualização.
+     */
     @Column(name = "TOTAL_VALUE", precision = 10, scale = 2)
     private BigDecimal totalValue;
 
+    // endregion
+
+    // region Hooks JPA
+
+    /**
+     * Recalcula o valor total do template antes de qualquer persistência ou atualização.
+     */
     @PrePersist
     @PreUpdate
     public void calculateTotalValue() {
@@ -50,4 +76,6 @@ public class PlanTemplate {
             this.totalValue = pricePerSession.multiply(BigDecimal.valueOf(sessionsCount));
         }
     }
+
+    // endregion
 }
