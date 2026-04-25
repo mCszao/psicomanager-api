@@ -21,5 +21,6 @@ public record PlanResponseDTO(
         LocalDate estimatedEndDate,
         LocalDateTime startedAt,
         LocalDateTime endedAt,
-        Boolean isActive
+        Boolean isActive,
+        Boolean isContinuous
 ) {}

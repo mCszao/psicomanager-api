@@ -1,22 +1,26 @@
 package com.psicomanager.api.schedule.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.psicomanager.api.schedule.enums.AttendanceTypeEnum;
 import com.psicomanager.api.schedule.enums.FrequencyEnum;
 import com.psicomanager.api.schedule.enums.StageEnum;
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * Payload de registro de uma nova sessão de atendimento avulsa.
+ * <p>
+ * Para criação de múltiplas sessões com frequência, utilize o fluxo de planos.
+ * </p>
+ */
 public record ScheduleRegisterDTO(
+
         @NotBlank
         String patientId,
 
         @NotNull
-        @Future
         LocalDateTime dateStart,
 
         LocalDateTime dateEnd,
@@ -25,13 +29,26 @@ public record ScheduleRegisterDTO(
 
         AttendanceTypeEnum type,
 
-        // opcional — vínculo com plano existente
+        /** Vínculo com um plano existente. Opcional. */
         String planId,
 
-        // opcional — frequência para criação em lote sem plano
+        /**
+         * Frequência para criação em lote via fluxo de planos.
+         * Quando informado junto com {@code sessionsCount}, cria múltiplas sessões espaçadas.
+         */
         FrequencyEnum frequency,
 
-        // opcional — quantidade de sessões a gerar em lote (requer frequency)
-        @Min(1)
-        Integer sessionsCount
+        /**
+         * Quantidade de sessões a criar em lote.
+         * Requer {@code frequency}.
+         */
+        Integer sessionsCount,
+
+        /**
+         * Valor cobrado por esta sessão.
+         * Quando vinculada a um plano, é preenchido automaticamente com o
+         * {@code pricePerSession} do plano caso não seja informado.
+         */
+        BigDecimal sessionValue
+
 ) {}

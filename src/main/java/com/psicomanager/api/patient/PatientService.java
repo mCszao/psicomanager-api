@@ -39,6 +39,7 @@ public class PatientService {
         patientRepo.save(patient);
     }
 
+    @Transactional
     public List<PatientResponseDTO> getAllPatientsComplete() {
         log.info("Buscando pacientes");
         return patientRepo.findAll().stream().map(PatientMapper::toDto).toList();
@@ -49,6 +50,7 @@ public class PatientService {
         return patientRepo.findAll().stream().map(PatientMapper::toResumeDto).toList();
     }
 
+    @Transactional
     public PatientResponseDTO getDetailsById(String id) {
         log.info("Buscando informações do paciente de id " + id);
         var patient = patientRepo.findById(id).orElseThrow(PatientNotFoundException::new);

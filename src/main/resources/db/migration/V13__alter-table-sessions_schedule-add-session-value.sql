@@ -1,0 +1,1 @@
+ALTER TABLE `sessions_schedule` ADD COLUMN `SESSION_VALUE` decimal(10,2) DEFAULT NULL;

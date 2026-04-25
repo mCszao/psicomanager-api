@@ -56,7 +56,8 @@ public class PlanMapper {
                 plan.getEstimatedEndDate(),
                 plan.getStartedAt(),
                 plan.getEndedAt(),
-                plan.getIsActive()
+                plan.getIsActive(),
+                plan.getIsContinuous()
         );
     }
 

@@ -3,6 +3,7 @@ package com.psicomanager.api.schedule.mapper;
 import com.psicomanager.api.patient.dto.PatientResumeResponseDTO;
 import com.psicomanager.api.patient.mapper.PatientMapper;
 import com.psicomanager.api.patient.model.Patient;
+import com.psicomanager.api.plan.dto.PlanResumeResponseDTO;
 import com.psicomanager.api.schedule.dto.ScheduleRegisterDTO;
 import com.psicomanager.api.schedule.dto.ScheduleResponseDTO;
 import com.psicomanager.api.schedule.dto.ScheduleRescheduledToDTO;
@@ -42,6 +43,16 @@ public class ScheduleMapper {
                         schedule.getRescheduledTo().getDateEnd())
                 : null;
 
+        PlanResumeResponseDTO planResume = schedule.getPlan() != null
+                ? new PlanResumeResponseDTO(
+                        schedule.getPlan().getId(),
+                        schedule.getPlan().getTitle() != null
+                                ? schedule.getPlan().getTitle()
+                                : schedule.getPlan().getPlanTemplate() != null
+                                        ? schedule.getPlan().getPlanTemplate().getTitle()
+                                        : null)
+                : null;
+
         return new ScheduleResponseDTO(
                 schedule.getId(),
                 schedule.getDateStart(),
@@ -50,7 +61,9 @@ public class ScheduleMapper {
                 schedule.getStage(),
                 schedule.getType(),
                 PatientMapper.toResumeDto(schedule.getPatient()),
-                rescheduledTo
+                rescheduledTo,
+                planResume,
+                schedule.getSessionValue()
         );
     }
 }

@@ -15,11 +15,16 @@ import java.time.LocalDate;
  * {@code sessionsCount} e {@code frequency} são herdados do template e só
  * precisam ser enviados caso o psicólogo queira sobrescrevê-los para este paciente.
  * </p>
- * <p>
- * Quando {@code generateSessions} é {@code true}, o campo {@code sessionStartTime}
- * torna-se obrigatório e as sessões serão geradas automaticamente com base em
- * {@code frequency} e {@code sessionsCount} a partir de {@code adherenceDate}.
- * </p>
+ *
+ * <h3>Regras de negócio validadas no service:</h3>
+ * <ul>
+ *   <li>Plano <b>finito</b> ({@code isContinuous = false}): {@code frequency} e
+ *       {@code sessionsCount} são obrigatórios.</li>
+ *   <li>Plano <b>contínuo</b> ({@code isContinuous = true}): {@code frequency}
+ *       é obrigatória.</li>
+ *   <li>Quando {@code generateSessions = true}: {@code sessionStartTime} é obrigatório
+ *       e {@code frequency} deve estar definida.</li>
+ * </ul>
  */
 public record PlanRegisterDTO(
 
@@ -32,14 +37,24 @@ public record PlanRegisterDTO(
         /** Título do plano. Opcional — sobrescreve o título do template se informado. */
         String title,
 
-        /** Valor por sessão. Opcional — sobrescreve o valor do template se informado. */
+        /**
+         * Valor por sessão. Opcional — pré-preenchido a partir do template quando disponível.
+         * Pode ser sobrescrito para ajustes individuais por paciente.
+         */
         BigDecimal pricePerSession,
 
-        /** Quantidade de sessões. Opcional — sobrescreve o valor do template se informado. */
+        /**
+         * Quantidade de sessões. Obrigatório para planos finitos.
+         * Opcional para contínuos — usado apenas como referência de geração.
+         */
         @Min(1)
         Integer sessionsCount,
 
-        /** Frequência das sessões. Opcional — sobrescreve o valor do template se informado. */
+        /**
+         * Frequência das sessões. Obrigatória para qualquer tipo de plano.
+         * Determina o espaçamento entre sessões geradas e o funcionamento
+         * do botão "Lançar mais sessões".
+         */
         FrequencyEnum frequency,
 
         @NotNull
@@ -53,9 +68,15 @@ public record PlanRegisterDTO(
         LocalDate estimatedEndDate,
 
         /**
+         * Quando {@code true}, o plano é contínuo e não encerra automaticamente.
+         * Padrão: {@code true}.
+         */
+        boolean isContinuous,
+
+        /**
          * Quando {@code true}, gera as sessões automaticamente com base em
-         * {@code frequency} e {@code sessionsCount} a partir de {@code adherenceDate}.
-         * Requer que {@code sessionStartTime} seja informado.
+         * {@code frequency} e {@code sessionsCount} (finitos) ou ~3 meses (contínuos)
+         * a partir de {@code adherenceDate}. Requer {@code sessionStartTime}.
          */
         boolean generateSessions,
 

@@ -7,6 +7,7 @@ import com.psicomanager.api.schedule.enums.StageEnum;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity(name = "sessions_schedule")
@@ -50,4 +51,12 @@ public class Schedule {
     @OneToOne
     @JoinColumn(name = "RESCHEDULED_TO", nullable = true, referencedColumnName = "id")
     private Schedule rescheduledTo;
+
+    /**
+     * Valor cobrado por esta sessão.
+     * Quando a sessão pertence a um plano, pode ser preenchido automaticamente
+     * com o {@code pricePerSession} do plano.
+     */
+    @Column(name = "SESSION_VALUE", precision = 10, scale = 2)
+    private BigDecimal sessionValue;
 }

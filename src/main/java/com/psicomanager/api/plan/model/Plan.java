@@ -115,6 +115,17 @@ public class Plan {
     @Column(name = "IS_ACTIVE", nullable = false)
     private Boolean isActive = true;
 
+    /**
+     * Indica se o plano é de acompanhamento contínuo, sem fim definido.
+     * <p>
+     * Quando {@code true}, o plano não encerra automaticamente ao concluir sessões
+     * e o campo {@code sessionsCount} é usado apenas como referência de geração,
+     * não como critério de encerramento.
+     * </p>
+     */
+    @Column(name = "IS_CONTINUOUS", nullable = false)
+    private Boolean isContinuous = true;
+
     // endregion
 
     // region Hooks JPA
