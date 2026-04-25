@@ -5,6 +5,7 @@ import com.psicomanager.api.patient.exception.PatientNotFoundException;
 import com.psicomanager.api.plan.PlanRepository;
 import com.psicomanager.api.plan.PlanService;
 import com.psicomanager.api.plan.exception.PlanNotFoundException;
+import com.psicomanager.api.plan.validation.PlanValidator;
 import com.psicomanager.api.schedule.dto.ScheduleAnnotationsDTO;
 import com.psicomanager.api.schedule.dto.ScheduleRegisterDTO;
 import com.psicomanager.api.schedule.dto.ScheduleRescheduleDTO;
@@ -13,6 +14,7 @@ import com.psicomanager.api.schedule.enums.AttendanceTypeEnum;
 import com.psicomanager.api.schedule.enums.FrequencyEnum;
 import com.psicomanager.api.schedule.enums.StageEnum;
 import com.psicomanager.api.schedule.exception.*;
+import com.psicomanager.api.schedule.validation.ScheduleValidator;
 import com.psicomanager.api.schedule.mapper.ScheduleMapper;
 import com.psicomanager.api.schedule.model.Schedule;
 import jakarta.transaction.Transactional;
@@ -22,7 +24,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -106,21 +107,22 @@ public class ScheduleService {
     // region Criação
 
     /**
-     * Cria uma ou mais sessões de atendimento.
+     * Cria uma sessão de atendimento única.
      * <p>
-     * Quando {@code frequency} e {@code sessionsCount} são informados e
-     * {@code sessionsCount > 1}, cria um lote de sessões espaçadas pela frequência.
-     * Cada sessão é verificada individualmente contra conflitos de horário.
-     * Caso contrário, cria uma sessão única.
+     * Quando vinculada a um plano e {@code sessionValue} não for informado,
+     * o valor é preenchido automaticamente com o {@code pricePerSession} do plano.
      * </p>
      *
      * @param dto payload de criação
      * @throws PatientNotFoundException      se o paciente não for encontrado
      * @throws PlanNotFoundException         se o plano informado não for encontrado
-     * @throws ScheduleConflictTimeException se qualquer sessão conflitar com outra já existente
+     * @throws ScheduleConflictTimeException se a sessão conflitar com outra já existente
      */
     @Transactional
     public void createSchedule(ScheduleRegisterDTO dto) {
+        log.info("Validando regras de negócio da sessão");
+        ScheduleValidator.validateRegister(dto);
+
         log.info("Buscando informações do paciente de id " + dto.patientId());
         var patient = patientRepo.findById(dto.patientId()).orElseThrow(PatientNotFoundException::new);
 
@@ -128,38 +130,48 @@ public class ScheduleService {
                 ? planRepo.findById(dto.planId()).orElseThrow(PlanNotFoundException::new)
                 : null;
 
+        if (plan != null) {
+            PlanValidator.validatePlanIsActive(plan);
+        }
+
+        // Criação em lote — usada pelo botão "Lançar mais sessões" dos planos
         if (dto.frequency() != null && dto.sessionsCount() != null && dto.sessionsCount() > 1) {
             log.info("Criando " + dto.sessionsCount() + " sessões em lote com frequência " + dto.frequency());
-            List<Schedule> sessions = new ArrayList<>();
+            var sessions = new java.util.ArrayList<Schedule>();
             LocalDateTime current = dto.dateStart();
-
             for (int i = 0; i < dto.sessionsCount(); i++) {
                 LocalDateTime end = resolveEnd(current, i == 0 ? dto.dateEnd() : null);
                 assertNoConflict(current, end, null);
-
                 Schedule session = new Schedule();
                 session.setPatient(patient);
                 session.setPlan(plan);
                 session.setDateStart(current);
                 session.setDateEnd(end);
-                session.setStage(dto.stage() != null ? dto.stage() : StageEnum.OPENED);
+                session.setStage(StageEnum.OPENED);
                 session.setType(dto.type() != null ? dto.type() : AttendanceTypeEnum.PRESENTIAL);
+                if (plan != null && plan.getPricePerSession() != null) {
+                    session.setSessionValue(plan.getPricePerSession());
+                }
                 sessions.add(session);
-
                 current = nextSessionDate(current, dto.frequency());
             }
-
             scheduleRepo.saveAll(sessions);
             log.info(sessions.size() + " sessões criadas com sucesso");
             return;
         }
 
+        // Criação simples — sessão única
         log.info("Verificando conflito de horário para nova consulta");
         assertNoConflict(dto.dateStart(), resolveEnd(dto.dateStart(), dto.dateEnd()), null);
-        Schedule formedSchedule = mapper.dtoToEntity(dto, patient);
-        formedSchedule.setPlan(plan);
+        Schedule schedule = mapper.dtoToEntity(dto, patient);
+        schedule.setPlan(plan);
+        if (dto.sessionValue() != null) {
+            schedule.setSessionValue(dto.sessionValue());
+        } else if (plan != null && plan.getPricePerSession() != null) {
+            schedule.setSessionValue(plan.getPricePerSession());
+        }
         log.info("Salvando nova consulta do paciente de id " + dto.patientId());
-        scheduleRepo.save(formedSchedule);
+        scheduleRepo.save(schedule);
     }
 
     // endregion
@@ -298,6 +310,9 @@ public class ScheduleService {
      */
     @Transactional
     public void rescheduleSession(String id, ScheduleRescheduleDTO dto) {
+        log.info("Validando regras de negócio do reagendamento");
+        ScheduleValidator.validateReschedule(dto);
+
         log.info("Buscando sessão de id " + id + " para reagendamento");
         var schedule = scheduleRepo.findById(id).orElseThrow(ScheduleNotFoundException::new);
         if (schedule.getStage() != StageEnum.OPENED) throw new ScheduleAlreadyRescheduledException();

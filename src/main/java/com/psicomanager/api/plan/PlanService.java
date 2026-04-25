@@ -7,6 +7,7 @@ import com.psicomanager.api.plan.dto.PlanResponseDTO;
 import com.psicomanager.api.plan.exception.InvalidPlanConfigException;
 import com.psicomanager.api.plan.exception.PlanNotFoundException;
 import com.psicomanager.api.plan.exception.PlanTemplateNotFoundException;
+import com.psicomanager.api.plan.validation.PlanValidator;
 import com.psicomanager.api.plan.mapper.PlanMapper;
 import com.psicomanager.api.plan.model.Plan;
 import com.psicomanager.api.plan.template.model.PlanTemplate;
@@ -130,6 +131,9 @@ public class PlanService {
      */
     @Transactional
     public void createPlan(PlanRegisterDTO dto) {
+        log.info("Validando regras de negócio do plano");
+        PlanValidator.validateRegister(dto);
+
         log.info("Buscando paciente de id " + dto.patientId());
         var patient = patientRepo.findById(dto.patientId()).orElseThrow(PatientNotFoundException::new);
 
@@ -137,6 +141,7 @@ public class PlanService {
         plan.setPatient(patient);
         plan.setAdherenceDate(dto.adherenceDate());
         plan.setIsActive(true);
+        plan.setIsContinuous(dto.isContinuous());
 
         applyTemplateOrDirectValues(plan, dto);
         applyEstimatedEndDate(plan, dto);
@@ -203,20 +208,21 @@ public class PlanService {
      * @throws ScheduleConflictTimeException se qualquer sessão conflitar com outra já existente
      */
     private void generateSessions(Plan plan, PlanRegisterDTO dto) {
-        if (plan.getFrequency() == null || plan.getSessionsCount() == null) {
+        // Validações já garantidas pelo PlanValidator.validateRegister
+        int count = Boolean.TRUE.equals(plan.getIsContinuous())
+                ? resolveCountForContinuous(plan.getFrequency())
+                : (plan.getSessionsCount() != null ? plan.getSessionsCount() : 0);
+
+        if (count <= 0) {
             throw new InvalidPlanConfigException(
-                    "Para gerar sessões automaticamente é necessário informar frequência e quantidade de sessões");
-        }
-        if (dto.sessionStartTime() == null || dto.sessionStartTime().isBlank()) {
-            throw new InvalidPlanConfigException(
-                    "Para gerar sessões automaticamente é necessário informar o horário de início (sessionStartTime)");
+                    "Não foi possível determinar a quantidade de sessões a gerar");
         }
 
         LocalTime startTime = LocalTime.parse(dto.sessionStartTime());
         LocalDateTime current = dto.adherenceDate().atTime(startTime);
         List<Schedule> sessions = new ArrayList<>();
 
-        for (int i = 0; i < plan.getSessionsCount(); i++) {
+        for (int i = 0; i < count; i++) {
             LocalDateTime end = current.plusHours(1);
             assertNoConflict(current, end, null);
 
@@ -227,6 +233,9 @@ public class PlanService {
             session.setDateEnd(end);
             session.setStage(StageEnum.OPENED);
             session.setType(AttendanceTypeEnum.PRESENTIAL);
+            if (plan.getPricePerSession() != null) {
+                session.setSessionValue(plan.getPricePerSession());
+            }
             sessions.add(session);
 
             current = nextSessionDate(current, plan.getFrequency());
@@ -234,6 +243,21 @@ public class PlanService {
 
         scheduleRepo.saveAll(sessions);
         log.info(sessions.size() + " sessões geradas automaticamente para o plano " + plan.getId());
+    }
+
+    /**
+     * Calcula quantas sessões gerar para um plano contínuo cobrindo aproximadamente 3 meses.
+     *
+     * @param frequency frequência das sessões
+     * @return quantidade de sessões para ~3 meses
+     */
+    private int resolveCountForContinuous(FrequencyEnum frequency) {
+        return switch (frequency) {
+            case DAILY    -> 90;
+            case WEEKLY   -> 13;
+            case BIWEEKLY -> 7;
+            case MONTHLY  -> 3;
+        };
     }
 
     // endregion
@@ -301,7 +325,8 @@ public class PlanService {
             plan.setStartedAt(LocalDateTime.now());
             planRepo.save(plan);
         }
-        if (isLastSession) {
+        // Planos contínuos não encerram automaticamente
+        if (isLastSession && !Boolean.TRUE.equals(plan.getIsContinuous())) {
             plan.setEndedAt(LocalDateTime.now());
             plan.setIsActive(false);
             planRepo.save(plan);

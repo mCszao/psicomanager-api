@@ -1,6 +1,7 @@
 package com.psicomanager.api.infra.config;
 
 import com.psicomanager.api.auth.exception.InvalidRefreshTokenException;
+import com.psicomanager.api.core.exception.BusinessRuleException;
 import com.psicomanager.api.plan.exception.InvalidPlanConfigException;
 import com.psicomanager.api.plan.exception.PlanNotFoundException;
 import com.psicomanager.api.plan.exception.PlanTemplateNotFoundException;
@@ -26,6 +27,12 @@ import java.util.Map;
 @ControllerAdvice
 @Slf4j
 public class ControllerExceptionHandler {
+
+    @ExceptionHandler(BusinessRuleException.class)
+    private ResponseEntity<BaseResponse<String>> businessRuleHandler(BusinessRuleException ex) {
+        log.error("Violação de regra de negócio: " + ex.getMessage());
+        return ResponseEntity.badRequest().body(new BaseResponse<>(false, ex.getMessage()));
+    }
 
     @ExceptionHandler(InvalidRefreshTokenException.class)
     private ResponseEntity<BaseResponse<String>> invalidRefreshTokenHandler(InvalidRefreshTokenException ex) {
