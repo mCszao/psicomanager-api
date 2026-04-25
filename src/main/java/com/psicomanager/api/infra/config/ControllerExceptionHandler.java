@@ -1,5 +1,6 @@
 package com.psicomanager.api.infra.config;
 
+import com.psicomanager.api.alert.exception.AlertNotFoundException;
 import com.psicomanager.api.auth.exception.InvalidRefreshTokenException;
 import com.psicomanager.api.core.exception.BusinessRuleException;
 import com.psicomanager.api.plan.exception.InvalidPlanConfigException;
@@ -27,6 +28,12 @@ import java.util.Map;
 @ControllerAdvice
 @Slf4j
 public class ControllerExceptionHandler {
+
+    @ExceptionHandler(AlertNotFoundException.class)
+    private ResponseEntity<BaseResponse<String>> alertNotFoundHandler(AlertNotFoundException ex) {
+        log.error("Aviso informado não foi encontrado");
+        return ResponseEntity.status(404).body(new BaseResponse<>(false, ex.getMessage()));
+    }
 
     @ExceptionHandler(BusinessRuleException.class)
     private ResponseEntity<BaseResponse<String>> businessRuleHandler(BusinessRuleException ex) {

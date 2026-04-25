@@ -2,6 +2,7 @@ package com.psicomanager.api.schedule;
 
 import com.psicomanager.api.patient.PatientRepository;
 import com.psicomanager.api.patient.exception.PatientNotFoundException;
+import com.psicomanager.api.alert.AlertService;
 import com.psicomanager.api.plan.PlanRepository;
 import com.psicomanager.api.plan.PlanService;
 import com.psicomanager.api.plan.exception.PlanNotFoundException;
@@ -52,6 +53,9 @@ public class ScheduleService {
     @Autowired
     @Lazy
     private PlanService planService;
+
+    @Autowired
+    private AlertService alertService;
 
     @Autowired
     private ScheduleMapper mapper;
@@ -240,6 +244,9 @@ public class ScheduleService {
             long totalCount = scheduleRepo.countByPlanId(plan.getId());
             planService.onSessionConcluded(plan, concludedCount == 1, concludedCount == totalCount);
         }
+
+        log.info("Desativando avisos de sessão vinculados à sessão de id " + id);
+        alertService.deactivateBySession(id);
 
         log.info("Sessão de id " + id + " concluída com sucesso");
     }
