@@ -52,6 +52,7 @@ public class PlanMapper {
                 plan.getSessionsCount(),
                 plan.getFrequency(),
                 plan.getTotalValue(),
+                plan.getAttendanceType(),
                 plan.getAdherenceDate(),
                 plan.getEstimatedEndDate(),
                 plan.getStartedAt(),

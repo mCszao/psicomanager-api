@@ -14,7 +14,8 @@ import com.psicomanager.api.plan.model.Plan;
  */
 public class PlanValidator {
 
-    private PlanValidator() {}
+    private PlanValidator() {
+    }
 
     // region Validação de registro
 
@@ -55,14 +56,18 @@ public class PlanValidator {
     }
 
     /**
-     * Quando {@code generateSessions} é {@code true}, o horário de início é obrigatório
-     * pois é usado para agendar todas as sessões geradas.
+     * Quando {@code generateSessions} é {@code true}, o horário de início e o tipo
+     * de atendimento são obrigatórios para que as sessões possam ser criadas corretamente.
      */
     private static void validateSessionGeneration(PlanRegisterDTO dto) {
         if (dto.generateSessions()) {
             if (dto.sessionStartTime() == null || dto.sessionStartTime().isBlank()) {
                 throw new BusinessRuleException(
                         "Para gerar sessões automaticamente é necessário informar o horário de início.");
+            }
+            if (dto.attendanceType() == null) {
+                throw new BusinessRuleException(
+                        "Para gerar sessões automaticamente é necessário informar o tipo de atendimento (presencial ou remoto).");
             }
         }
     }

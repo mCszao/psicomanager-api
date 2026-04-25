@@ -2,6 +2,7 @@ package com.psicomanager.api.plan.dto;
 
 import com.psicomanager.api.patient.dto.PatientResumeResponseDTO;
 import com.psicomanager.api.plan.template.dto.PlanTemplateResponseDTO;
+import com.psicomanager.api.schedule.enums.AttendanceTypeEnum;
 import com.psicomanager.api.schedule.enums.FrequencyEnum;
 
 import java.math.BigDecimal;
@@ -17,6 +18,7 @@ public record PlanResponseDTO(
         Integer sessionsCount,
         FrequencyEnum frequency,
         BigDecimal totalValue,
+        AttendanceTypeEnum attendanceType,
         LocalDate adherenceDate,
         LocalDate estimatedEndDate,
         LocalDateTime startedAt,

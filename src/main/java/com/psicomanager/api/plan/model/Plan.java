@@ -2,6 +2,7 @@ package com.psicomanager.api.plan.model;
 
 import com.psicomanager.api.patient.model.Patient;
 import com.psicomanager.api.plan.template.model.PlanTemplate;
+import com.psicomanager.api.schedule.enums.AttendanceTypeEnum;
 import com.psicomanager.api.schedule.enums.FrequencyEnum;
 import jakarta.persistence.*;
 import lombok.*;
@@ -81,6 +82,15 @@ public class Plan {
      */
     @Column(name = "TOTAL_VALUE", precision = 10, scale = 2)
     private BigDecimal totalValue;
+
+    /**
+     * Tipo de atendimento das sessões geradas a partir deste plano.
+     * Quando presente, é aplicado automaticamente a todas as sessões geradas.
+     * Pode ser {@code null} para planos sem geração automática de sessões.
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "ATTENDANCE_TYPE")
+    private AttendanceTypeEnum attendanceType;
 
     // endregion
 

@@ -7,10 +7,10 @@ import com.psicomanager.api.plan.dto.PlanResponseDTO;
 import com.psicomanager.api.plan.exception.InvalidPlanConfigException;
 import com.psicomanager.api.plan.exception.PlanNotFoundException;
 import com.psicomanager.api.plan.exception.PlanTemplateNotFoundException;
-import com.psicomanager.api.plan.validation.PlanValidator;
 import com.psicomanager.api.plan.mapper.PlanMapper;
 import com.psicomanager.api.plan.model.Plan;
 import com.psicomanager.api.plan.template.model.PlanTemplate;
+import com.psicomanager.api.plan.validation.PlanValidator;
 import com.psicomanager.api.schedule.ScheduleRepository;
 import com.psicomanager.api.schedule.enums.AttendanceTypeEnum;
 import com.psicomanager.api.schedule.enums.FrequencyEnum;
@@ -69,10 +69,10 @@ public class PlanService {
      */
     private LocalDate calculateEstimatedEnd(LocalDate start, FrequencyEnum frequency, int sessionsCount) {
         return switch (frequency) {
-            case DAILY    -> start.plusDays(sessionsCount - 1L);
-            case WEEKLY   -> start.plusWeeks(sessionsCount - 1L);
+            case DAILY -> start.plusDays(sessionsCount - 1L);
+            case WEEKLY -> start.plusWeeks(sessionsCount - 1L);
             case BIWEEKLY -> start.plusWeeks((sessionsCount - 1L) * 2);
-            case MONTHLY  -> start.plusMonths(sessionsCount - 1L);
+            case MONTHLY -> start.plusMonths(sessionsCount - 1L);
         };
     }
 
@@ -85,10 +85,10 @@ public class PlanService {
      */
     private LocalDateTime nextSessionDate(LocalDateTime current, FrequencyEnum frequency) {
         return switch (frequency) {
-            case DAILY    -> current.plusDays(1);
-            case WEEKLY   -> current.plusWeeks(1);
+            case DAILY -> current.plusDays(1);
+            case WEEKLY -> current.plusWeeks(1);
             case BIWEEKLY -> current.plusWeeks(2);
-            case MONTHLY  -> current.plusMonths(1);
+            case MONTHLY -> current.plusMonths(1);
         };
     }
 
@@ -117,16 +117,18 @@ public class PlanService {
      * <p>
      * Quando {@code planTemplateId} é fornecido, os campos não informados no
      * payload são herdados do template. Quando {@code generateSessions} é
-     * {@code true}, as sessões são geradas automaticamente, cada uma verificada
+     * {@code true}, as sessões são geradas automaticamente com o tipo de
+     * atendimento definido em {@code attendanceType}, cada uma verificada
      * individualmente quanto a conflitos de horário antes de ser persistida.
      * </p>
      *
      * @param dto payload de criação do plano
-     * @throws PatientNotFoundException     se o paciente não for encontrado
+     * @throws PatientNotFoundException      se o paciente não for encontrado
      * @throws PlanTemplateNotFoundException se o template informado não for encontrado
-     * @throws InvalidPlanConfigException   se {@code generateSessions} for {@code true}
-     *                                       mas {@code frequency}, {@code sessionsCount}
-     *                                       ou {@code sessionStartTime} não forem informados
+     * @throws InvalidPlanConfigException    se {@code generateSessions} for {@code true}
+     *                                       mas {@code frequency}, {@code sessionsCount},
+     *                                       {@code sessionStartTime} ou {@code attendanceType}
+     *                                       não forem informados
      * @throws ScheduleConflictTimeException se alguma sessão gerada conflitar com outra já existente
      */
     @Transactional
@@ -142,6 +144,7 @@ public class PlanService {
         plan.setAdherenceDate(dto.adherenceDate());
         plan.setIsActive(true);
         plan.setIsContinuous(dto.isContinuous());
+        plan.setAttendanceType(dto.attendanceType());
 
         applyTemplateOrDirectValues(plan, dto);
         applyEstimatedEndDate(plan, dto);
@@ -198,13 +201,18 @@ public class PlanService {
 
     /**
      * Gera as sessões automaticamente para o plano recém-criado.
+     * <p>
+     * O tipo de atendimento ({@code PRESENTIAL} ou {@code REMOTE}) é herdado diretamente
+     * do plano, garantindo consistência entre o plano e as sessões geradas.
      * Cada sessão tem seu horário verificado individualmente contra conflitos
      * antes de ser adicionada ao lote de persistência.
+     * </p>
      *
      * @param plan plano já persistido ao qual as sessões serão vinculadas
      * @param dto  payload original com {@code sessionStartTime} e demais configurações
-     * @throws InvalidPlanConfigException    se {@code frequency}, {@code sessionsCount}
-     *                                        ou {@code sessionStartTime} não estiverem disponíveis
+     * @throws InvalidPlanConfigException    se {@code frequency}, {@code sessionsCount},
+     *                                       {@code sessionStartTime} ou {@code attendanceType}
+     *                                       não estiverem disponíveis
      * @throws ScheduleConflictTimeException se qualquer sessão conflitar com outra já existente
      */
     private void generateSessions(Plan plan, PlanRegisterDTO dto) {
@@ -218,6 +226,7 @@ public class PlanService {
                     "Não foi possível determinar a quantidade de sessões a gerar");
         }
 
+        AttendanceTypeEnum type = plan.getAttendanceType();
         LocalTime startTime = LocalTime.parse(dto.sessionStartTime());
         LocalDateTime current = dto.adherenceDate().atTime(startTime);
         List<Schedule> sessions = new ArrayList<>();
@@ -232,7 +241,7 @@ public class PlanService {
             session.setDateStart(current);
             session.setDateEnd(end);
             session.setStage(StageEnum.OPENED);
-            session.setType(AttendanceTypeEnum.PRESENTIAL);
+            session.setType(type);
             if (plan.getPricePerSession() != null) {
                 session.setSessionValue(plan.getPricePerSession());
             }
@@ -242,7 +251,7 @@ public class PlanService {
         }
 
         scheduleRepo.saveAll(sessions);
-        log.info(sessions.size() + " sessões geradas automaticamente para o plano " + plan.getId());
+        log.info(sessions.size() + " sessões geradas automaticamente para o plano " + plan.getId() + " com tipo de atendimento " + type);
     }
 
     /**
@@ -253,10 +262,10 @@ public class PlanService {
      */
     private int resolveCountForContinuous(FrequencyEnum frequency) {
         return switch (frequency) {
-            case DAILY    -> 90;
-            case WEEKLY   -> 13;
+            case DAILY -> 90;
+            case WEEKLY -> 13;
             case BIWEEKLY -> 7;
-            case MONTHLY  -> 3;
+            case MONTHLY -> 3;
         };
     }
 

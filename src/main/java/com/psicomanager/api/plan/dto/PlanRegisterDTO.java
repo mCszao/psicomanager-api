@@ -1,5 +1,6 @@
 package com.psicomanager.api.plan.dto;
 
+import com.psicomanager.api.schedule.enums.AttendanceTypeEnum;
 import com.psicomanager.api.schedule.enums.FrequencyEnum;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -22,8 +23,8 @@ import java.time.LocalDate;
  *       {@code sessionsCount} são obrigatórios.</li>
  *   <li>Plano <b>contínuo</b> ({@code isContinuous = true}): {@code frequency}
  *       é obrigatória.</li>
- *   <li>Quando {@code generateSessions = true}: {@code sessionStartTime} é obrigatório
- *       e {@code frequency} deve estar definida.</li>
+ *   <li>Quando {@code generateSessions = true}: {@code sessionStartTime} e
+ *       {@code attendanceType} são obrigatórios e {@code frequency} deve estar definida.</li>
  * </ul>
  */
 public record PlanRegisterDTO(
@@ -76,7 +77,7 @@ public record PlanRegisterDTO(
         /**
          * Quando {@code true}, gera as sessões automaticamente com base em
          * {@code frequency} e {@code sessionsCount} (finitos) ou ~3 meses (contínuos)
-         * a partir de {@code adherenceDate}. Requer {@code sessionStartTime}.
+         * a partir de {@code adherenceDate}. Requer {@code sessionStartTime} e {@code attendanceType}.
          */
         boolean generateSessions,
 
@@ -84,6 +85,13 @@ public record PlanRegisterDTO(
          * Horário de início de cada sessão gerada (formato {@code HH:mm}).
          * Obrigatório quando {@code generateSessions} é {@code true}.
          */
-        String sessionStartTime
+        String sessionStartTime,
+
+        /**
+         * Tipo de atendimento das sessões geradas (presencial ou remoto).
+         * Obrigatório quando {@code generateSessions} é {@code true}.
+         * Também é armazenado no plano para reverberar em futuras sessões lançadas.
+         */
+        AttendanceTypeEnum attendanceType
 
 ) {}
