@@ -1,0 +1,9 @@
+CREATE TABLE `plan_templates` (
+  `ID` varchar(255) NOT NULL,
+  `TITLE` varchar(255) NOT NULL,
+  `PRICE_PER_SESSION` decimal(10,2) NOT NULL,
+  `SESSIONS_COUNT` int NOT NULL,
+  `FREQUENCY` enum('DAILY','WEEKLY','BIWEEKLY','MONTHLY') NOT NULL,
+  `TOTAL_VALUE` decimal(10,2) DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+);

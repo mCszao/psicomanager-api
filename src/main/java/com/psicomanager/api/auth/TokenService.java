@@ -39,7 +39,7 @@ public class TokenService {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secretKey);
             return JWT.create()
-                    .withIssuer("psicomanager-auth-login")
+                    .withIssuer("agenda-psico-auth-login")
                     .withSubject(user.getUsername())
                     .withExpiresAt(accessTokenExpiration())
                     .sign(algorithm);
@@ -54,7 +54,7 @@ public class TokenService {
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
         try {
             String subject = JWT.require(algorithm)
-                    .withIssuer("psicomanager-auth-login")
+                    .withIssuer("agenda-psico-auth-login")
                     .build()
                     .verify(token)
                     .getSubject();

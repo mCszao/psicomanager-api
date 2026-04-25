@@ -1,0 +1,20 @@
+CREATE TABLE `plans` (
+  `ID` varchar(255) NOT NULL,
+  `patient_id` varchar(255) NOT NULL,
+  `plan_template_id` varchar(255) DEFAULT NULL,
+  `TITLE` varchar(255) DEFAULT NULL,
+  `PRICE_PER_SESSION` decimal(10,2) DEFAULT NULL,
+  `SESSIONS_COUNT` int DEFAULT NULL,
+  `FREQUENCY` enum('DAILY','WEEKLY','BIWEEKLY','MONTHLY') DEFAULT NULL,
+  `TOTAL_VALUE` decimal(10,2) DEFAULT NULL,
+  `ADHERENCE_DATE` date NOT NULL,
+  `ESTIMATED_END_DATE` date DEFAULT NULL,
+  `STARTED_AT` datetime DEFAULT NULL,
+  `ENDED_AT` datetime DEFAULT NULL,
+  `IS_ACTIVE` tinyint(1) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`ID`),
+  KEY `fk_plans_patient_id` (`patient_id`),
+  KEY `fk_plans_plan_template_id` (`plan_template_id`),
+  CONSTRAINT `fk_plans_patient_id` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`ID`),
+  CONSTRAINT `fk_plans_plan_template_id` FOREIGN KEY (`plan_template_id`) REFERENCES `plan_templates` (`ID`)
+);

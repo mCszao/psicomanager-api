@@ -1,6 +1,9 @@
 package com.psicomanager.api.infra.config;
 
 import com.psicomanager.api.auth.exception.InvalidRefreshTokenException;
+import com.psicomanager.api.plan.exception.InvalidPlanConfigException;
+import com.psicomanager.api.plan.exception.PlanNotFoundException;
+import com.psicomanager.api.plan.exception.PlanTemplateNotFoundException;
 import com.psicomanager.api.core.dto.BaseResponse;
 import com.psicomanager.api.core.exception.DuplicateEntryException;
 import com.psicomanager.api.document.exception.ContractWithoutArgsException;
@@ -84,5 +87,23 @@ public class ControllerExceptionHandler {
     private ResponseEntity<BaseResponse<String>> dataIntegrityViolationHandler(DataIntegrityViolationException ex) {
         log.error("Dados duplicados foram enviados");
         return ResponseEntity.badRequest().body(new BaseResponse<>(false, "Dados duplicados"));
+    }
+
+    @ExceptionHandler(PlanNotFoundException.class)
+    private ResponseEntity<BaseResponse<String>> planNotFoundHandler(PlanNotFoundException ex) {
+        log.error("Plano informado não foi encontrado");
+        return ResponseEntity.status(404).body(new BaseResponse<>(false, ex.getMessage()));
+    }
+
+    @ExceptionHandler(PlanTemplateNotFoundException.class)
+    private ResponseEntity<BaseResponse<String>> planTemplateNotFoundHandler(PlanTemplateNotFoundException ex) {
+        log.error("Template de plano informado não foi encontrado");
+        return ResponseEntity.status(404).body(new BaseResponse<>(false, ex.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidPlanConfigException.class)
+    private ResponseEntity<BaseResponse<String>> invalidPlanConfigHandler(InvalidPlanConfigException ex) {
+        log.error("Configuração inválida para criação de plano");
+        return ResponseEntity.badRequest().body(new BaseResponse<>(false, ex.getMessage()));
     }
 }

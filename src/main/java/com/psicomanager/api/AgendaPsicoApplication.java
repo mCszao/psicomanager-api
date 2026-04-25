@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class PsicomanagerApiApplication {
+public class AgendaPsicoApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(PsicomanagerApiApplication.class, args);
+		SpringApplication.run(AgendaPsicoApplication.class, args);
 	}
 
 }
