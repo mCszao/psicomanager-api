@@ -105,6 +105,39 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.12</version>
+				<executions>
+					<execution>
+						<id>prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<excludes>
+						<exclude>com/psicomanager/api/infra/**</exclude>
+						<exclude>com/psicomanager/api/AgendaPsicoApplication.class</exclude>
+						<exclude>com/psicomanager/api/RunningController.class</exclude>
+						<exclude>com/psicomanager/api/**/dto/**</exclude>
+						<exclude>com/psicomanager/api/**/model/**</exclude>
+						<exclude>com/psicomanager/api/**/enums/**</exclude>
+						<exclude>com/psicomanager/api/**/mapper/**</exclude>
+						<exclude>com/psicomanager/api/**/exception/**</exclude>
+						<exclude>com/psicomanager/api/**/*Controller.class</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 	<repositories>
