@@ -14,8 +14,7 @@ import com.psicomanager.api.plan.model.Plan;
  */
 public class PlanValidator {
 
-    private PlanValidator() {
-    }
+    private PlanValidator() {}
 
     // region Validação de registro
 
@@ -56,19 +55,25 @@ public class PlanValidator {
     }
 
     /**
-     * Quando {@code generateSessions} é {@code true}, o horário de início e o tipo
-     * de atendimento são obrigatórios para que as sessões possam ser criadas corretamente.
+     * Quando {@code generateSessions} é {@code true}, o número de sessões, o horário
+     * de início e o tipo de atendimento são obrigatórios. A quantidade de sessões a
+     * gerar é sempre baseada em {@code sessionsCount} — não existe geração automática
+     * por período de tempo.
      */
     private static void validateSessionGeneration(PlanRegisterDTO dto) {
-        if (dto.generateSessions()) {
-            if (dto.sessionStartTime() == null || dto.sessionStartTime().isBlank()) {
-                throw new BusinessRuleException(
-                        "Para gerar sessões automaticamente é necessário informar o horário de início.");
-            }
-            if (dto.attendanceType() == null) {
-                throw new BusinessRuleException(
-                        "Para gerar sessões automaticamente é necessário informar o tipo de atendimento (presencial ou remoto).");
-            }
+        if (!dto.generateSessions()) return;
+
+        if (dto.sessionsCount() == null || dto.sessionsCount() < 1) {
+            throw new BusinessRuleException(
+                    "Para gerar sessões automaticamente é necessário informar o número de sessões.");
+        }
+        if (dto.sessionStartTime() == null || dto.sessionStartTime().isBlank()) {
+            throw new BusinessRuleException(
+                    "Para gerar sessões automaticamente é necessário informar o horário de início.");
+        }
+        if (dto.attendanceType() == null) {
+            throw new BusinessRuleException(
+                    "Para gerar sessões automaticamente é necessário informar o tipo de atendimento (presencial ou remoto).");
         }
     }
 

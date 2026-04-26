@@ -15,9 +15,10 @@ import java.util.List;
 /**
  * Gerencia os templates reutilizáveis de plano de atendimento.
  * <p>
- * Templates são modelos globais do psicólogo que definem preço, frequência
- * e quantidade de sessões. Ao criar um plano para um paciente, o psicólogo
- * pode optar por partir de um template e sobrescrever valores individualmente.
+ * Templates são modelos globais do psicólogo que definem preço, frequência,
+ * quantidade de sessões e tipo de atendimento padrão. Ao criar um plano para
+ * um paciente, o psicólogo pode optar por partir de um template e sobrescrever
+ * valores individualmente.
  * </p>
  */
 @Service
@@ -46,6 +47,7 @@ public class PlanTemplateService {
         template.setPricePerSession(dto.pricePerSession());
         template.setSessionsCount(dto.sessionsCount());
         template.setFrequency(dto.frequency());
+        template.setAttendanceType(dto.attendanceType());
         planTemplateRepo.save(template);
         log.info("Template de plano salvo com sucesso");
     }

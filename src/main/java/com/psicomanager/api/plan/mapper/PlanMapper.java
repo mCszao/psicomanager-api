@@ -28,7 +28,8 @@ public class PlanMapper {
                 t.getPricePerSession(),
                 t.getSessionsCount(),
                 t.getFrequency(),
-                t.getTotalValue()
+                t.getTotalValue(),
+                t.getAttendanceType()
         );
     }
 

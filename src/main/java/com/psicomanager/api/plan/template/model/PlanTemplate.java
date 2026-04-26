@@ -1,5 +1,6 @@
 package com.psicomanager.api.plan.template.model;
 
+import com.psicomanager.api.schedule.enums.AttendanceTypeEnum;
 import com.psicomanager.api.schedule.enums.FrequencyEnum;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -12,8 +13,8 @@ import java.math.BigDecimal;
 /**
  * Template reutilizável de plano de atendimento.
  * <p>
- * Define um modelo de plano com frequência, preço e quantidade de sessões
- * que pode ser aplicado a múltiplos pacientes. Ao aplicar um template,
+ * Define um modelo de plano com frequência, preço, quantidade de sessões e tipo
+ * de atendimento que pode ser aplicado a múltiplos pacientes. Ao aplicar um template,
  * todos os valores são copiados para o {@link com.psicomanager.api.plan.model.Plan}
  * e podem ser ajustados individualmente.
  * </p>
@@ -61,6 +62,16 @@ public class PlanTemplate {
      */
     @Column(name = "TOTAL_VALUE", precision = 10, scale = 2)
     private BigDecimal totalValue;
+
+    /**
+     * Tipo de atendimento padrão para sessões geradas a partir deste template.
+     * Quando presente, é herdado pelo plano criado a partir do template e pode
+     * ser sobrescrito individualmente por paciente.
+     * Nullable para compatibilidade com templates criados antes desta funcionalidade.
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "ATTENDANCE_TYPE")
+    private AttendanceTypeEnum attendanceType;
 
     // endregion
 
