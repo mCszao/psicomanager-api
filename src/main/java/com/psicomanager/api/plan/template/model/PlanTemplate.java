@@ -73,6 +73,10 @@ public class PlanTemplate {
     @Column(name = "ATTENDANCE_TYPE")
     private AttendanceTypeEnum attendanceType;
 
+    /** Tenant: organização à qual este template pertence. */
+    @Column(name = "organization_id")
+    private String organizationId;
+
     // endregion
 
     // region Hooks JPA

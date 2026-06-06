@@ -136,6 +136,10 @@ public class Plan {
     @Column(name = "IS_CONTINUOUS", nullable = false)
     private Boolean isContinuous = true;
 
+    /** Tenant: organização à qual este plano pertence. */
+    @Column(name = "organization_id")
+    private String organizationId;
+
     // endregion
 
     // region Hooks JPA

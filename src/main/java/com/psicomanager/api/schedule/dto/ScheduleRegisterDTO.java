@@ -1,5 +1,6 @@
 package com.psicomanager.api.schedule.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.psicomanager.api.schedule.enums.AttendanceTypeEnum;
 import com.psicomanager.api.schedule.enums.FrequencyEnum;
 import com.psicomanager.api.schedule.enums.StageEnum;
@@ -21,8 +22,10 @@ public record ScheduleRegisterDTO(
         String patientId,
 
         @NotNull
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
         LocalDateTime dateStart,
 
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
         LocalDateTime dateEnd,
 
         StageEnum stage,

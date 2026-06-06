@@ -1,5 +1,8 @@
 package com.psicomanager.api.schedule;
 
+import com.psicomanager.api.financial.AccountService;
+import com.psicomanager.api.financial.FinancialService;
+import com.psicomanager.api.infra.tenant.TenantService;
 import com.psicomanager.api.patient.PatientRepository;
 import com.psicomanager.api.patient.exception.PatientNotFoundException;
 import com.psicomanager.api.alert.AlertService;
@@ -18,10 +21,12 @@ import com.psicomanager.api.schedule.exception.*;
 import com.psicomanager.api.schedule.validation.ScheduleValidator;
 import com.psicomanager.api.schedule.mapper.ScheduleMapper;
 import com.psicomanager.api.schedule.model.Schedule;
+import com.psicomanager.api.user.model.User;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -56,6 +61,16 @@ public class ScheduleService {
 
     @Autowired
     private AlertService alertService;
+
+    @Autowired
+    @Lazy
+    private FinancialService financialService;
+
+    @Autowired
+    private AccountService accountService;
+
+    @Autowired
+    private TenantService tenantService;
 
     @Autowired
     private ScheduleMapper mapper;
@@ -138,11 +153,12 @@ public class ScheduleService {
             PlanValidator.validatePlanIsActive(plan);
         }
 
-        // Criação em lote — usada pelo botão "Lançar mais sessões" dos planos
+        // Criação em lote
         if (dto.frequency() != null && dto.sessionsCount() != null && dto.sessionsCount() > 1) {
             log.info("Criando " + dto.sessionsCount() + " sessões em lote com frequência " + dto.frequency());
             var sessions = new java.util.ArrayList<Schedule>();
             LocalDateTime current = dto.dateStart();
+            String orgId = tenantService.required();
             for (int i = 0; i < dto.sessionsCount(); i++) {
                 LocalDateTime end = resolveEnd(current, i == 0 ? dto.dateEnd() : null);
                 assertNoConflict(current, end, null);
@@ -153,6 +169,7 @@ public class ScheduleService {
                 session.setDateEnd(end);
                 session.setStage(StageEnum.OPENED);
                 session.setType(dto.type() != null ? dto.type() : AttendanceTypeEnum.PRESENTIAL);
+                session.setOrganizationId(orgId);
                 if (plan != null && plan.getPricePerSession() != null) {
                     session.setSessionValue(plan.getPricePerSession());
                 }
@@ -169,6 +186,7 @@ public class ScheduleService {
         assertNoConflict(dto.dateStart(), resolveEnd(dto.dateStart(), dto.dateEnd()), null);
         Schedule schedule = mapper.dtoToEntity(dto, patient);
         schedule.setPlan(plan);
+        schedule.setOrganizationId(tenantService.required());
         if (dto.sessionValue() != null) {
             schedule.setSessionValue(dto.sessionValue());
         } else if (plan != null && plan.getPricePerSession() != null) {
@@ -189,7 +207,8 @@ public class ScheduleService {
      */
     public List<ScheduleResponseDTO> getAllSchedules() {
         log.info("Buscando por todas as consultas");
-        return scheduleRepo.findAll().stream().map(ScheduleMapper::toDto).toList();
+        return scheduleRepo.findByOrganizationId(tenantService.required())
+                .stream().map(ScheduleMapper::toDto).toList();
     }
 
     /**
@@ -222,11 +241,18 @@ public class ScheduleService {
 
     /**
      * Conclui uma sessão aberta, preenchendo {@code dateEnd} com o momento atual.
+     * <p>
      * Quando a sessão pertence a um plano, notifica o {@link PlanService} para
      * atualizar o ciclo de vida do plano.
+     * </p>
+     * <p>
+     * Gera automaticamente uma cobrança financeira ({@code SESSION_CHARGE}) para
+     * sessões avulsas ou de planos contínuos. Sessões de planos fechados não geram
+     * {@code SESSION_CHARGE} — a cobrança global do plano foi gerada em {@link PlanService}.
+     * </p>
      *
      * @param id ID da sessão
-     * @throws ScheduleNotFoundException        se a sessão não for encontrada
+     * @throws ScheduleNotFoundException         se a sessão não for encontrada
      * @throws ScheduleAlreadyConcludedException se a sessão não estiver aberta
      */
     @Transactional
@@ -248,14 +274,25 @@ public class ScheduleService {
         log.info("Desativando avisos de sessão vinculados à sessão de id " + id);
         alertService.deactivateBySession(id);
 
+        // Hook financeiro: gera SESSION_CHARGE para sessões avulsas ou de planos contínuos
+        boolean shouldChargePerSession =
+                schedule.getPlan() == null || Boolean.TRUE.equals(schedule.getPlan().getIsContinuous());
+
+        if (shouldChargePerSession) {
+            log.info("Gerando cobrança de sessão para a sessão de id " + id);
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            var psychAccount = accountService.getPsychologistAccount(user.getId());
+            financialService.generateSessionCharge(schedule, psychAccount);
+        }
+
         log.info("Sessão de id " + id + " concluída com sucesso");
     }
 
     /**
-     * Cancela uma sessão aberta.
+     * Cancela uma sessão aberta e cancela a transação financeira pendente vinculada, se houver.
      *
      * @param id ID da sessão
-     * @throws ScheduleNotFoundException       se a sessão não for encontrada
+     * @throws ScheduleNotFoundException        se a sessão não for encontrada
      * @throws ScheduleAlreadyCancelledException se a sessão não estiver aberta
      */
     @Transactional
@@ -265,6 +302,8 @@ public class ScheduleService {
         if (schedule.getStage() != StageEnum.OPENED) throw new ScheduleAlreadyCancelledException();
         schedule.setStage(StageEnum.CANCELLED);
         scheduleRepo.save(schedule);
+        financialService.cancelTransactionBySessionIfPending(schedule.getId());
+        log.info("Transação financeira vinculada à sessão de id " + id + " cancelada, se existia.");
         log.info("Sessão de id " + id + " cancelada com sucesso");
     }
 
@@ -311,9 +350,9 @@ public class ScheduleService {
      *
      * @param id  ID da sessão a reagendar
      * @param dto payload com a nova data de início e, opcionalmente, de fim
-     * @throws ScheduleNotFoundException         se a sessão não for encontrada
+     * @throws ScheduleNotFoundException          se a sessão não for encontrada
      * @throws ScheduleAlreadyRescheduledException se a sessão não estiver aberta
-     * @throws ScheduleConflictTimeException      se a nova data conflitar com outra sessão
+     * @throws ScheduleConflictTimeException       se a nova data conflitar com outra sessão
      */
     @Transactional
     public void rescheduleSession(String id, ScheduleRescheduleDTO dto) {

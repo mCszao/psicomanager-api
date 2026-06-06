@@ -15,6 +15,9 @@ public interface ScheduleRepository extends JpaRepository<Schedule, String> {
 
     List<Schedule> findByPatientId(String patientId);
 
+    /** Retorna todas as sessões de uma organização (tenant). */
+    List<Schedule> findByOrganizationId(String organizationId);
+
     long countByPlanId(String planId);
 
     long countByPlanIdAndStage(String planId, StageEnum stage);

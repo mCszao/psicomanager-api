@@ -1,5 +1,6 @@
 package com.psicomanager.api.plan;
 
+import com.psicomanager.api.infra.tenant.TenantService;
 import com.psicomanager.api.plan.exception.PlanTemplateNotFoundException;
 import com.psicomanager.api.plan.mapper.PlanMapper;
 import com.psicomanager.api.plan.template.dto.PlanTemplateRegisterDTO;
@@ -30,6 +31,9 @@ public class PlanTemplateService {
     @Autowired
     private PlanTemplateRepository planTemplateRepo;
 
+    @Autowired
+    private TenantService tenantService;
+
     // endregion
 
     // region Criação
@@ -48,6 +52,7 @@ public class PlanTemplateService {
         template.setSessionsCount(dto.sessionsCount());
         template.setFrequency(dto.frequency());
         template.setAttendanceType(dto.attendanceType());
+        template.setOrganizationId(tenantService.required());
         planTemplateRepo.save(template);
         log.info("Template de plano salvo com sucesso");
     }
@@ -62,7 +67,8 @@ public class PlanTemplateService {
      * @return lista de DTOs de templates
      */
     public List<PlanTemplateResponseDTO> getAll() {
-        return planTemplateRepo.findAll().stream().map(PlanMapper::templateToDto).toList();
+        return planTemplateRepo.findByOrganizationId(tenantService.required())
+                .stream().map(PlanMapper::templateToDto).toList();
     }
 
     /**

@@ -1,0 +1,46 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./mvnw compile)",
+      "Bash(./mvnw test)",
+      "Bash(./mvnw verify)",
+      "Bash(./mvnw spring-boot:run)",
+      "Bash(./mvnw -pl . test -Dtest=*)",
+      "Bash(git status)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git add*)",
+      "Bash(git commit*)",
+      "Bash(git push*)",
+      "Bash(git checkout*)",
+      "Bash(git branch*)"
+    ],
+    "deny": [
+      "Bash(*DROP TABLE*)",
+      "Bash(*DELETE FROM* WHERE*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./mvnw compile -q 2>&1 | tail -20"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./mvnw test -q 2>&1 | tail -15"
+          }
+        ]
+      }
+    ]
+  }
+}

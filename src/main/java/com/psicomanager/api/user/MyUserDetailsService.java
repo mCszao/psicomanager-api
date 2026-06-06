@@ -1,6 +1,7 @@
 package com.psicomanager.api.user;
 
 import com.psicomanager.api.auth.TokenService;
+import com.psicomanager.api.financial.AccountService;
 import com.psicomanager.api.user.dto.ResponseLoginDTO;
 import com.psicomanager.api.user.dto.UserRegisterDTO;
 import com.psicomanager.api.user.exception.DuplicateUserEntryException;
@@ -26,6 +27,9 @@ public class MyUserDetailsService implements UserDetailsService {
 
     @Autowired
     private UserMapper mapper;
+
+    @Autowired
+    private AccountService accountService;
 
     @Override
     public UserDetails loadUserByUsername(String input) {
@@ -54,5 +58,7 @@ public class MyUserDetailsService implements UserDetailsService {
         log.info("Salvando novo usuário");
         User user = mapper.dtoToEntity(dto);
         userRepo.save(user);
+        accountService.createPsychologistAccount(user);
+        log.info("Conta financeira criada para o psicólogo de id " + user.getId());
     }
 }

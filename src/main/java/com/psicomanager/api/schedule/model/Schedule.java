@@ -59,4 +59,8 @@ public class Schedule {
      */
     @Column(name = "SESSION_VALUE", precision = 10, scale = 2)
     private BigDecimal sessionValue;
+
+    /** Tenant: organização à qual esta sessão pertence. */
+    @Column(name = "organization_id")
+    private String organizationId;
 }

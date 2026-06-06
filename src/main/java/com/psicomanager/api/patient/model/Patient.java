@@ -64,6 +64,13 @@ public class Patient {
 
     private LocalDate birthdayDate;
 
+    /**
+     * Tenant: organização à qual este paciente pertence.
+     * Preenchido automaticamente via {@link com.psicomanager.api.infra.tenant.TenantService}.
+     */
+    @Column(name = "organization_id")
+    private String organizationId;
+
     public void addAddress(Address address) {
         this.addresses.add(address);
     }

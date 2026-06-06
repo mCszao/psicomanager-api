@@ -1,6 +1,5 @@
 package com.psicomanager.api.user.model;
 
-import com.psicomanager.api.user.dto.UserRegisterDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -26,7 +25,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class User implements UserDetails {
-    @Id()
+
+    @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
@@ -49,6 +49,18 @@ public class User implements UserDetails {
     @Column(name = "PHONE", unique = true, length = 255)
     private String phone;
 
+    /**
+     * ID da organização ativa na sessão atual do usuário.
+     *
+     * <p>Nullable — será {@code null} enquanto o usuário não criar ou
+     * ingressar em nenhuma organização (estado de onboarding).</p>
+     *
+     * <p>Atualizado via {@code PATCH /organizations/switch/{organizationId}}
+     * quando o usuário troca a organização ativa no seletor da sidebar.</p>
+     */
+    @Column(name = "active_organization_id")
+    private String activeOrganizationId;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_USER"));
@@ -65,22 +77,14 @@ public class User implements UserDetails {
     }
 
     @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
+    public boolean isAccountNonExpired() { return true; }
 
     @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
+    public boolean isAccountNonLocked() { return true; }
 
     @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
+    public boolean isCredentialsNonExpired() { return true; }
 
     @Override
-    public boolean isEnabled() {
-        return true;
-    }
+    public boolean isEnabled() { return true; }
 }

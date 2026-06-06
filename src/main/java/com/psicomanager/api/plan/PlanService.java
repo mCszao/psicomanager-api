@@ -1,5 +1,8 @@
 package com.psicomanager.api.plan;
 
+import com.psicomanager.api.financial.AccountService;
+import com.psicomanager.api.financial.FinancialService;
+import com.psicomanager.api.infra.tenant.TenantService;
 import com.psicomanager.api.patient.PatientRepository;
 import com.psicomanager.api.patient.exception.PatientNotFoundException;
 import com.psicomanager.api.plan.dto.PlanRegisterDTO;
@@ -17,9 +20,12 @@ import com.psicomanager.api.schedule.enums.FrequencyEnum;
 import com.psicomanager.api.schedule.enums.StageEnum;
 import com.psicomanager.api.schedule.exception.ScheduleConflictTimeException;
 import com.psicomanager.api.schedule.model.Schedule;
+import com.psicomanager.api.user.model.User;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -53,6 +59,16 @@ public class PlanService {
 
     @Autowired
     private ScheduleRepository scheduleRepo;
+
+    @Autowired
+    @Lazy
+    private FinancialService financialService;
+
+    @Autowired
+    private AccountService accountService;
+
+    @Autowired
+    private TenantService tenantService;
 
     // endregion
 
@@ -121,6 +137,10 @@ public class PlanService {
      * {@code sessionsCount} — obrigatório para qualquer tipo de plano quando
      * a geração automática está ativada.
      * </p>
+     * <p>
+     * Planos fechados ({@code isContinuous = false}) geram automaticamente uma
+     * cobrança do tipo {@code PLAN_CHARGE} após a persistência.
+     * </p>
      *
      * @param dto payload de criação do plano
      * @throws PatientNotFoundException      se o paciente não for encontrado
@@ -143,6 +163,7 @@ public class PlanService {
         plan.setAdherenceDate(dto.adherenceDate());
         plan.setIsActive(true);
         plan.setIsContinuous(dto.isContinuous());
+        plan.setOrganizationId(tenantService.required());
 
         applyTemplateOrDirectValues(plan, dto);
         applyEstimatedEndDate(plan, dto);
@@ -152,6 +173,14 @@ public class PlanService {
 
         if (dto.generateSessions()) {
             generateSessions(plan, dto);
+        }
+
+        // Hook financeiro: planos fechados geram cobrança global imediata
+        if (!Boolean.TRUE.equals(plan.getIsContinuous())) {
+            log.info("Plano fechado criado. Gerando cobrança financeira para o plano de id " + plan.getId());
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            var psychAccount = accountService.getPsychologistAccount(user.getId());
+            financialService.generatePlanCharge(plan, psychAccount);
         }
     }
 

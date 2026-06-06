@@ -1,5 +1,7 @@
 package com.psicomanager.api.patient;
 
+import com.psicomanager.api.financial.AccountService;
+import com.psicomanager.api.infra.tenant.TenantService;
 import com.psicomanager.api.patient.dto.PatientRegisterDTO;
 import com.psicomanager.api.patient.dto.PatientResponseDTO;
 import com.psicomanager.api.patient.dto.PatientResumeResponseDTO;
@@ -23,6 +25,12 @@ public class PatientService {
     @Autowired
     private PatientMapper mapper;
 
+    @Autowired
+    private AccountService accountService;
+
+    @Autowired
+    private TenantService tenantService;
+
     @Transactional
     public void register(PatientRegisterDTO dto) {
         log.info("Validando informações enviadas");
@@ -36,24 +44,30 @@ public class PatientService {
             throw new DuplicatePatientEntryException("Nome do paciente");
         log.info("Salvando novo paciente");
         var patient = mapper.dtoToEntity(dto);
+        patient.setOrganizationId(tenantService.required());
         patientRepo.save(patient);
+        accountService.createPatientAccount(patient);
+        log.info("Conta financeira criada para o paciente de id " + patient.getId());
     }
 
     @Transactional
     public List<PatientResponseDTO> getAllPatientsComplete() {
         log.info("Buscando pacientes");
-        return patientRepo.findAll().stream().map(PatientMapper::toDto).toList();
+        return patientRepo.findByOrganizationId(tenantService.required())
+                .stream().map(PatientMapper::toDto).toList();
     }
 
     public List<PatientResumeResponseDTO> getAllPatientsResume() {
         log.info("Buscando pacientes resumidos");
-        return patientRepo.findAll().stream().map(PatientMapper::toResumeDto).toList();
+        return patientRepo.findByOrganizationId(tenantService.required())
+                .stream().map(PatientMapper::toResumeDto).toList();
     }
 
     @Transactional
     public PatientResponseDTO getDetailsById(String id) {
         log.info("Buscando informações do paciente de id " + id);
-        var patient = patientRepo.findById(id).orElseThrow(PatientNotFoundException::new);
+        var patient = patientRepo.findByIdAndOrganizationId(id, tenantService.required())
+                .orElseThrow(PatientNotFoundException::new);
         log.info("Retornando paciente");
         return PatientMapper.toDto(patient);
     }
