@@ -1,0 +1,45 @@
+name: CI
+
+# Validação executada em todo Pull Request para main — protege a produção.
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      # MySQL efêmero para o @SpringBootTest (contextLoads) + Flyway.
+      # lower-case-table-names=1 reproduz o ambiente de prod e evita o bug da V5.
+      - name: Subir MySQL de teste
+        run: |
+          docker run -d --name mysql-test \
+            -e MYSQL_ROOT_PASSWORD=root \
+            -e MYSQL_DATABASE=psicomanager \
+            -p 3310:3306 \
+            mysql:8.0 --lower-case-table-names=1
+          echo "Aguardando MySQL ficar pronto..."
+          for i in $(seq 1 40); do
+            if docker exec mysql-test mysqladmin ping -h localhost -uroot -proot --silent; then
+              echo "MySQL pronto."; break
+            fi
+            sleep 2
+          done
+
+      # Usa application.properties (localhost:3310, root/root) — bate com o MySQL acima.
+      - name: Testes (mvn verify)
+        run: mvn -B verify
+
+      - name: Derrubar MySQL de teste
+        if: always()
+        run: docker rm -f mysql-test
