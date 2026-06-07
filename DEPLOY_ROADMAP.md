@@ -9,10 +9,10 @@
 ## 📍 ESTADO ATUAL
 
 ```
-SISTEMA NO AR     : http://2.25.182.112  (HTTP, via IP)
-FASE EM ANDAMENTO : Fases 1-4 e 7 CONCLUIDAS. Pendente: Fase 5 (dominio+SSL) e Fase 6 (E2E)
-ÚLTIMA TAREFA     : 7.4 — CI/CD automatico validado nos dois repos
-PRÓXIMA AÇÃO      : (opcional) Fase 5 quando houver dominio; rotacionar GHCR_PAT
+SISTEMA NO AR     : https://agenda.mcszao.tech  (HTTPS, Let's Encrypt)
+FASE EM ANDAMENTO : Fases 1-5 e 7 CONCLUIDAS. Pendente apenas: Fase 6 (verificacao E2E)
+ÚLTIMA TAREFA     : 5.7 — renovacao automatica do SSL configurada
+PRÓXIMA AÇÃO      : Fase 6 (login/cadastro/agendamento/PDF) com usuario de teste
 BLOQUEIOS         : nenhum
 ```
 
@@ -97,13 +97,14 @@ FASE 4 — Primeiro Deploy (sem SSL)
   ✅ 4.5  API responde via http://2.25.182.112/api (BaseResponse JSON)
   ✅ 4.6  Flyway aplicou todas as migrations (apos fix de casing)
 
-FASE 5 — Domínio e SSL  (PENDENTE — usuario so forneceu IP por enquanto)
-  ⬜ 5.1  Registrar/usar domínio
-  ⬜ 5.2  Apontar DNS (registro A) para 2.25.182.112
-  ⬜ 5.3  Instalar Certbot na VPS
-  ⬜ 5.4  Emitir certificado SSL (Let's Encrypt)
-  ⬜ 5.5  Atualizar nginx.conf com bloco HTTPS
-  ⬜ 5.6  Atualizar NEXT_PUBLIC_API_URL p/ https + rebuild front
+FASE 5 — Domínio e SSL
+  ✅ 5.1  Domínio: agenda.mcszao.tech (subdomínio de mcszao.tech)
+  ✅ 5.2  Registro A → 2.25.182.112 (propagado)
+  ✅ 5.3  Certbot via container Docker (sem instalar no host, sem sudo)
+  ✅ 5.4  Certificado Let's Encrypt emitido (expira 2026-09-05)
+  ✅ 5.5  nginx.conf HTTPS (redirect 80->443 + SSL) recarregado
+  ✅ 5.6  NEXT_PUBLIC_API_URL=https://agenda.mcszao.tech/api + front rebuildado
+  ✅ 5.7  Renovação automática (cron seg 03:00, certbot renew + nginx reload)
 
 FASE 6 — Verificação End-to-End  (PENDENTE — precisa de usuario de teste)
   ⬜ 6.1  Login com usuário de teste
@@ -1097,6 +1098,21 @@ Mesma validação no `psicomanager-front`.
   - Secrets `VPS_HOST/VPS_USER/VPS_SSH_KEY` ficaram **legado** (nao usados; podem remover).
 - **Resultado:** ambos pipelines verdes; job deploy roda em ~5s na VPS. SSH segue travado.
 - Detalhes operacionais e troubleshooting: ver [`OPERACOES.md`](./OPERACOES.md).
+
+### 2026-06-07 — Fase 5 (domínio + HTTPS)
+
+- Domínio **agenda.mcszao.tech** (subdomínio; raiz reservada p/ futuros projetos da VPS).
+  Registro A → 2.25.182.112, TTL 14400.
+- Certificado emitido com **Certbot rodando como container** (`certbot/certbot certonly
+  --webroot`), montando `/etc/letsencrypt` e o volume `psicomanager_certbot_www`. Sem
+  instalar nada no host e **sem sudo** (tudo via Docker). Dry-run antes do real.
+- `nginx.conf` trocado para HTTPS (redirect 80->443 + bloco SSL 443). O compose já montava
+  `/etc/letsencrypt:ro` no nginx, então bastou `nginx -s reload`.
+- `NEXT_PUBLIC_API_URL` -> `https://agenda.mcszao.tech/api` (secret) + rerun do front.
+  Verificado que o bundle passou a referenciar o domínio HTTPS e o IP antigo sumiu
+  (evita mixed content).
+- Renovação automática: cron do `mcsmanager` (seg 03:00) roda `certbot renew` via container
+  e recarrega o nginx. Script: `psicomanager-deploy/setup-renewal.sh`.
 
 ---
 

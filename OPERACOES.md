@@ -24,8 +24,8 @@
 | Deploy CI | **runners self-hosted** na VPS (`vps-api`, `vps-front`) — sem SSH |
 | Acesso SSH | só do seu IP (firewall) · chave `~/.ssh/psicomanager_deploy` (uso manual) |
 | Banco | container `psicomanager-db` (MySQL 8) · db `psicomanager` · user `psico_app` |
-| URL atual | **http://2.25.182.112** (HTTP/IP — domínio+SSL pendente) |
-| Domínio planejado | `agenda.mcszao.tech` (subdomínio, p/ conviver com futuros projetos) |
+| URL de produção | **https://agenda.mcszao.tech** (HTTPS/Let's Encrypt, renovação automática) |
+| Certificado | `/etc/letsencrypt/live/agenda.mcszao.tech/` · renova via cron seg 03:00 |
 
 ### Arquitetura
 
@@ -206,9 +206,11 @@ Após editar o `.env`, recrie os containers afetados: `docker compose up -d`.
 
 ### 5.3 `NEXT_PUBLIC_API_URL` — atenção
 Essa variável é **embutida na imagem do front no momento do build** (não em runtime).
-Mudou? → atualize o **secret no GitHub** e **dê push no front** para rebuildar.
-- Hoje: `http://2.25.182.112/api`
-- Após domínio+SSL: `https://agenda.mcszao.tech/api`
+Mudou? → atualize o **secret no GitHub** e **dê push no front** (ou rerun do workflow)
+para rebuildar. Valor atual: **`https://agenda.mcszao.tech/api`**.
+
+> ⚠️ Página HTTPS chamando API HTTP = **mixed content** (o navegador bloqueia). Por isso,
+> ao mudar de domínio/protocolo, sempre rebuilde o front com a URL HTTPS correta.
 
 ### 5.4 Rotacionar o `GHCR_PAT` (procedimento seguro, sem expor o token)
 1. Gere um novo token clássico no GitHub (escopos `write:packages`, `read:packages`, `delete:packages`).
