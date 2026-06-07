@@ -9,10 +9,11 @@
 ## 📍 ESTADO ATUAL
 
 ```
-FASE EM ANDAMENTO : Fase 3 — VPS: Configuração Inicial (aguarda ação do usuário)
-ÚLTIMA TAREFA     : 2.2 — Frontend: workflow de deploy criado
-PRÓXIMA AÇÃO      : Usuário contratar VPS Hostinger (3.1) + configurar GitHub Secrets (2.3)
-BLOQUEIOS         : Fases 3-7 dependem de operações manuais do usuário (VPS, DNS, secrets)
+SISTEMA NO AR     : http://2.25.182.112  (HTTP, via IP)
+FASE EM ANDAMENTO : Fases 1-4 e 7 CONCLUIDAS. Pendente: Fase 5 (dominio+SSL) e Fase 6 (E2E)
+ÚLTIMA TAREFA     : 7.4 — CI/CD automatico validado nos dois repos
+PRÓXIMA AÇÃO      : (opcional) Fase 5 quando houver dominio; rotacionar GHCR_PAT
+BLOQUEIOS         : nenhum
 ```
 
 ---
@@ -75,36 +76,36 @@ FASE 1 — Mudanças de Código
 FASE 2 — CI/CD (GitHub Actions)
   ✅ 2.1  Backend: criar .github/workflows/deploy.yml   (trigger: main)
   ✅ 2.2  Frontend: criar .github/workflows/deploy.yml  (trigger: master)
-  ⬜ 2.3  Configurar GitHub Secrets nos dois repos      ← AÇÃO DO USUÁRIO
-  ⬜ 2.4  Fazer push e verificar imagens chegando no GHCR
+  ✅ 2.3  GitHub Secrets configurados nos dois repos (via gh CLI)
+  ✅ 2.4  Imagens publicadas no GHCR (ghcr.io/mcszao/psicomanager-{api,front})
 
 FASE 3 — VPS: Configuração Inicial
-  ⬜ 3.1  Contratar VPS Hostinger (plano KVM 1 — 4GB RAM)
-  ⬜ 3.2  Configurar acesso SSH local
-  ⬜ 3.3  Instalar Docker + Docker Compose na VPS
-  ⬜ 3.4  Configurar UFW (firewall)
-  ⬜ 3.5  Criar estrutura /opt/psicomanager/
-  ⬜ 3.6  Criar /opt/psicomanager/.env
-  ⬜ 3.7  Criar /opt/psicomanager/docker-compose.yml
-  ⬜ 3.8  Criar /opt/psicomanager/nginx.conf (HTTP only por enquanto)
+  ✅ 3.1  VPS Hostinger (Ubuntu 24.04) — IP 2.25.182.112
+  ✅ 3.2  SSH ok (chave dedicada psicomanager_deploy instalada)
+  ✅ 3.3  Docker 29.5 + Compose v5.1 (ja estavam instalados)
+  ✅ 3.4  Firewall ja configurado pelo usuario (80/443 livres)
+  ✅ 3.5  /opt/psicomanager criado (dono: mcsmanager)
+  ✅ 3.6  /opt/psicomanager/.env enviado
+  ✅ 3.7  /opt/psicomanager/docker-compose.yml enviado (+ lower-case-table-names=1)
+  ✅ 3.8  /opt/psicomanager/nginx.conf enviado (HTTP only)
 
 FASE 4 — Primeiro Deploy (sem SSL)
-  ⬜ 4.1  Autenticar GHCR na VPS
-  ⬜ 4.2  docker compose pull + up
-  ⬜ 4.3  Verificar containers rodando (docker compose ps)
-  ⬜ 4.4  Testar acesso via http://IP_VPS (frontend)
-  ⬜ 4.5  Testar API via http://IP_VPS/api/auth/signIn
-  ⬜ 4.6  Confirmar Flyway rodou as migrations
+  ✅ 4.1  GHCR autenticado na VPS
+  ✅ 4.2  docker compose pull + up (4 containers)
+  ✅ 4.3  Containers rodando (api/db/front/nginx Up)
+  ✅ 4.4  Front responde via http://2.25.182.112 (307 -> /login, /login 200)
+  ✅ 4.5  API responde via http://2.25.182.112/api (BaseResponse JSON)
+  ✅ 4.6  Flyway aplicou todas as migrations (apos fix de casing)
 
-FASE 5 — Domínio e SSL
-  ⬜ 5.1  Registrar domínio (ou usar domínio existente)
-  ⬜ 5.2  Apontar DNS (registro A) para o IP da VPS
+FASE 5 — Domínio e SSL  (PENDENTE — usuario so forneceu IP por enquanto)
+  ⬜ 5.1  Registrar/usar domínio
+  ⬜ 5.2  Apontar DNS (registro A) para 2.25.182.112
   ⬜ 5.3  Instalar Certbot na VPS
   ⬜ 5.4  Emitir certificado SSL (Let's Encrypt)
   ⬜ 5.5  Atualizar nginx.conf com bloco HTTPS
-  ⬜ 5.6  Testar https://SEU_DOMINIO
+  ⬜ 5.6  Atualizar NEXT_PUBLIC_API_URL p/ https + rebuild front
 
-FASE 6 — Verificação End-to-End
+FASE 6 — Verificação End-to-End  (PENDENTE — precisa de usuario de teste)
   ⬜ 6.1  Login com usuário de teste
   ⬜ 6.2  Cadastro de novo paciente
   ⬜ 6.3  Criação de agendamento
@@ -113,10 +114,10 @@ FASE 6 — Verificação End-to-End
   ⬜ 6.6  Fluxo completo sem erros de console
 
 FASE 7 — Validação do CI/CD Automático
-  ⬜ 7.1  Push de mudança no psicomanager-api → verificar Actions
-  ⬜ 7.2  Confirmar nova imagem apareceu no GHCR
-  ⬜ 7.3  Confirmar novo container subiu na VPS automaticamente
-  ⬜ 7.4  Mesma validação para psicomanager-front
+  ✅ 7.1  Workflow Deploy API rodou de ponta a ponta (build+push+SSH)
+  ✅ 7.2  Imagens no GHCR atualizadas
+  ✅ 7.3  Deploy SSH na VPS automatico OK
+  ✅ 7.4  Mesma validação no psicomanager-front (verde)
 ```
 
 ---
@@ -1040,6 +1041,44 @@ Mesma validação no `psicomanager-front`.
 
 - **Nota técnica:** backend usa Spring Boot `3.3.1-SNAPSHOT` (repo de snapshots). Funciona,
   mas considerar fixar numa versão release antes de produção definitiva.
+
+### 2026-06-07 — Fases 3 a 7 (VPS, primeiro deploy e CI/CD)
+
+- **VPS:** Hostinger Ubuntu 24.04, IP `2.25.182.112`. **Usuario NAO-root: `mcsmanager`.**
+  Docker 29.5 + Compose v5.1 ja instalados; firewall ja ativo (80/443 livres).
+- **Bootstrap (sudo, feito pelo usuario):** `usermod -aG docker mcsmanager`,
+  `mkdir -p /opt/psicomanager` + `chown mcsmanager`. Assim o deploy roda sem root.
+- **Chave SSH:** par dedicado `~/.ssh/psicomanager_deploy` (ed25519) instalado no
+  authorized_keys do mcsmanager. A privada e o secret `VPS_SSH_KEY`.
+- **Secrets (gh CLI):** VPS_HOST=2.25.182.112, VPS_USER=mcsmanager, VPS_SSH_KEY,
+  GHCR_PAT nos dois repos; NEXT_PUBLIC_API_URL=http://2.25.182.112/api no front.
+- **Arquivos da VPS:** mantidos fora dos repos em `C:\...\GitHub\psicomanager-deploy\`
+  (.env com segredos reais, docker-compose.yml, nginx.conf) e enviados via scp.
+
+- **BLOQUEIO 1 — secret VPS_SSH_KEY corrompido.** `Get-Content | gh secret set` no
+  PowerShell re-codifica a chave (quebra o PEM) -> `ssh: no key found`. Corrigido
+  regravando via `cmd /c "gh secret set ... < arquivo"` (preserva bytes).
+
+- **BLOQUEIO 2 — Flyway V5 quebrou no Linux (case-sensitivity do MySQL).**
+  `V5__alter-table-users.sql` usa `ALTER TABLE USERS` (maiusculo); V1 cria `users`.
+  No Windows (dev) e case-insensitive e passa; no Linux (`lower_case_table_names=0`)
+  falha com `Table 'psicomanager.USERS' doesn't exist`, deixando a migration "failed".
+  **Decisao:** NAO editar a migration (mudaria o checksum e quebraria o Flyway no dev
+  local do usuario). Em vez disso, `command: --lower-case-table-names=1` no servico
+  mysql do compose (so vale na init -> recriado o volume com `down -v`). Resolve a V5
+  e qualquer outro casing divergente de uma vez, alinhando prod ao comportamento do dev.
+
+- **Resultado:** 4 containers Up; API `Started in 9.4s`, Flyway aplicou tudo;
+  front 307->/login e /login 200; API responde BaseResponse via nginx. Sistema no ar.
+- **CI/CD:** ambos workflows verdes de ponta a ponta (build+push GHCR + deploy SSH).
+
+- **PENDENCIAS / RECOMENDACOES:**
+  - 🔐 **Rotacionar o GHCR_PAT** (foi exposto no chat). Gerar novo, atualizar o secret
+    nos 2 repos e o `.env` da VPS, revogar o antigo.
+  - Fase 5 (dominio + HTTPS/SSL) quando houver dominio: apos emitir o cert, trocar
+    NEXT_PUBLIC_API_URL para `https://DOMINIO/api` e dar push no front (rebuild).
+  - Workflows usam actions em Node 20 (deprecado a partir de set/2026) — bumpar versoes.
+  - Front tem 36 alertas Dependabot — revisar dependencias.
 
 ---
 
