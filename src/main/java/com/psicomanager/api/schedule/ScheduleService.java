@@ -261,7 +261,6 @@ public class ScheduleService {
         var schedule = scheduleRepo.findById(id).orElseThrow(ScheduleNotFoundException::new);
         if (schedule.getStage() != StageEnum.OPENED) throw new ScheduleAlreadyConcludedException();
         schedule.setStage(StageEnum.CONCLUDED);
-        schedule.setDateEnd(LocalDateTime.now());
         scheduleRepo.save(schedule);
 
         if (schedule.getPlan() != null) {
@@ -274,7 +273,6 @@ public class ScheduleService {
         log.info("Desativando avisos de sessão vinculados à sessão de id " + id);
         alertService.deactivateBySession(id);
 
-        // Hook financeiro: gera SESSION_CHARGE para sessões avulsas ou de planos contínuos
         boolean shouldChargePerSession =
                 schedule.getPlan() == null || Boolean.TRUE.equals(schedule.getPlan().getIsContinuous());
 

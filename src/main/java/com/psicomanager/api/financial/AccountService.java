@@ -6,6 +6,7 @@ import com.psicomanager.api.financial.account.model.PatientAccount;
 import com.psicomanager.api.financial.account.model.PsychologistAccount;
 import com.psicomanager.api.financial.transaction.TransactionRepository;
 import com.psicomanager.api.financial.transaction.enums.TransactionStatusEnum;
+import com.psicomanager.api.financial.transaction.model.FinancialTransaction;
 import com.psicomanager.api.financial.transaction.exception.PatientAccountNotFoundException;
 import com.psicomanager.api.infra.tenant.TenantService;
 import com.psicomanager.api.patient.PatientRepository;
@@ -151,8 +152,10 @@ public class AccountService {
      * Recalcula e persiste os saldos derivados da conta do paciente com base nas transações do ledger.
      *
      * <ul>
-     *   <li>{@code balance} = soma de transações PENDING e OVERDUE</li>
-     *   <li>{@code creditBalance} = soma de transações ADVANCE</li>
+     *   <li>{@code balance} = soma do valor em aberto ({@code amount - amountPaid - creditApplied})
+     *       de transações PENDING, OVERDUE e PARTIALLY_PAID</li>
+     *   <li>{@code creditBalance} = soma dos adiantamentos (ADVANCE) menos o crédito já consumido
+     *       em cobranças ({@code creditApplied})</li>
      * </ul>
      *
      * @param account conta do paciente a recalcular
@@ -163,17 +166,22 @@ public class AccountService {
 
         BigDecimal balance = transactions.stream()
                 .filter(t -> t.getStatus() == TransactionStatusEnum.PENDING
-                        || t.getStatus() == TransactionStatusEnum.OVERDUE)
-                .map(t -> t.getAmount())
+                        || t.getStatus() == TransactionStatusEnum.OVERDUE
+                        || t.getStatus() == TransactionStatusEnum.PARTIALLY_PAID)
+                .map(FinancialTransaction::getOutstanding)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        BigDecimal creditBalance = transactions.stream()
+        BigDecimal totalAdvance = transactions.stream()
                 .filter(t -> t.getStatus() == TransactionStatusEnum.ADVANCE)
-                .map(t -> t.getAmount())
+                .map(FinancialTransaction::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal creditConsumed = transactions.stream()
+                .map(t -> t.getCreditApplied() != null ? t.getCreditApplied() : BigDecimal.ZERO)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         account.setBalance(balance);
-        account.setCreditBalance(creditBalance);
+        account.setCreditBalance(totalAdvance.subtract(creditConsumed));
         patientAccountRepo.save(account);
     }
 
@@ -181,15 +189,21 @@ public class AccountService {
      * Recalcula e persiste os saldos derivados da conta do psicólogo com base nas transações do ledger.
      *
      * <ul>
-     *   <li>{@code totalReceivable} = soma de transações PENDING e OVERDUE</li>
-     *   <li>{@code totalReceived} = soma de transações PAID</li>
+     *   <li>{@code totalReceivable} = soma do valor em aberto ({@code amount - amountPaid - creditApplied})
+     *       de transações PENDING, OVERDUE e PARTIALLY_PAID</li>
+     *   <li>{@code totalReceived} = caixa efetivamente recebido: adiantamentos (ADVANCE) +
+     *       parte paga em dinheiro de qualquer cobrança ({@code amountPaid}). O crédito aplicado
+     *       não entra aqui pois já foi contabilizado quando o adiantamento foi recebido.</li>
      * </ul>
+     *
+     * <p>Resolve o tenant via {@code tenantService.optional()} (e não {@code required()}) porque
+     * pode ser invocado pelo {@code OverdueSchedulerJob}, fora de um contexto de requisição;
+     * nesse caso recai sobre um filtro em memória por conta do psicólogo.</p>
      *
      * @param account conta do psicólogo a recalcular
      */
     @Transactional
     public void recalculatePsychologistBalance(PsychologistAccount account) {
-        // Usa optional() pois pode ser chamado pelo OverdueSchedulerJob (sem contexto de request)
         String orgId = tenantService.optional();
         var allTransactions = orgId != null
                 ? transactionRepo.findByPsychologistAccountIdAndOrganizationId(account.getId(), orgId)
@@ -199,17 +213,22 @@ public class AccountService {
 
         BigDecimal receivable = allTransactions.stream()
                 .filter(t -> t.getStatus() == TransactionStatusEnum.PENDING
-                        || t.getStatus() == TransactionStatusEnum.OVERDUE)
-                .map(t -> t.getAmount())
+                        || t.getStatus() == TransactionStatusEnum.OVERDUE
+                        || t.getStatus() == TransactionStatusEnum.PARTIALLY_PAID)
+                .map(FinancialTransaction::getOutstanding)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        BigDecimal received = allTransactions.stream()
-                .filter(t -> t.getStatus() == TransactionStatusEnum.PAID)
-                .map(t -> t.getAmount())
+        BigDecimal receivedAdvance = allTransactions.stream()
+                .filter(t -> t.getStatus() == TransactionStatusEnum.ADVANCE)
+                .map(FinancialTransaction::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal receivedCash = allTransactions.stream()
+                .map(t -> t.getAmountPaid() != null ? t.getAmountPaid() : BigDecimal.ZERO)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         account.setTotalReceivable(receivable);
-        account.setTotalReceived(received);
+        account.setTotalReceived(receivedAdvance.add(receivedCash));
         psychologistAccountRepo.save(account);
     }
 

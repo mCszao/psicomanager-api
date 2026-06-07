@@ -50,6 +50,9 @@ public class FinancialService {
      * <p>Aplica automaticamente crédito disponível do paciente, podendo liquidar
      * total ou parcialmente a cobrança gerada.</p>
      *
+     * <p>O vencimento é definido em 30 dias a partir da data de conclusão (momento da geração
+     * da cobrança), e não a partir da data agendada da sessão.</p>
+     *
      * @param schedule     sessão concluída
      * @param psychAccount conta do psicólogo autenticado
      * @return transação criada
@@ -65,11 +68,11 @@ public class FinancialService {
         transaction.setSession(schedule);
         transaction.setPatientAccount(patientAccount);
         transaction.setPsychologistAccount(psychAccount);
-        transaction.setDueDate(schedule.getDateStart().toLocalDate().plusDays(7));
+        transaction.setDueDate(LocalDate.now().plusDays(30));
         transaction.setStatus(TransactionStatusEnum.PENDING);
         transaction.setOrganizationId(tenantService.optional());
 
-        applyAutomaticCredit(transaction, patientAccount, psychAccount);
+        applyAutomaticCredit(transaction, patientAccount);
         transactionRepo.save(transaction);
         accountService.recalculatePatientBalance(patientAccount);
         accountService.recalculatePsychologistBalance(psychAccount);
@@ -83,6 +86,8 @@ public class FinancialService {
      * ({@code IS_CONTINUOUS = false}).
      *
      * <p>Aplica automaticamente crédito disponível do paciente.</p>
+     *
+     * <p>O vencimento é definido em 30 dias a partir da data de adesão do plano.</p>
      *
      * @param plan         plano fechado recém-criado
      * @param psychAccount conta do psicólogo autenticado
@@ -99,11 +104,11 @@ public class FinancialService {
         transaction.setPlan(plan);
         transaction.setPatientAccount(patientAccount);
         transaction.setPsychologistAccount(psychAccount);
-        transaction.setDueDate(plan.getAdherenceDate().plusDays(7));
+        transaction.setDueDate(plan.getAdherenceDate().plusDays(30));
         transaction.setStatus(TransactionStatusEnum.PENDING);
         transaction.setOrganizationId(tenantService.optional());
 
-        applyAutomaticCredit(transaction, patientAccount, psychAccount);
+        applyAutomaticCredit(transaction, patientAccount);
         transactionRepo.save(transaction);
         accountService.recalculatePatientBalance(patientAccount);
         accountService.recalculatePsychologistBalance(psychAccount);
@@ -113,46 +118,43 @@ public class FinancialService {
     }
 
     /**
-     * Aplica crédito disponível do paciente à transação recém-criada.
+     * Aplica crédito disponível do paciente à transação recém-criada, registrando o
+     * valor consumido em {@code creditApplied}.
      *
-     * <p>Regras:</p>
+     * <p>Regras, dado {@code credit = patientAccount.creditBalance}:</p>
      * <ol>
-     *   <li>Se creditBalance == 0 → mantém PENDING, incrementa totalReceivable</li>
-     *   <li>Se creditBalance >= amount → status PAID, zera crédito usado, incrementa totalReceived</li>
-     *   <li>Se 0 < creditBalance < amount → status PARTIALLY_PAID, zera creditBalance, split entre receivable e received</li>
+     *   <li>{@code credit <= 0} → mantém PENDING, nada é aplicado;</li>
+     *   <li>{@code credit >= amount} → status PAID, {@code creditApplied = amount};</li>
+     *   <li>{@code 0 < credit < amount} → status PARTIALLY_PAID, {@code creditApplied = credit}.</li>
      * </ol>
      *
-     * @param transaction  transação com status PENDING a avaliar
-     * @param patientAccount conta do paciente
-     * @param psychAccount   conta do psicólogo
+     * <p>Não altera saldos das contas: {@code creditBalance} do paciente, {@code totalReceivable}
+     * e {@code totalReceived} do psicólogo são derivados pelos chamadores via
+     * {@code recalculate*Balance} a partir dos campos persistidos.</p>
+     *
+     * @param transaction    transação com status PENDING a avaliar
+     * @param patientAccount conta do paciente, fonte do crédito disponível
      */
     private void applyAutomaticCredit(
             FinancialTransaction transaction,
-            PatientAccount patientAccount,
-            PsychologistAccount psychAccount
+            PatientAccount patientAccount
     ) {
         BigDecimal credit = patientAccount.getCreditBalance();
         BigDecimal amount = transaction.getAmount();
 
-        if (credit.compareTo(BigDecimal.ZERO) == 0) {
-            psychAccount.setTotalReceivable(psychAccount.getTotalReceivable().add(amount));
+        if (credit.compareTo(BigDecimal.ZERO) <= 0) {
             return;
         }
 
         if (credit.compareTo(amount) >= 0) {
             transaction.setStatus(TransactionStatusEnum.PAID);
             transaction.setPaidAt(LocalDateTime.now());
+            transaction.setCreditApplied(amount);
             transaction.setNotes("Liquidado automaticamente por crédito disponível");
-            patientAccount.setCreditBalance(credit.subtract(amount));
-            psychAccount.setTotalReceived(psychAccount.getTotalReceived().add(amount));
         } else {
-            // 0 < credit < amount
-            BigDecimal remaining = amount.subtract(credit);
             transaction.setStatus(TransactionStatusEnum.PARTIALLY_PAID);
+            transaction.setCreditApplied(credit);
             transaction.setNotes("Parcialmente liquidado por crédito disponível");
-            patientAccount.setCreditBalance(BigDecimal.ZERO);
-            psychAccount.setTotalReceivable(psychAccount.getTotalReceivable().add(remaining));
-            psychAccount.setTotalReceived(psychAccount.getTotalReceived().add(credit));
         }
     }
 
@@ -162,6 +164,12 @@ public class FinancialService {
 
     /**
      * Registra o pagamento (total ou parcial) de uma transação existente.
+     *
+     * <p>O pagamento em dinheiro é acumulado em {@code amountPaid} sobre o valor já pago,
+     * somado ao {@code creditApplied} eventualmente existente. Quando
+     * {@code amountPaid + creditApplied >= amount} a transação vira PAID e {@code amountPaid}
+     * é limitado ao restante em aberto (evita inflar o total recebido); caso contrário vira
+     * PARTIALLY_PAID.</p>
      *
      * @param transactionId ID da transação a pagar
      * @param dto           dados do pagamento
@@ -178,11 +186,20 @@ public class FinancialService {
         if (transaction.getStatus() == TransactionStatusEnum.PAID) throw new TransactionAlreadyPaidException();
         if (transaction.getStatus() == TransactionStatusEnum.CANCELLED) throw new TransactionCancelledException();
 
-        if (dto.amountPaid().compareTo(transaction.getAmount()) >= 0) {
+        BigDecimal amount = transaction.getAmount();
+        BigDecimal creditApplied = transaction.getCreditApplied() != null
+                ? transaction.getCreditApplied() : BigDecimal.ZERO;
+        BigDecimal alreadyPaid = transaction.getAmountPaid() != null
+                ? transaction.getAmountPaid() : BigDecimal.ZERO;
+        BigDecimal newCashPaid = alreadyPaid.add(dto.amountPaid());
+
+        if (newCashPaid.add(creditApplied).compareTo(amount) >= 0) {
             transaction.setStatus(TransactionStatusEnum.PAID);
             transaction.setPaidAt(LocalDateTime.now());
+            transaction.setAmountPaid(amount.subtract(creditApplied));
         } else {
             transaction.setStatus(TransactionStatusEnum.PARTIALLY_PAID);
+            transaction.setAmountPaid(newCashPaid);
         }
 
         transaction.setPaymentMethod(dto.paymentMethod());
@@ -222,8 +239,6 @@ public class FinancialService {
         transaction.setOrganizationId(tenantService.optional());
         transactionRepo.save(transaction);
 
-        patientAccount.setCreditBalance(patientAccount.getCreditBalance().add(dto.amount()));
-        psychAccount.setTotalReceived(psychAccount.getTotalReceived().add(dto.amount()));
         accountService.recalculatePatientBalance(patientAccount);
         accountService.recalculatePsychologistBalance(psychAccount);
         log.info("Adiantamento de R$ " + dto.amount() + " registrado para o paciente de id " + dto.patientId());
@@ -249,10 +264,9 @@ public class FinancialService {
         transaction.setNotes(dto.notes());
         transaction.setPatientAccount(patientAccount);
         transaction.setPsychologistAccount(psychAccount);
+        transaction.setOrganizationId(tenantService.optional());
         transactionRepo.save(transaction);
 
-        patientAccount.setCreditBalance(patientAccount.getCreditBalance().add(dto.amount()));
-        psychAccount.setTotalReceived(psychAccount.getTotalReceived().add(dto.amount()));
         accountService.recalculatePatientBalance(patientAccount);
         accountService.recalculatePsychologistBalance(psychAccount);
         log.info("Adiantamento de R$ " + dto.amount() + " registrado para o paciente de id " + dto.patientId());
@@ -362,6 +376,18 @@ public class FinancialService {
     /**
      * Retorna o resumo financeiro consolidado do psicólogo.
      *
+     * <p>Calculado diretamente do ledger (não dos saldos persistidos) para refletir sempre
+     * o estado atual:</p>
+     * <ul>
+     *   <li>{@code totalReceivable} — valor em aberto ({@code amount - amountPaid - creditApplied})
+     *       das cobranças PENDING, OVERDUE e PARTIALLY_PAID;</li>
+     *   <li>{@code totalReceived} — caixa efetivo: adiantamentos (ADVANCE) mais a parte paga em
+     *       dinheiro ({@code amountPaid}) de qualquer cobrança;</li>
+     *   <li>{@code totalOverdue} — parte em aberto das cobranças OVERDUE;</li>
+     *   <li>{@code totalPendingCount} — contagem das cobranças PENDING (parcialmente pagas não
+     *       são pendência).</li>
+     * </ul>
+     *
      * @param userId ID do usuário (psicólogo)
      * @return DTO com totais consolidados
      */
@@ -371,9 +397,23 @@ public class FinancialService {
         var allTransactions = transactionRepo
                 .findByPsychologistAccountIdAndOrganizationId(psychAccount.getId(), orgId);
 
+        BigDecimal totalReceivable = allTransactions.stream()
+                .filter(t -> t.getStatus() == TransactionStatusEnum.PENDING
+                        || t.getStatus() == TransactionStatusEnum.OVERDUE
+                        || t.getStatus() == TransactionStatusEnum.PARTIALLY_PAID)
+                .map(FinancialTransaction::getOutstanding)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal totalReceived = allTransactions.stream()
+                .map(t -> {
+                    if (t.getStatus() == TransactionStatusEnum.ADVANCE) return t.getAmount();
+                    return t.getAmountPaid() != null ? t.getAmountPaid() : BigDecimal.ZERO;
+                })
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
         BigDecimal totalOverdue = allTransactions.stream()
                 .filter(t -> t.getStatus() == TransactionStatusEnum.OVERDUE)
-                .map(FinancialTransaction::getAmount)
+                .map(FinancialTransaction::getOutstanding)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         long totalPendingCount = allTransactions.stream()
@@ -381,8 +421,8 @@ public class FinancialService {
                 .count();
 
         return new FinancialSummaryDTO(
-                psychAccount.getTotalReceivable(),
-                psychAccount.getTotalReceived(),
+                totalReceivable,
+                totalReceived,
                 totalOverdue,
                 totalPendingCount
         );

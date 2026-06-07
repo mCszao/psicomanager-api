@@ -59,6 +59,14 @@ public class FinancialTransaction {
     @Column(name = "amount", nullable = false, precision = 12, scale = 2)
     private BigDecimal amount;
 
+    /** Parte do {@code amount} quitada em dinheiro (pagamentos via /financial/payments). */
+    @Column(name = "amount_paid", nullable = false, precision = 12, scale = 2)
+    private BigDecimal amountPaid = BigDecimal.ZERO;
+
+    /** Parte do {@code amount} quitada com crédito de adiantamento (liquidação automática). */
+    @Column(name = "credit_applied", nullable = false, precision = 12, scale = 2)
+    private BigDecimal creditApplied = BigDecimal.ZERO;
+
     /** Data de vencimento. Nulo para pagamentos e adiantamentos. */
     @Column(name = "due_date")
     private LocalDate dueDate;
@@ -89,5 +97,18 @@ public class FinancialTransaction {
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
+    }
+
+    /**
+     * Valor ainda em aberto desta transação: {@code amount - amountPaid - creditApplied},
+     * nunca negativo. Para cobranças quitadas resulta em zero; para adiantamentos não é
+     * semanticamente relevante.
+     */
+    @Transient
+    public BigDecimal getOutstanding() {
+        BigDecimal total = amount != null ? amount : BigDecimal.ZERO;
+        BigDecimal paid = amountPaid != null ? amountPaid : BigDecimal.ZERO;
+        BigDecimal credit = creditApplied != null ? creditApplied : BigDecimal.ZERO;
+        return total.subtract(paid).subtract(credit).max(BigDecimal.ZERO);
     }
 }
