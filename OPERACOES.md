@@ -21,7 +21,8 @@
 | Arquivos de infra | `/opt/psicomanager/{.env, docker-compose.yml, nginx.conf}` |
 | Imagens (GHCR) | `ghcr.io/mcszao/psicomanager-api:latest` · `ghcr.io/mcszao/psicomanager-front:latest` |
 | Branch que deploya | api → **`main`** · front → **`master`** |
-| Chave SSH de deploy | local: `~/.ssh/psicomanager_deploy` · pública instalada no VPS |
+| Deploy CI | **runners self-hosted** na VPS (`vps-api`, `vps-front`) — sem SSH |
+| Acesso SSH | só do seu IP (firewall) · chave `~/.ssh/psicomanager_deploy` (uso manual) |
 | Banco | container `psicomanager-db` (MySQL 8) · db `psicomanager` · user `psico_app` |
 | URL atual | **http://2.25.182.112** (HTTP/IP — domínio+SSL pendente) |
 | Domínio planejado | `agenda.mcszao.tech` (subdomínio, p/ conviver com futuros projetos) |
@@ -51,10 +52,10 @@ O deploy é **automático** via GitHub Actions. O fluxo normal é:
 3. Merge / push no branch de produção:
    - psicomanager-api  → push em  main
    - psicomanager-front → push em master
-4. O workflow .github/workflows/deploy.yml dispara sozinho e:
-   a. builda a imagem Docker
-   b. publica no GHCR (ghcr.io/mcszao/...)
-   c. faz SSH na VPS e roda: docker compose pull <serviço> && up -d <serviço>
+4. O workflow .github/workflows/deploy.yml dispara sozinho com 2 jobs:
+   - build  (runner do GitHub, ubuntu-latest): builda a imagem e publica no GHCR
+   - deploy (runner SELF-HOSTED dentro da VPS): docker compose pull + up -d <serviço>
+     → roda local na VPS, SEM SSH e SEM abrir a porta 22.
 5. Em ~2-3 min a nova versão está no ar.
 ```
 
@@ -145,6 +146,35 @@ curl -s -o /dev/null -w "%{http_code}\n" \
 
 ---
 
+## 4.5 Runners self-hosted (executam o deploy)
+
+O job `deploy` de cada workflow roda em um runner self-hosted instalado **dentro da VPS**,
+como serviço systemd (usuário `mcsmanager`). São 2: `vps-api` e `vps-front`, em
+`/home/mcsmanager/runners/{api,front}`. Eles conectam de **saída** ao GitHub (HTTPS),
+por isso a porta 22 pode ficar fechada/restrita ao seu IP.
+
+```bash
+# Status dos runners
+systemctl list-units 'actions.runner.*' --type=service
+sudo ./svc.sh status        # dentro de /home/mcsmanager/runners/api (ou front)
+
+# Parar / iniciar / reiniciar
+cd /home/mcsmanager/runners/api      # ou .../front
+sudo ./svc.sh stop
+sudo ./svc.sh start
+
+# Logs
+journalctl -u 'actions.runner.mCszao-psicomanager-api.vps-api' -f
+```
+
+- Conferir online/offline também em: repo → **Settings → Actions → Runners**.
+- **Re-registrar** (recriar VPS, trocar repo, etc.): pegue um token novo na sua máquina
+  com `gh api -X POST repos/mCszao/psicomanager-api/actions/runners/registration-token --jq .token`,
+  então na VPS rode `./config.sh --url https://github.com/mCszao/psicomanager-api --token <TOKEN> --replace --unattended`
+  (scripts auxiliares: `setup-runners.sh` e `install-services.sh` na pasta local `psicomanager-deploy`).
+
+---
+
 ## 5. Gerenciar segredos e variáveis de ambiente
 
 Os segredos vivem em **2 lugares**, nunca em arquivo versionado do repositório:
@@ -154,11 +184,9 @@ Os segredos vivem em **2 lugares**, nunca em arquivo versionado do repositório:
 
 | Secret | api | front | Descrição |
 |---|:--:|:--:|---|
-| `VPS_HOST` | ✅ | ✅ | IP da VPS (`2.25.182.112`) |
-| `VPS_USER` | ✅ | ✅ | usuário SSH (`mcsmanager`) |
-| `VPS_SSH_KEY` | ✅ | ✅ | **chave privada** de deploy (conteúdo de `~/.ssh/psicomanager_deploy`) |
-| `GHCR_PAT` | ✅ | ✅ | token p/ login no GHCR |
+| `GHCR_PAT` | ✅ | ✅ | token p/ login no GHCR (usado no job deploy, na VPS) |
 | `NEXT_PUBLIC_API_URL` | — | ✅ | URL da API embutida no build do front |
+| `VPS_HOST` `VPS_USER` `VPS_SSH_KEY` | ⚠️ | ⚠️ | **legado** — eram do deploy via SSH (appleboy). Não são mais usados desde a migração para runner self-hosted; podem ser removidos. |
 
 > **Editar pela interface web** (não pelo terminal) para o valor não ficar no histórico
 > de comandos. Pelo `gh` CLI, se precisar, prefira ler de arquivo:
@@ -289,7 +317,8 @@ A VPS foi pensada para receber mais APIs. Recomendações para não conflitar:
 
 | Sintoma | Causa | Solução |
 |---|---|---|
-| Workflow falha em `Deploy na VPS via SSH` com `ssh: no key found` | Secret `VPS_SSH_KEY` corrompido (pipe do PowerShell re-codifica o PEM) | Regravar via `cmd /c "gh secret set VPS_SSH_KEY --repo R < ~/.ssh/psicomanager_deploy"` |
+| Job `deploy` fica "Queued" e não roda | Runner self-hosted offline | Na VPS: `cd /home/mcsmanager/runners/api && sudo ./svc.sh start`; conferir em Settings → Actions → Runners |
+| (Histórico) Deploy via SSH dava `i/o timeout` na porta 22 ou `ssh: no key found` | Firewall restringe SSH ao seu IP / secret de chave corrompido pelo pipe do PowerShell | **Resolvido** migrando o deploy para runner self-hosted (não usa mais SSH nem a porta 22) |
 | `docker login ghcr.io` nega no **Windows** (`denied`) mas credenciais válidas | Bug do credential helper do Docker Desktop (`credsStore: desktop`) | Não bloqueia: o CI usa o `GITHUB_TOKEN`; na VPS (Linux) o login funciona normal |
 | GHCR rejeita push (`name invalid`) | Nome de imagem com maiúscula (`mCszao`) | Workflows usam `IMAGE_NAME=${GITHUB_REPOSITORY,,}` (minúsculas) |
 | `docker compose pull` não acha a imagem | `GITHUB_USERNAME` no `.env` com maiúscula | Tem que ser `mcszao` (minúsculo) |
@@ -309,6 +338,7 @@ A VPS foi pensada para receber mais APIs. Recomendações para não conflitar:
 | `docker-compose.yml`, `nginx.conf` | ❌ (hoje) | `/opt/psicomanager/` na VPS + cópia local `…/GitHub/psicomanager-deploy/` |
 | `.env` de produção (segredos) | ❌ (e nunca deve) | `/opt/psicomanager/.env` na VPS |
 | Secrets de CI | ❌ | GitHub Secrets |
+| Runners self-hosted | ❌ | `/home/mcsmanager/runners/{api,front}` na VPS (serviços systemd) |
 
 > **Recomendação:** versionar `docker-compose.yml` e `nginx.conf` (sem o `.env`) num repo
 > de infra (ex: tornar `psicomanager-deploy` um repositório git, ou uma pasta `deploy/` no
@@ -322,7 +352,9 @@ A VPS foi pensada para receber mais APIs. Recomendações para não conflitar:
 - [ ] `GHCR_PAT` rotacionado (foi exposto durante o setup inicial).
 - [ ] Token com escopo mínimo (`read/write/delete:packages`), com expiração.
 - [ ] Acesso à VPS só por chave SSH (sem senha); nunca usar `root`.
+- [ ] **SSH (22) restrito ao seu IP** no firewall — o deploy não depende mais da 22
+  (usa runner self-hosted), então pode manter travado.
 - [ ] `.env` de produção fora do git, permissões restritas (`chmod 600`).
 - [ ] Backups do MySQL agendados e testados.
-- [ ] Firewall só com 22/80/443 abertos.
+- [ ] Firewall: 80/443 abertos ao público; 22 só do seu IP.
 - [ ] Revisar periodicamente os alertas do Dependabot (front).

@@ -1080,6 +1080,24 @@ Mesma validação no `psicomanager-front`.
   - Workflows usam actions em Node 20 (deprecado a partir de set/2026) — bumpar versoes.
   - Front tem 36 alertas Dependabot — revisar dependencias.
 
+### 2026-06-07 — Deploy migrado de SSH para runner self-hosted
+
+- **Problema:** o deploy via `appleboy/ssh-action` passou a falhar com
+  `dial tcp ***:22: i/o timeout`. O firewall da VPS restringe a porta 22 ao IP do dono;
+  os runners do GitHub (IPs dinamicos de datacenter) ficam bloqueados. SSH do dono funciona.
+- **Decisao do usuario:** manter a 22 travada (seguranca) e usar **runners self-hosted**.
+- **Implementacao:**
+  - 2 runners self-hosted na VPS (`vps-api`, `vps-front`) em `/home/mcsmanager/runners/`,
+    como servicos systemd rodando como `mcsmanager` (label `self-hosted,vps`).
+    Scripts: `psicomanager-deploy/setup-runners.sh` (config, sem sudo) e
+    `install-services.sh` (svc.sh install, com sudo).
+  - Workflows divididos em 2 jobs: `build` (ubuntu-latest -> GHCR) e `deploy`
+    (`runs-on: [self-hosted, vps]`, `needs: build`) que roda `docker compose pull/up -d`
+    localmente na VPS. Removidos appleboy/ssh-action e dependencia da porta 22.
+  - Secrets `VPS_HOST/VPS_USER/VPS_SSH_KEY` ficaram **legado** (nao usados; podem remover).
+- **Resultado:** ambos pipelines verdes; job deploy roda em ~5s na VPS. SSH segue travado.
+- Detalhes operacionais e troubleshooting: ver [`OPERACOES.md`](./OPERACOES.md).
+
 ---
 
 ## 🔧 REFERÊNCIA RÁPIDA
