@@ -319,7 +319,7 @@ A VPS foi pensada para receber mais APIs. Recomendações para não conflitar:
 
 | Sintoma | Causa | Solução |
 |---|---|---|
-| Job `deploy` fica "Queued" e não roda | Runner self-hosted offline | Na VPS: `cd /home/mcsmanager/runners/api && sudo ./svc.sh start`; conferir em Settings → Actions → Runners |
+| Job `deploy` fica "Queued" e não roda | Runner self-hosted offline **ou online mas travado** (ex: após auto-update do runner — aparece "Listening for Jobs" mas não pega o job) | Reiniciar os runners (sudo): `sudo systemctl restart "actions.runner.mCszao-psicomanager-front.vps-front" "actions.runner.mCszao-psicomanager-api.vps-api"`. Deploy imediato sem esperar: `cd /opt/psicomanager && docker compose pull front && docker compose up -d front` |
 | (Histórico) Deploy via SSH dava `i/o timeout` na porta 22 ou `ssh: no key found` | Firewall restringe SSH ao seu IP / secret de chave corrompido pelo pipe do PowerShell | **Resolvido** migrando o deploy para runner self-hosted (não usa mais SSH nem a porta 22) |
 | `docker login ghcr.io` nega no **Windows** (`denied`) mas credenciais válidas | Bug do credential helper do Docker Desktop (`credsStore: desktop`) | Não bloqueia: o CI usa o `GITHUB_TOKEN`; na VPS (Linux) o login funciona normal |
 | GHCR rejeita push (`name invalid`) | Nome de imagem com maiúscula (`mCszao`) | Workflows usam `IMAGE_NAME=${GITHUB_REPOSITORY,,}` (minúsculas) |
