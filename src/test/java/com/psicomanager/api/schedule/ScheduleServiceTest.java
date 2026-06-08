@@ -1,12 +1,16 @@
 package com.psicomanager.api.schedule;
 
 import com.psicomanager.api.alert.AlertService;
+import com.psicomanager.api.financial.AccountService;
+import com.psicomanager.api.financial.FinancialService;
+import com.psicomanager.api.infra.tenant.TenantService;
 import com.psicomanager.api.patient.PatientRepository;
 import com.psicomanager.api.patient.exception.PatientNotFoundException;
 import com.psicomanager.api.patient.model.Patient;
 import com.psicomanager.api.plan.PlanRepository;
 import com.psicomanager.api.plan.PlanService;
 import com.psicomanager.api.plan.model.Plan;
+import com.psicomanager.api.user.model.User;
 import com.psicomanager.api.schedule.dto.ScheduleAnnotationsDTO;
 import com.psicomanager.api.schedule.dto.ScheduleRegisterDTO;
 import com.psicomanager.api.schedule.dto.ScheduleRescheduleDTO;
@@ -15,6 +19,7 @@ import com.psicomanager.api.schedule.enums.StageEnum;
 import com.psicomanager.api.schedule.exception.*;
 import com.psicomanager.api.schedule.mapper.ScheduleMapper;
 import com.psicomanager.api.schedule.model.Schedule;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -24,6 +29,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -50,6 +57,9 @@ class ScheduleServiceTest {
     @Mock private PlanService planService;
     @Mock private AlertService alertService;
     @Mock private ScheduleMapper mapper;
+    @Mock private FinancialService financialService;
+    @Mock private AccountService accountService;
+    @Mock private TenantService tenantService;
 
     private static final String SCHEDULE_ID = "schedule-1";
     private static final String PATIENT_ID  = "patient-1";
@@ -61,6 +71,14 @@ class ScheduleServiceTest {
     @BeforeEach
     void setUp() {
         patient = new Patient();
+        // concludeSession lê o usuário autenticado para gerar a cobrança de sessão.
+        SecurityContextHolder.getContext()
+                .setAuthentication(new UsernamePasswordAuthenticationToken(new User(), null));
+    }
+
+    @AfterEach
+    void tearDown() {
+        SecurityContextHolder.clearContext();
     }
 
     // region Helpers
