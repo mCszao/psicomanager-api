@@ -1,5 +1,8 @@
 package com.psicomanager.api.plan;
 
+import com.psicomanager.api.financial.AccountService;
+import com.psicomanager.api.financial.FinancialService;
+import com.psicomanager.api.infra.tenant.TenantService;
 import com.psicomanager.api.patient.PatientRepository;
 import com.psicomanager.api.patient.exception.PatientNotFoundException;
 import com.psicomanager.api.patient.model.Patient;
@@ -8,11 +11,13 @@ import com.psicomanager.api.plan.exception.PlanNotFoundException;
 import com.psicomanager.api.plan.mapper.PlanMapper;
 import com.psicomanager.api.plan.model.Plan;
 import com.psicomanager.api.schedule.ScheduleRepository;
+import com.psicomanager.api.user.model.User;
 import com.psicomanager.api.schedule.enums.AttendanceTypeEnum;
 import com.psicomanager.api.schedule.enums.FrequencyEnum;
 import com.psicomanager.api.schedule.enums.StageEnum;
 import com.psicomanager.api.schedule.exception.ScheduleConflictTimeException;
 import com.psicomanager.api.schedule.model.Schedule;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -21,6 +26,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -45,6 +52,9 @@ class PlanServiceTest {
     @Mock private PlanTemplateRepository planTemplateRepo;
     @Mock private PatientRepository patientRepo;
     @Mock private ScheduleRepository scheduleRepo;
+    @Mock private TenantService tenantService;
+    @Mock private FinancialService financialService;
+    @Mock private AccountService accountService;
 
     private static final String PATIENT_ID = "patient-1";
     private static final String PLAN_ID    = "plan-1";
@@ -55,6 +65,15 @@ class PlanServiceTest {
     @BeforeEach
     void setUp() {
         patient = new Patient();
+        // createPlan lê o usuário autenticado do SecurityContext para gerar a
+        // cobrança de planos fechados — define um principal de teste.
+        SecurityContextHolder.getContext()
+                .setAuthentication(new UsernamePasswordAuthenticationToken(new User(), null));
+    }
+
+    @AfterEach
+    void tearDown() {
+        SecurityContextHolder.clearContext();
     }
 
     // region Helpers
