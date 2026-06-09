@@ -21,5 +21,6 @@ public record TransactionResponseDTO(
         LocalDateTime createdAt,
         PatientResumeResponseDTO patient,
         String planId,
-        String sessionId
+        String sessionId,
+        LocalDateTime sessionDate
 ) {}

@@ -32,7 +32,8 @@ public class TransactionMapper {
                 t.getCreatedAt(),
                 patientResume,
                 t.getPlan() != null ? t.getPlan().getId() : null,
-                t.getSession() != null ? t.getSession().getId() : null
+                t.getSession() != null ? t.getSession().getId() : null,
+                t.getSession() != null ? t.getSession().getDateStart() : null
         );
     }
 }
