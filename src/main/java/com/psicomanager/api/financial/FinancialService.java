@@ -158,6 +158,69 @@ public class FinancialService {
         }
     }
 
+    /**
+     * Aplica crédito disponível a uma cobrança em aberto, incrementando {@code creditApplied}
+     * e atualizando o status (PAID quando totalmente coberta, senão PARTIALLY_PAID). Não altera
+     * saldos (derivados via {@code recalculate*Balance}). Retorna o crédito efetivamente consumido.
+     *
+     * @param t               cobrança a abater
+     * @param availableCredit crédito disponível do paciente
+     * @return valor de crédito consumido (≥ 0)
+     */
+    private BigDecimal applyCreditToTransaction(FinancialTransaction t, BigDecimal availableCredit) {
+        if (availableCredit == null || availableCredit.compareTo(BigDecimal.ZERO) <= 0) return BigDecimal.ZERO;
+        BigDecimal amount = t.getAmount() != null ? t.getAmount() : BigDecimal.ZERO;
+        BigDecimal paid = t.getAmountPaid() != null ? t.getAmountPaid() : BigDecimal.ZERO;
+        BigDecimal credit = t.getCreditApplied() != null ? t.getCreditApplied() : BigDecimal.ZERO;
+        BigDecimal outstanding = amount.subtract(paid).subtract(credit);
+        if (outstanding.compareTo(BigDecimal.ZERO) <= 0) return BigDecimal.ZERO;
+
+        BigDecimal toApply = availableCredit.min(outstanding);
+        BigDecimal newCredit = credit.add(toApply);
+        t.setCreditApplied(newCredit);
+        if (paid.add(newCredit).compareTo(amount) >= 0) {
+            t.setStatus(TransactionStatusEnum.PAID);
+            t.setPaidAt(LocalDateTime.now());
+        } else {
+            t.setStatus(TransactionStatusEnum.PARTIALLY_PAID);
+        }
+        return toApply;
+    }
+
+    /**
+     * Consome o crédito de adiantamento disponível do paciente abatendo as cobranças em aberto
+     * (PENDING, OVERDUE, PARTIALLY_PAID), da mais antiga para a mais nova. Idempotente: nada faz
+     * quando não há crédito ou cobranças em aberto. Recalcula os saldos afetados.
+     *
+     * @param patientAccount conta do paciente cujo crédito deve ser consumido
+     */
+    @Transactional
+    public void applyCreditToOpenCharges(PatientAccount patientAccount) {
+        BigDecimal credit = patientAccount.getCreditBalance();
+        if (credit == null || credit.compareTo(BigDecimal.ZERO) <= 0) return;
+
+        var openCharges = transactionRepo.findByPatientAccountIdAndStatusInOrderByCreatedAtAsc(
+                patientAccount.getId(),
+                List.of(TransactionStatusEnum.PENDING, TransactionStatusEnum.OVERDUE, TransactionStatusEnum.PARTIALLY_PAID)
+        );
+
+        var affectedPsych = new java.util.LinkedHashMap<String, PsychologistAccount>();
+        for (var charge : openCharges) {
+            if (credit.compareTo(BigDecimal.ZERO) <= 0) break;
+            BigDecimal consumed = applyCreditToTransaction(charge, credit);
+            if (consumed.compareTo(BigDecimal.ZERO) > 0) {
+                transactionRepo.save(charge);
+                credit = credit.subtract(consumed);
+                affectedPsych.putIfAbsent(charge.getPsychologistAccount().getId(), charge.getPsychologistAccount());
+            }
+        }
+
+        if (!affectedPsych.isEmpty()) {
+            accountService.recalculatePatientBalance(patientAccount);
+            affectedPsych.values().forEach(accountService::recalculatePsychologistBalance);
+        }
+    }
+
     // endregion
 
     // region Pagamentos e adiantamentos
@@ -186,6 +249,11 @@ public class FinancialService {
         if (transaction.getStatus() == TransactionStatusEnum.PAID) throw new TransactionAlreadyPaidException();
         if (transaction.getStatus() == TransactionStatusEnum.CANCELLED) throw new TransactionCancelledException();
 
+        // Feature B: consome o crédito disponível do paciente antes de aplicar o dinheiro
+        BigDecimal availableCredit = transaction.getPatientAccount().getCreditBalance() != null
+                ? transaction.getPatientAccount().getCreditBalance() : BigDecimal.ZERO;
+        applyCreditToTransaction(transaction, availableCredit);
+
         BigDecimal amount = transaction.getAmount();
         BigDecimal creditApplied = transaction.getCreditApplied() != null
                 ? transaction.getCreditApplied() : BigDecimal.ZERO;
@@ -196,7 +264,7 @@ public class FinancialService {
         if (newCashPaid.add(creditApplied).compareTo(amount) >= 0) {
             transaction.setStatus(TransactionStatusEnum.PAID);
             transaction.setPaidAt(LocalDateTime.now());
-            transaction.setAmountPaid(amount.subtract(creditApplied));
+            transaction.setAmountPaid(amount.subtract(creditApplied).max(BigDecimal.ZERO));
         } else {
             transaction.setStatus(TransactionStatusEnum.PARTIALLY_PAID);
             transaction.setAmountPaid(newCashPaid);
@@ -241,6 +309,8 @@ public class FinancialService {
 
         accountService.recalculatePatientBalance(patientAccount);
         accountService.recalculatePsychologistBalance(psychAccount);
+        // Feature A: consome o crédito recém-creditado nas cobranças em aberto
+        applyCreditToOpenCharges(patientAccount);
         log.info("Adiantamento de R$ " + dto.amount() + " registrado para o paciente de id " + dto.patientId());
     }
 
@@ -269,6 +339,8 @@ public class FinancialService {
 
         accountService.recalculatePatientBalance(patientAccount);
         accountService.recalculatePsychologistBalance(psychAccount);
+        // Feature A: consome o crédito recém-creditado nas cobranças em aberto
+        applyCreditToOpenCharges(patientAccount);
         log.info("Adiantamento de R$ " + dto.amount() + " registrado para o paciente de id " + dto.patientId());
     }
 

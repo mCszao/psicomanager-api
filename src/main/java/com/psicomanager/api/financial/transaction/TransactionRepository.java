@@ -12,6 +12,10 @@ public interface TransactionRepository extends JpaRepository<FinancialTransactio
 
     List<FinancialTransaction> findByPatientAccountIdOrderByCreatedAtDesc(String patientAccountId);
 
+    /** Cobranças do paciente nos status informados, da mais antiga para a mais nova (consumo de crédito). */
+    List<FinancialTransaction> findByPatientAccountIdAndStatusInOrderByCreatedAtAsc(
+            String patientAccountId, List<TransactionStatusEnum> statuses);
+
     List<FinancialTransaction> findByStatus(TransactionStatusEnum status);
 
     List<FinancialTransaction> findByStatusAndDueDateBefore(TransactionStatusEnum status, LocalDate date);
