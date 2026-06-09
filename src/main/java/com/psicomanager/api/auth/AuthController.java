@@ -40,6 +40,7 @@ public class AuthController {
     private static final String ACCESS_TOKEN_COOKIE = "authToken";
     private static final String REFRESH_TOKEN_COOKIE = "refreshToken";
     private static final int REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60;
+    private static final int ACCESS_TOKEN_MAX_AGE = 2 * 60 * 60; // 2 horas, alinhado ao exp do JWT
 
     private Cookie buildHttpOnlyCookie(String name, String value, int maxAge) {
         Cookie cookie = new Cookie(name, value);
@@ -51,7 +52,7 @@ public class AuthController {
     }
 
     private void setAuthCookies(HttpServletResponse response, String accessToken, String rawRefreshToken) {
-        response.addCookie(buildHttpOnlyCookie(ACCESS_TOKEN_COOKIE, accessToken, 15 * 60));
+        response.addCookie(buildHttpOnlyCookie(ACCESS_TOKEN_COOKIE, accessToken, ACCESS_TOKEN_MAX_AGE));
         response.addCookie(buildHttpOnlyCookie(REFRESH_TOKEN_COOKIE, rawRefreshToken, REFRESH_TOKEN_MAX_AGE));
     }
 
