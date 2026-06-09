@@ -35,6 +35,11 @@ public class User implements UserDetails {
     @Column(name = "USERNAME", nullable = false, unique = true, length = 255)
     private String username;
 
+    /** Nome de exibição do usuário. Nullable para usuários criados antes da V29. */
+    @Size(max = 255)
+    @Column(name = "name", length = 255)
+    private String name;
+
     @Size(max = 255)
     @Email
     @Column(name = "EMAIL", length = 255)

@@ -11,6 +11,7 @@ public class UserMapper {
     public User dtoToEntity(UserRegisterDTO dto) {
         User entity = new User();
         entity.setUsername(dto.username());
+        entity.setName(dto.name());
         String encryptedPass = new BCryptPasswordEncoder().encode(dto.password());
         entity.setPassword(encryptedPass);
         entity.setPhone(dto.phone());
