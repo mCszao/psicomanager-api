@@ -68,7 +68,7 @@ public class TokenService {
     }
 
     public Instant accessTokenExpiration() {
-        return Instant.now().plus(15, ChronoUnit.MINUTES);
+        return Instant.now().plus(2, ChronoUnit.HOURS);
     }
 
     public Instant refreshTokenExpiration() {
