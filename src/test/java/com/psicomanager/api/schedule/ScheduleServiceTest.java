@@ -464,6 +464,26 @@ class ScheduleServiceTest {
         }
 
         @Test
+        @DisplayName("nova sessão deve herdar o organizationId da original (senão some do calendário)")
+        void deveHerdarOrganizationId() {
+            var original = openedSchedule();
+            original.setOrganizationId("org-1");
+            var newStart = START.plusDays(1);
+            var dto = new ScheduleRescheduleDTO(newStart, newStart.plusHours(1));
+
+            when(scheduleRepo.findById(SCHEDULE_ID)).thenReturn(Optional.of(original));
+            when(scheduleRepo.findConflictingSchedules(any(), any(), eq(SCHEDULE_ID))).thenReturn(List.of());
+
+            service.rescheduleSession(SCHEDULE_ID, dto);
+
+            ArgumentCaptor<Schedule> captor = ArgumentCaptor.forClass(Schedule.class);
+            verify(scheduleRepo, times(2)).save(captor.capture());
+            Schedule newSession = captor.getAllValues().stream()
+                    .filter(s -> s != original).findFirst().orElseThrow();
+            assertThat(newSession.getOrganizationId()).isEqualTo("org-1");
+        }
+
+        @Test
         @DisplayName("deve resolver dateEnd como start + 1h quando dateEnd é null no reagendamento")
         void deveResolverDateEndQuandoNuloNoReagendamento() {
             var original = openedSchedule();

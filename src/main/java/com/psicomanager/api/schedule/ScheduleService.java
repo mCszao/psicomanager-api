@@ -371,6 +371,9 @@ public class ScheduleService {
         newSchedule.setDateEnd(newEnd);
         newSchedule.setStage(StageEnum.OPENED);
         newSchedule.setType(schedule.getType());
+        // Herda o tenant da sessão original — sem isso a sessão reagendada some
+        // do calendário (getAllSchedules filtra por organizationId).
+        newSchedule.setOrganizationId(schedule.getOrganizationId());
         scheduleRepo.save(newSchedule);
 
         schedule.setStage(StageEnum.RESCHEDULED);
