@@ -217,6 +217,22 @@ class PlanServiceTest {
                 return sessions.stream().allMatch(s -> s.getStage() == StageEnum.OPENED);
             }));
         }
+
+        @Test
+        @DisplayName("sessões geradas devem herdar o organizationId do plano")
+        void sessoesGeradasHerdamOrganizationId() {
+            when(patientRepo.findById(PATIENT_ID)).thenReturn(Optional.of(patient));
+            when(scheduleRepo.findConflictingSchedules(any(), any(), any())).thenReturn(List.of());
+            when(tenantService.required()).thenReturn("org-1");
+
+            service.createPlan(finiteDto(true));
+
+            verify(scheduleRepo).saveAll(argThat(list -> {
+                @SuppressWarnings("unchecked")
+                var sessions = (List<Schedule>) list;
+                return sessions.stream().allMatch(s -> "org-1".equals(s.getOrganizationId()));
+            }));
+        }
     }
 
     // endregion

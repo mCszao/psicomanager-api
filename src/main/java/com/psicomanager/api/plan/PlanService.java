@@ -265,6 +265,9 @@ public class PlanService {
             session.setDateEnd(end);
             session.setStage(StageEnum.OPENED);
             session.setType(type);
+            // Herda o tenant do plano — sem isso a sessão gerada some do calendário
+            // (getAllSchedules filtra por organizationId).
+            session.setOrganizationId(plan.getOrganizationId());
             if (plan.getPricePerSession() != null) {
                 session.setSessionValue(plan.getPricePerSession());
             }
