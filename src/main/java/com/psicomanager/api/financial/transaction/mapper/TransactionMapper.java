@@ -24,6 +24,8 @@ public class TransactionMapper {
                 t.getId(),
                 t.getType(),
                 t.getAmount(),
+                t.getAmountPaid(),
+                t.getCreditApplied(),
                 t.getStatus(),
                 t.getDueDate(),
                 t.getPaidAt(),
