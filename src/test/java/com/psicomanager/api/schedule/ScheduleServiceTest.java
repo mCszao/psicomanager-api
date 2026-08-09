@@ -3,6 +3,8 @@ package com.psicomanager.api.schedule;
 import com.psicomanager.api.alert.AlertService;
 import com.psicomanager.api.financial.AccountService;
 import com.psicomanager.api.financial.FinancialService;
+import com.psicomanager.api.financial.transaction.enums.PaymentMethodEnum;
+import com.psicomanager.api.financial.transaction.model.FinancialTransaction;
 import com.psicomanager.api.infra.tenant.TenantService;
 import com.psicomanager.api.patient.PatientRepository;
 import com.psicomanager.api.patient.exception.PatientNotFoundException;
@@ -32,6 +34,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -244,6 +247,24 @@ class ScheduleServiceTest {
             service.concludeSession(SCHEDULE_ID);
 
             verify(planService).onSessionConcluded(plan, false, true);
+        }
+
+        @Test
+        @DisplayName("concluir e pagar registra o pagamento da cobrança gerada")
+        void concluirEPagarRegistraPagamento() {
+            var schedule = openedSchedule();
+            var charge = new FinancialTransaction();
+            charge.setId("charge-1");
+            charge.setAmount(new BigDecimal("100.00"));
+
+            when(scheduleRepo.findById(SCHEDULE_ID)).thenReturn(Optional.of(schedule));
+            when(financialService.generateSessionCharge(eq(schedule), any())).thenReturn(charge);
+
+            service.concludeSession(SCHEDULE_ID, PaymentMethodEnum.PIX);
+
+            verify(financialService).registerPayment(eq("charge-1"), argThat(dto ->
+                    dto.paymentMethod() == PaymentMethodEnum.PIX
+                            && dto.amountPaid().compareTo(new BigDecimal("100.00")) == 0));
         }
     }
 
