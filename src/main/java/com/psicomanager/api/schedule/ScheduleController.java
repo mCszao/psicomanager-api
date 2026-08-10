@@ -58,6 +58,15 @@ public class ScheduleController {
         return ResponseEntity.ok(new BaseResponse<>(true, "Sessão concluída com sucesso!"));
     }
 
+    @PatchMapping("/{id}/conclude-and-pay")
+    public ResponseEntity<BaseResponse<String>> concludeAndPay(
+            @PathVariable String id,
+            @RequestBody @Valid ConcludeAndPayDTO data) {
+        log.info("PATCH: /schedules/" + id + "/conclude-and-pay");
+        scheduleService.concludeSession(id, data.paymentMethod());
+        return ResponseEntity.ok(new BaseResponse<>(true, "Sessão concluída e paga com sucesso!"));
+    }
+
     @PatchMapping("/{id}/cancel")
     public ResponseEntity<BaseResponse<String>> cancel(@PathVariable String id) {
         log.info("PATCH: /schedules/" + id + "/cancel");

@@ -2,6 +2,8 @@ package com.psicomanager.api.schedule;
 
 import com.psicomanager.api.financial.AccountService;
 import com.psicomanager.api.financial.FinancialService;
+import com.psicomanager.api.financial.transaction.dto.PaymentRegisterDTO;
+import com.psicomanager.api.financial.transaction.enums.PaymentMethodEnum;
 import com.psicomanager.api.infra.tenant.TenantService;
 import com.psicomanager.api.patient.PatientRepository;
 import com.psicomanager.api.patient.exception.PatientNotFoundException;
@@ -29,6 +31,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -257,6 +260,19 @@ public class ScheduleService {
      */
     @Transactional
     public void concludeSession(String id) {
+        concludeSession(id, null);
+    }
+
+    /**
+     * Conclui a sessão e, quando {@code payMethod} é informado, liquida a cobrança
+     * gerada ("concluir e pagar"). Se não houver cobrança (plano fechado) ou ela já
+     * estiver quitada por crédito, o pagamento é ignorado.
+     *
+     * @param id        ID da sessão
+     * @param payMethod forma de pagamento; {@code null} para apenas concluir
+     */
+    @Transactional
+    public void concludeSession(String id, PaymentMethodEnum payMethod) {
         log.info("Buscando sessão de id " + id + " para conclusão");
         var schedule = scheduleRepo.findById(id).orElseThrow(ScheduleNotFoundException::new);
         if (schedule.getStage() != StageEnum.OPENED) throw new ScheduleAlreadyConcludedException();
@@ -280,7 +296,15 @@ public class ScheduleService {
             log.info("Gerando cobrança de sessão para a sessão de id " + id);
             User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             var psychAccount = accountService.getPsychologistAccount(user.getId());
-            financialService.generateSessionCharge(schedule, psychAccount);
+            var charge = financialService.generateSessionCharge(schedule, psychAccount);
+
+            // "Concluir e pagar": liquida a cobrança se ainda houver valor em aberto
+            // (crédito de adiantamento pode ter coberto parte ou tudo).
+            if (payMethod != null && charge.getOutstanding().compareTo(BigDecimal.ZERO) > 0) {
+                log.info("Registrando pagamento da cobrança " + charge.getId() + " (concluir e pagar)");
+                financialService.registerPayment(charge.getId(),
+                        new PaymentRegisterDTO(charge.getId(), charge.getOutstanding(), payMethod, null));
+            }
         }
 
         log.info("Sessão de id " + id + " concluída com sucesso");
