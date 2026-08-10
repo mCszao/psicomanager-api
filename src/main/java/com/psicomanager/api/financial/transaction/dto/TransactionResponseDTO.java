@@ -13,6 +13,8 @@ public record TransactionResponseDTO(
         String id,
         TransactionTypeEnum type,
         BigDecimal amount,
+        BigDecimal amountPaid,
+        BigDecimal creditApplied,
         TransactionStatusEnum status,
         LocalDate dueDate,
         LocalDateTime paidAt,
